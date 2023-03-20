@@ -105,3 +105,6 @@ dist
 
 # Ignore .idea folder
 .idea
+
+# Ignore
+notes.md
