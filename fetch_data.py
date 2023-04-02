@@ -1,4 +1,4 @@
-from pandas import DataFrame, read_csv
+from pandas import DataFrame, read_csv, concat
 from pandera import DataFrameSchema, Column, Check
 
 # Read files
@@ -35,17 +35,17 @@ trips_schema = DataFrameSchema({
     'Covered distance (m)': Column(float, Check.greater_than_or_equal_to(10.0)),
     'Duration (sec.)': Column(int, Check.greater_than_or_equal_to(10))
 })
-trips_dfs: [DataFrame] = [may_trips, june_trips, july_trips]
+trips: DataFrame = concat([may_trips, june_trips, july_trips], ignore_index=True)
 fail_index: list = []
 
-
 try:
-    may_trips = trips_schema.validate(may_trips, lazy=True)
+    trips = trips_schema.validate(trips, lazy=True)
 except SchemaErrors as err:
     fail_index = err.failure_cases['index']
 finally:
-    may_trips = may_trips[~may_trips.index.isin(fail_index)]
-    may_trips = may_trips.dropna()
+    trips = trips[~trips.index.isin(fail_index)]
+    trips = trips.dropna()
 
-print(may_trips.loc[may_trips['Covered distance (m)'] < 10.0])
-print(may_trips.loc[may_trips['Duration (sec.)'] < 10])
+print(trips)
+print(trips.loc[trips['Covered distance (m)'] < 10.0])
+print(trips.loc[trips['Duration (sec.)'] < 10])
