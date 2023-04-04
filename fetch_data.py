@@ -1,9 +1,11 @@
+from dotenv import dotenv_values
 from pandas import DataFrame, read_csv, concat
 from pandera import DataFrameSchema, Column, Check
+from pandera.errors import SchemaErrors
+from sqlalchemy import URL, create_engine
+from sqlalchemy_utils import database_exists, create_database
 
 # Read files
-from pandera.errors import SchemaErrors
-
 may_trips: DataFrame = read_csv(r"https://dev.hsl.fi/citybikes/od-trips-2021/2021-05.csv")
 print("Read may trips")
 print(may_trips.head())
@@ -70,3 +72,18 @@ except SchemaErrors as err:
 finally:
     trips = trips[~trips.index.isin(fail_index)]
     trips = trips.dropna()
+
+# populate db
+config = dotenv_values()
+url_object = URL.create(
+    "postgresql",
+    username=config['DB_USER'],
+    password=config['DB_PASSWORD'],
+    host=config['DB_HOST'],
+    database=config['DATABASE'],
+)
+engine = create_engine(url_object)
+if not database_exists(engine.url):
+    create_database(engine.url)
+
+print(database_exists(engine.url))
