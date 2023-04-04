@@ -2,7 +2,9 @@ from dotenv import dotenv_values
 from pandas import DataFrame, read_csv, concat
 from pandera import DataFrameSchema, Column, Check
 from pandera.errors import SchemaErrors
-from sqlalchemy import URL, create_engine
+from sqlalchemy import URL, create_engine, MetaData, Table, Integer, String, Float, DateTime, ForeignKey, \
+    CheckConstraint
+from sqlalchemy import Column as Kolumn
 from sqlalchemy_utils import database_exists, create_database
 
 # Read files
@@ -85,5 +87,36 @@ url_object = URL.create(
 engine = create_engine(url_object)
 if not database_exists(engine.url):
     create_database(engine.url)
+
+meta = MetaData()
+
+station_table = Table(
+    'stations', meta,
+    Kolumn('Station_ID', Integer, primary_key=True),
+    Kolumn('Name_fi', String),
+    Kolumn('Name_sv', String),
+    Kolumn('Name', String),
+    Kolumn('Address_fi', String),
+    Kolumn('Address_sv', String),
+    Kolumn('City_fi', String, default="Helsinki", nullable=False),
+    Kolumn('City_sv', String, default="Helsingfors", nullable=False),
+    Kolumn('Operator', String),
+    Kolumn('Capacity', Integer),
+    Kolumn('x', Float),
+    Kolumn('y', Float)
+)
+
+trip_table = Table(
+    'trips', meta,
+    Kolumn('Trip_ID', Integer, primary_key=True),
+    Kolumn('Departure_datetime', DateTime),
+    Kolumn('Return_datetime', DateTime),
+    Kolumn('Departure_station_ID', Integer, ForeignKey("stations.Station_ID"), nullable=False),
+    Kolumn('Return_station_ID', Integer, ForeignKey('stations.Station_ID'), nullable=False),
+    Kolumn('Covered_distance_in_m', Float, CheckConstraint('"Covered_distance_in_m">=10')),
+    Kolumn('Duration_in_s', Integer, CheckConstraint('"Duration_in_s">=10'))
+)
+
+meta.create_all(engine)
 
 print(database_exists(engine.url))
