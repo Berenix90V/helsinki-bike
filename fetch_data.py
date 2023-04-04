@@ -20,24 +20,47 @@ stations: DataFrame = read_csv(r"https://opendata.arcgis.com/datasets/726277c507
 print("Read stations")
 print(stations.head())
 
-print(may_trips.columns)
-print("Types: ", may_trips.dtypes)
-print(stations.columns)
+trips: DataFrame = concat([may_trips, june_trips, july_trips], ignore_index=True)
 
 # Validate data
 trips_schema = DataFrameSchema({
-    'Departure': Column(str),
-    'Return': Column(str),
-    'Departure station id': Column(int),
-    'Departure station name': Column(str),
-    'Return station id': Column(int),
-    'Return station name': Column(str),
-    'Covered distance (m)': Column(float, Check.greater_than_or_equal_to(10.0)),
-    'Duration (sec.)': Column(int, Check.greater_than_or_equal_to(10))
+    'Departure_datetime': Column(str),
+    'Return_datetime': Column(str),
+    'Departure_station_id': Column(int),
+    'Return_station_id': Column(int),
+    'Covered_distance_in_m': Column(float, Check.greater_than_or_equal_to(10.0)),
+    'Duration_in_s': Column(int, Check.greater_than_or_equal_to(10))
 })
-trips: DataFrame = concat([may_trips, june_trips, july_trips], ignore_index=True)
-fail_index: list = []
+stations_schema = DataFrameSchema({
+    'ID': Column(int),
+    'Name_fi': Column(str),
+    'Name_sv': Column(str),
+    'Name_eng': Column(str),
+    'Address_fi': Column(str),
+    'Address_sv': Column(str),
+    'City_fi': Column(str),
+    'City_sv': Column(str),
+    'Operator': Column(str),
+    'Capacity': Column(str),
+    'x': Column(str),
+    'y': Column(str)
+})
 
+# Eliminate redundant or obsolete information
+trips.drop(['Departure station name', 'Return station name'], axis=1, inplace=True)
+stations.drop(['FID'], axis=1, inplace=True)
+
+# Fix column names
+trips.rename(columns={
+    'Departure': 'Departure_datetime',
+    'Return': 'Return_datetime',
+    'Covered distance (m)': 'Covered_distance_in_m',
+    'Duration (sec.)': 'Duration_in_s'
+}, inplace=True)
+trips.columns = trips.columns.str.replace(' ', '_')
+stations.columns = ['ID', 'Name_fi', 'Name_sv', 'Name_eng', 'Address_fi', 'Address_sv', 'City_fi',
+                    'City_sv', 'Operator', 'Capacity', 'x', 'y']
+fail_index: list = []
 try:
     trips = trips_schema.validate(trips, lazy=True)
 except SchemaErrors as err:
@@ -46,6 +69,9 @@ finally:
     trips = trips[~trips.index.isin(fail_index)]
     trips = trips.dropna()
 
-print(trips)
-print(trips.loc[trips['Covered distance (m)'] < 10.0])
-print(trips.loc[trips['Duration (sec.)'] < 10])
+print(trips.columns)
+print("Types: ", trips.dtypes)
+print(stations.columns)
+
+print(trips.loc[trips['Covered_distance_in_m'] < 10.0])
+print(trips.loc[trips['Duration_in_s'] < 10])
