@@ -22,7 +22,7 @@ print(stations.head())
 
 trips: DataFrame = concat([may_trips, june_trips, july_trips], ignore_index=True)
 
-# Validate data
+# Validation schemas
 trips_schema = DataFrameSchema({
     'Departure_datetime': Column(str, Check.str_matches("^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$")),
     'Return_datetime': Column(str, Check.str_matches("^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$")),
@@ -60,6 +60,8 @@ trips.rename(columns={
 trips.columns = trips.columns.str.replace(' ', '_')
 stations.columns = ['ID', 'Name_fi', 'Name_sv', 'Name_eng', 'Address_fi', 'Address_sv', 'City_fi',
                     'City_sv', 'Operator', 'Capacity', 'x', 'y']
+
+# Validate data
 fail_index: list = []
 try:
     trips = trips_schema.validate(trips, lazy=True)
@@ -68,11 +70,3 @@ except SchemaErrors as err:
 finally:
     trips = trips[~trips.index.isin(fail_index)]
     trips = trips.dropna()
-
-print(trips.columns)
-print("Types: ", trips.dtypes)
-print(stations.columns)
-print("Types: ", stations.dtypes)
-
-print(trips.loc[trips['Covered_distance_in_m'] < 10.0])
-print(trips.loc[trips['Duration_in_s'] < 10])
