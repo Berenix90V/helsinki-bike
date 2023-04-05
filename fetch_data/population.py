@@ -85,7 +85,7 @@ def populate_table(engine: Engine, df: DataFrame, table: str, index=True) -> Non
     df: DataFrame
         data to insert in the table
     table: str
-        name of the table in the databaase in which to copy the data
+        name of the table in the database in which to copy the data
     index: bool
         if True add an ID column with the row number
     """
