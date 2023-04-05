@@ -26,8 +26,10 @@ stations_schema: DataFrameSchema = stations_schema()
 
 # Validate data
 stations = validate_df(stations, stations_schema)
+print("Stations validated")
 trips = validate_df(trips, trips_schema)
 trips = trips.dropna()
+print("Trips validated")
 
 # Set default value for city name
 stations["City_fi"] = stations['City_fi'].str.strip().replace('', 'Helsinki')
@@ -39,9 +41,12 @@ engine = create_db_engine(config['DB_USER'], config['DB_PASSWORD'], config['DB_H
 if not database_exists(engine.url):
     create_database(engine.url)
 create_tables(engine)
+print("Created db and tables")
 
 # station insertion
 populate_table(engine, stations, "stations", False)
+print("Stations table populated")
 
 # trips insertion
 populate_table(engine, trips, "trips", True)
+print("Trips table populated")
