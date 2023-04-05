@@ -1,5 +1,5 @@
 from dotenv import dotenv_values
-from pandas import DataFrame
+from pandas import DataFrame, to_datetime
 from pandera import DataFrameSchema
 from sqlalchemy_utils import database_exists, create_database
 from population import populate_table, create_db_engine, create_tables
@@ -20,6 +20,11 @@ trips.columns = ['Departure_datetime', 'Return_datetime', 'Departure_station_ID'
 stations.columns = ['ID', 'Name_fi', 'Name_sv', 'Name_eng', 'Address_fi', 'Address_sv', 'City_fi',
                     'City_sv', 'Operator', 'Capacity', 'x', 'y']
 
+# Conversion from string to datetime
+trips['Departure_datetime'] = to_datetime(trips['Departure_datetime'])
+trips['Return_datetime'] = to_datetime(trips['Return_datetime'])
+trips = trips[trips['Departure_datetime'] < trips['Return_datetime']]
+
 # Validation schemas
 trips_schema: DataFrameSchema = trips_schema(stations)
 stations_schema: DataFrameSchema = stations_schema()
@@ -35,7 +40,7 @@ print("Trips validated")
 stations["City_fi"] = stations['City_fi'].str.strip().replace('', 'Helsinki')
 stations["City_sv"] = stations['City_sv'].str.strip().replace('', 'Helsingfors')
 
-# create database and tables
+# create database and table
 config = dotenv_values()
 engine = create_db_engine(config['DB_USER'], config['DB_PASSWORD'], config['DB_HOST'], config['DATABASE'])
 if not database_exists(engine.url):

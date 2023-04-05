@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pandas import DataFrame
 from pandera.errors import SchemaErrors
 from pandera import DataFrameSchema, Column, Check
@@ -35,7 +37,6 @@ def trips_schema(stations: DataFrame) -> DataFrameSchema:
     Conditions:
     - trip's length >= 10m
     - trip's duration >= 10s
-    - Timestamp in ISO format YYYY-MM-DDThh:mm:ss
     - station ID columns not NULL and ID is a valid station ID (present in stations['ID'])
 
     Parameters
@@ -49,8 +50,8 @@ def trips_schema(stations: DataFrame) -> DataFrameSchema:
         the trips schema with all the rules to validate trips
     """
     return DataFrameSchema({
-        'Departure_datetime': Column(str, Check.str_matches("^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$")),
-        'Return_datetime': Column(str, Check.str_matches("^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$")),
+        'Departure_datetime': Column(datetime),
+        'Return_datetime': Column(datetime),
         'Departure_station_ID': Column(int, Check.isin(stations['ID']), nullable=False),
         'Return_station_ID': Column(int, Check.isin(stations['ID']), nullable=False),
         'Covered_distance_in_m': Column(float, Check.greater_than_or_equal_to(10.0)),
