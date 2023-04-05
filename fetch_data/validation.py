@@ -14,7 +14,7 @@ def validate_df(df: DataFrame, schema: DataFrameSchema) -> DataFrame:
     return df
 
 
-def return_stations_schema() -> DataFrameSchema:
+def stations_schema() -> DataFrameSchema:
     return DataFrameSchema({
         'ID': Column(int, nullable=False),
         'Name_fi': Column(str),
@@ -31,7 +31,7 @@ def return_stations_schema() -> DataFrameSchema:
     })
 
 
-def return_trips_schema(stations: DataFrame) -> DataFrameSchema:
+def trips_schema(stations: DataFrame) -> DataFrameSchema:
     return DataFrameSchema({
         'Departure_datetime': Column(str, Check.str_matches("^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$")),
         'Return_datetime': Column(str, Check.str_matches("^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$")),
