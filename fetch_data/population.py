@@ -52,8 +52,8 @@ def create_tables(engine: Engine) -> None:
         Column('Return_datetime', DateTime),
         Column('Departure_station_ID', Integer, ForeignKey("stations.ID"), nullable=False),
         Column('Return_station_ID', Integer, ForeignKey('stations.ID'), nullable=False),
-        Column('Covered_distance_in_m', Float, CheckConstraint('"Covered_distance_in_m">=10')),
-        Column('Duration_in_s', Integer, CheckConstraint('"Duration_in_s">=10'))
+        Column('Covered_distance', Float, CheckConstraint('"Covered_distance">=10')),
+        Column('Duration', Integer, CheckConstraint('"Duration">=10'))
     )
     stations = Table(
         'stations', meta,
