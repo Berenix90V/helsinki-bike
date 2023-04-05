@@ -16,7 +16,7 @@ stations.drop(['FID'], axis=1, inplace=True)
 
 # Fix column names
 trips.columns = ['Departure_datetime', 'Return_datetime', 'Departure_station_ID', 'Return_station_ID',
-                 'Covered_distance_in_m', 'Duration_in_s']
+                 'Covered_distance', 'Duration']
 stations.columns = ['ID', 'Name_fi', 'Name_sv', 'Name_eng', 'Address_fi', 'Address_sv', 'City_fi',
                     'City_sv', 'Operator', 'Capacity', 'x', 'y']
 

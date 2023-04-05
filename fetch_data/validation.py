@@ -54,8 +54,8 @@ def trips_schema(stations: DataFrame) -> DataFrameSchema:
         'Return_datetime': Column(datetime),
         'Departure_station_ID': Column(int, Check.isin(stations['ID']), nullable=False),
         'Return_station_ID': Column(int, Check.isin(stations['ID']), nullable=False),
-        'Covered_distance_in_m': Column(float, Check.greater_than_or_equal_to(10.0)),
-        'Duration_in_s': Column(int, Check.greater_than_or_equal_to(10))
+        'Covered_distance': Column(float, Check.greater_than_or_equal_to(10.0)),
+        'Duration': Column(int, Check.greater_than_or_equal_to(10))
     })
 
 

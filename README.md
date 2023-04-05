@@ -55,5 +55,29 @@ Features implemented:
 - **database populating**: 
   - create database and tables
   - read the dataframe into a stream and copy the validated data into table
+  
+### Trip table
+Columns:
+- ID (int, not NULL): journey's ID
+- Departure_datetime: timestamp in ISO format of departure time
+- Return_datetime: timestamp in ISO format of return time
+- Departure_station_ID: id of the station where the journey begins (foreign key stations.ID)
+- Return_station_ID: id of the station where the journey ends (foreign key stations.ID)
+- Covered_distance (float): distance in meters covered during the journey 
+- Duration (int): how much time the journey lasts in seconds
 
+### Station table
+Columns:
+- ID (int, not NULL): id of the station
+- Name_fi: station's name in Finnish
+- Name_sv: station's name in Swedish
+- Name: station's name in English
+- Address_fi: station's address in Finnish
+- Address_sv: station's address in Swedish
+- City_fi: name of the city, in Finnish, where the station is located
+- City_sv: name of the city, in Swedish, where the station is located
+- Operator: operator responsible for the station
+- Capacity (int): number of bikes that the station can host
+- x (float): x coordinate of the station
+- y (float): y coordinate of the station
 
