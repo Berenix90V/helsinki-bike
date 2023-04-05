@@ -1,23 +1,49 @@
 from io import StringIO
-from dotenv import dotenv_values
 from pandas import DataFrame
 from sqlalchemy import Table, MetaData, Column, Integer, Float, String, DateTime, ForeignKey, CheckConstraint, URL, \
     create_engine, Engine
 
 
-def create_db_engine() -> Engine:
-    config = dotenv_values()
+def create_db_engine(user: str, psw: str, host: str, database: str) -> Engine:
+    """
+    Given the necessary parameters it returns an Engine object establishing a connection with the specified database.
+
+    Parameters
+    ----------
+    user: str
+        username
+    psw: str
+        password
+    host: str
+        hostname
+    database: str
+        database to connect to (default or an existing one)
+
+    Returns
+    -------
+    engine: Engine
+        An engine created with the given parameters
+    """
     url_object = URL.create(
         "postgresql",
-        username=config['DB_USER'],
-        password=config['DB_PASSWORD'],
-        host=config['DB_HOST'],
-        database=config['DATABASE'],
+        username=user,
+        password=psw,
+        host=host,
+        database=database,
     )
     return create_engine(url_object)
 
 
-def create_tables(engine) -> None:
+def create_tables(engine: Engine) -> None:
+    """
+    Given the engine it creates a MetaData object in which the tables are stored
+    and then created through the create_all method that takes as parameter the engine.
+
+    Parameters
+    ----------
+    engine: Engine
+        engine through which is possible the connection to the database
+    """
     meta = MetaData()
     trips = Table(
         'trips', meta,
@@ -47,14 +73,29 @@ def create_tables(engine) -> None:
     meta.create_all(engine)
 
 
-def populate_db(engine, df: DataFrame, table: str, sep='\t', encoding='utf8', index=True) -> None:
+def populate_table(engine: Engine, df: DataFrame, table: str, index=True) -> None:
+    """
+    Given the connection, the data and the table, it populates the table with the data through a copy.
+    If the index is True one more column that keep the row number will be inserted, otherwise not.
+
+    Parameters
+    ----------
+    engine: Engine
+        engine connection to the database
+    df: DataFrame
+        data to insert in the table
+    table: str
+        name of the table in the databaase in which to copy the data
+    index: bool
+        if True add an ID column with the row number
+    """
     # data preparation
     output = StringIO()
-    df.to_csv(output, sep=sep, header=False, encoding=encoding, index=index)
+    df.to_csv(output, sep='\t', header=False, encoding='utf8', index=index)
     output.seek(0)
     # insert data
     connection = engine.raw_connection()
     cursor = connection.cursor()
-    cursor.copy_from(output, table, sep=sep, null='')
+    cursor.copy_from(output, table, sep='\t', null='')
     connection.commit()
     cursor.close()

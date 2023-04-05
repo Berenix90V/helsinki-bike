@@ -1,7 +1,8 @@
+from dotenv import dotenv_values
 from pandas import DataFrame
 from pandera import DataFrameSchema
 from sqlalchemy_utils import database_exists, create_database
-from population import populate_db, create_db_engine, create_tables
+from population import populate_table, create_db_engine, create_tables
 from validation import validate_df, stations_schema, trips_schema
 from fetch_data import fetch_trips, fetch_stations
 
@@ -33,13 +34,14 @@ stations["City_fi"] = stations['City_fi'].str.strip().replace('', 'Helsinki')
 stations["City_sv"] = stations['City_sv'].str.strip().replace('', 'Helsingfors')
 
 # create database and tables
-engine = create_db_engine()
+config = dotenv_values()
+engine = create_db_engine(config['DB_USER'], config['DB_PASSWORD'], config['DB_HOST'], config['DATABASE'])
 if not database_exists(engine.url):
     create_database(engine.url)
 create_tables(engine)
 
 # station insertion
-populate_db(engine, stations, "stations", "\t", 'utf-8', False)
+populate_table(engine, stations, "stations", False)
 
 # trips insertion
-populate_db(engine, trips, "trips", "\t", 'utf-8', True)
+populate_table(engine, trips, "trips", True)
