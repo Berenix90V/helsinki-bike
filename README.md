@@ -31,6 +31,7 @@ A Python script is performing this task. Python has been chosen because it's eas
 with this language thanks to its libraries dedicated to data analysis (pandas).\
 For data validation pandera is used becaause it is a library that provides an easy and fast readable way 
 to validate dataframe objects. (https://pandera.readthedocs.io/en/stable/).\
+The check on the departure date < return date is not handled by pandera but by pandas.
 The interface between python and the database is provided by SQLAlchemy (https://www.sqlalchemy.org/).
 ### Database
 The database chosen is a PostgreSQL, a relational SQL database that fits the purpose of this project.
@@ -46,6 +47,7 @@ Features implemented:
   - eliminated unnecessary or redundant columns (FID, Departure station name and Destination station name)
   - properly renamed columns into '_' spaced name and more readable names
 - **data validation**: 
+  - filter out trips that have departure date < arrival date
   - filter out trips that last less than 10 seconds or with a length < 10m
   - checking types
   - datetime format 
