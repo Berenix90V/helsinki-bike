@@ -1,16 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import JourneysTable from "./components/JourneysTable";
+import NavBar from "./components/NavBar";
+import Container from 'react-bootstrap/Container';
+
 
 function App() {
   return (
-    <div className="App">
+    <Container>
       <header className="App-header">
-          <h1>Journeys table</h1>
+        <NavBar/>
       </header>
+        <h1 className="text-center">Journeys table</h1>
         <JourneysTable/>
-    </div>
+    </Container>
   );
 }
 
