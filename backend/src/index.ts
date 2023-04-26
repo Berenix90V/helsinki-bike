@@ -3,11 +3,27 @@ dotenv.config()
 import express from 'express'
 import "reflect-metadata"
 import {connect_to_db} from "./db/db_connection";
+import {router as stationRouter} from "./routes/journeys";
+const cors = require("cors")
+
+
 
 const app = express()
 
 connect_to_db()
 
+//MIDDLEWARE
+app.use(cors({ origin: true }));
+app.use(express.json())
+
+// ROUTES
+// app.get("/", (req,res) =>{
+//     res.send('Helsinki bikes app')
+// })
+app.use("/api/v1/journeys", stationRouter)
+
 app.listen(process.env.PORT, ()=>{
     console.log("Server listening on port "+process.env.PORT)
 })
+
+export default app
