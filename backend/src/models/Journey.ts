@@ -1,8 +1,8 @@
-import {BaseEntity, Column, Entity} from "typeorm";
+import {BaseEntity, Column, Entity, PrimaryColumn} from "typeorm";
 
-@Entity()
+@Entity({ name: "trips"})
 export class Journey extends BaseEntity{
-    @Column()
+    @PrimaryColumn()
     declare  ID:number
     @Column()
     declare Departure_datetime: Date
@@ -18,7 +18,7 @@ export class Journey extends BaseEntity{
     declare Duration: number
 
     static async fetchAll(): Promise<Journey[]>{
-        return Journey.find({
+        return await Journey.find({
             skip: 0,
             take: 100
         })

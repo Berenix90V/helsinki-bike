@@ -1,5 +1,6 @@
 import {DataSource} from "typeorm";
 import * as dotenv from 'dotenv'
+import {Journey} from "../models/Journey";
 dotenv.config()
 
 export const AppDataSource = new DataSource({
@@ -9,5 +10,6 @@ export const AppDataSource = new DataSource({
     username: process.env.PG_USER,
     password: process.env.PG_PASSWORD,
     database: process.env.PG_DATABASE,
-    synchronize: true
+    synchronize: true,
+    entities: [Journey]
 })
