@@ -1,4 +1,4 @@
-import {AppDataSource} from "../db/data-sources";
+import {AppDataSource} from "../src/db/data-sources";
 
 describe("Test database connection", ()=>{
     test("Initialize AppDataSource", async()=>{
