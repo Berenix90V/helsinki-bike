@@ -10,9 +10,16 @@ router.route("/").get(async (req, res) =>{
             res.status(200).json({
                 test: allJourneys
             }))
-        .catch((err) => res.status(404).json({
-            err: err.message
-        }))
+        .catch((err) => {
+            if (err instanceof RangeError)
+                res.status(400).json({
+                    err: err.message
+                })
+            else
+                res.status(404).json({
+                    err: err.message
+                })
+        })
 })
 
 export {router}

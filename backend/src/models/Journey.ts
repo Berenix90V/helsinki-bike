@@ -36,8 +36,8 @@ export class Journey extends BaseEntity{
     declare Duration: number
 
     static async fetchFirstNJourneys(take:number): Promise<Journey[]>{
-        if (take<0)
-            throw RangeError("The number of required objects must be > 0")
+        if (take<=0)
+            throw RangeError("Bad request: The number of required objects must be >= 0")
         return await Journey.find({
             skip: 0,
             take: take
