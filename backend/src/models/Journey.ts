@@ -1,20 +1,38 @@
-import {BaseEntity, Column, Entity, PrimaryColumn} from "typeorm";
+import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity({ name: "trips"})
 export class Journey extends BaseEntity{
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn('increment')
     declare  ID:number
-    @Column()
+    @Column({
+        type: "timestamp",
+        nullable: false
+    })
     declare Departure_datetime: Date
-    @Column()
+    @Column({
+        type: "timestamp",
+        nullable:false
+    })
     declare Return_datetime: Date
-    @Column()
+    @Column({
+        type: "int",
+        nullable:false
+    })
     declare Departure_station_ID:number
-    @Column()
+    @Column({
+        type: "int",
+        nullable: false
+    })
     declare Return_station_ID: number
-    @Column()
+    @Column({
+        type: "float",
+        nullable: false
+    })
     declare Covered_distance: number
-    @Column()
+    @Column({
+        type: "int",
+        nullable:false
+    })
     declare Duration: number
 
     static async fetchAll(): Promise<Journey[]>{
