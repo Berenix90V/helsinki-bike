@@ -35,10 +35,12 @@ export class Journey extends BaseEntity{
     })
     declare Duration: number
 
-    static async fetchAll(): Promise<Journey[]>{
+    static async fetchFirstNJourneys(take:number): Promise<Journey[]>{
+        if (take<0)
+            throw RangeError("The number of required objects must be > 0")
         return await Journey.find({
             skip: 0,
-            take: 100
+            take: take
         })
 }
 

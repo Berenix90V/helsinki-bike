@@ -1,7 +1,7 @@
 import {Journey} from "../models/Journey";
 
-const getAllJourneys = async ()=>{
-    return await Journey.fetchAll()
+const getAllJourneys = async (n: number)=>{
+    return await Journey.fetchFirstNJourneys(n)
 }
 
 export {getAllJourneys}
