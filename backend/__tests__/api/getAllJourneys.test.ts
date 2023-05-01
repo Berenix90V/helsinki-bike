@@ -1,7 +1,6 @@
 import app from "../../src/index"
 import {AppDataSource} from "../../src/db/data-sources";
 import request from "supertest";
-import {Journey} from "../../src/models/Journey";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
