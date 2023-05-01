@@ -8,7 +8,7 @@ router.route("/").get(async (req, res) =>{
     await getAllJourneys(take)
         .then((allJourneys: Journey[]) =>
             res.status(200).json({
-                test: allJourneys
+                journeys: allJourneys
             }))
         .catch((err) => {
             if (err instanceof RangeError)
