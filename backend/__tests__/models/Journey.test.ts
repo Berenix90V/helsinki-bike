@@ -9,7 +9,7 @@ afterEach(async ()=>{
     await AppDataSource.destroy()
 })
 
-describe("test Journey entity", ()=>{
+describe("Test Journey entity", ()=>{
     it.each([[10], [5], [1]])("Test fetchFirstNJourneys for valid input", async(n)=>{
         const result:Journey[] = await Journey.fetchFirstNJourneys(n)
         expect(result).toHaveLength(n)
