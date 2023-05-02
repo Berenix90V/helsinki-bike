@@ -1,9 +1,11 @@
 import {Table} from "react-bootstrap";
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 
 interface Journey{
-    Departure_station: string,
-    Return_station: string,
+    Departure_station_ID: string,
+    Return_station_ID: string,
     Covered_distance: number,
     Duration: number
 }
@@ -11,28 +13,22 @@ interface Journey{
 function renderJourney(journey:Journey, index:number){
     return (
         <tr key={index}>
-            <td>{journey.Departure_station}</td>
-            <td>{journey.Return_station}</td>
-            <td>{journey.Covered_distance}</td>
-            <td>{journey.Duration}</td>
+            <td>{journey.Departure_station_ID}</td>
+            <td>{journey.Return_station_ID}</td>
+            <td>{journey.Covered_distance/1000.0}</td>
+            <td>{journey.Duration/60.0}</td>
         </tr>
     )
 }
 function JourneysTable(){
-    const journeys: Journey[] = [
-        {
-            Departure_station: "Kupitta",
-            Return_station: "Kupitta",
-            Covered_distance: 10.0,
-            Duration: 30
-        },
-        {
-            Departure_station: "Student Village",
-            Return_station: "Kupitta",
-            Covered_distance: 11.0,
-            Duration: 43
-        }
-    ]
+    const [journeys, setJourneys] = useState<Journey[]>([])
+    useEffect(() => {
+        axios.get("http://localhost:3006/api/v1/journeys/?take=10")
+            .then((response) => {
+                setJourneys(response.data.journeys)
+            })
+    }, [])
+
     return (
         <Table striped bordered hover>
             <thead>
