@@ -15,8 +15,8 @@ function renderJourney(journey:Journey, index:number){
         <tr key={index}>
             <td>{journey.Departure_station_ID}</td>
             <td>{journey.Return_station_ID}</td>
-            <td>{journey.Covered_distance/1000.0}</td>
-            <td>{journey.Duration/60.0}</td>
+            <td>{(journey.Covered_distance/1000.0).toFixed(2)}</td>
+            <td>{(journey.Duration/60.0).toFixed(2)}</td>
         </tr>
     )
 }
@@ -33,10 +33,10 @@ function JourneysTable(){
         <Table striped bordered hover>
             <thead>
                 <tr>
-                    <th>Departure_station_ID</th>
-                    <th>Return_station_ID</th>
-                    <th>Covered_distance</th>
-                    <th>Duration</th>
+                    <th>Departure station ID</th>
+                    <th>Return station ID</th>
+                    <th>Covered distance (km)</th>
+                    <th>Duration (min)</th>
                 </tr>
             </thead>
             <tbody>
