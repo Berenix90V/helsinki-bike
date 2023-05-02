@@ -11,7 +11,7 @@ router.route("/").get(async (req, res) =>{
                 journeys: allJourneys
             }))
         .catch((err) => {
-            if (err instanceof RangeError)
+            if (err instanceof RangeError || err instanceof TypeError)
                 res.status(400).json({
                     err: err.message
                 })

@@ -39,12 +39,11 @@ export class Journey extends BaseEntity{
         if (take<=0){
             throw RangeError("Bad request: The number of required objects must be >= 0")
         }
-        else{
-            return await Journey.find({
-                skip: 0,
-                take: take
-            })
-        }
+        return await Journey.find({
+            skip: 0,
+            take: take
+        })
+
 
 }
 
