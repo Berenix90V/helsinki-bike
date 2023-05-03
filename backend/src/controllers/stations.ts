@@ -10,4 +10,4 @@ const getStationByID = async(id:number) => {
     return await Station.getByID(id)
 }
 
-export {getAllStations}
+export {getAllStations, getStationByID}
