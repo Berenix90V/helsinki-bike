@@ -8,8 +8,8 @@ function NavBar(){
                     Helsinki Bikes
                 </NavbarBrand>
                 <Nav>
-                    <Nav.Link>Journeys</Nav.Link>
-                    <Nav.Link>Stations</Nav.Link>
+                    <Nav.Link href="/journeys">Journeys</Nav.Link>
+                    <Nav.Link href="/stations">Stations</Nav.Link>
                 </Nav>
             </Container>
         </Navbar>
