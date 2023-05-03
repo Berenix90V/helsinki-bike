@@ -1,7 +1,7 @@
 import {Table} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import axios from "axios";
 import {Journey} from "../interfaces/Journey";
+import {getAllJourneys} from "../api/journeys_api";
 
 function renderJourney(journey:Journey, index:number){
     return (
@@ -16,7 +16,7 @@ function renderJourney(journey:Journey, index:number){
 function JourneysTable(){
     const [journeys, setJourneys] = useState<Journey[]>([])
     useEffect(() => {
-        axios.get("http://localhost:3006/api/v1/journeys/?take=10")
+        getAllJourneys(10)
             .then((response) => {
                 setJourneys(response.data.journeys)
             })
