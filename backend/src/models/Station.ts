@@ -82,6 +82,10 @@ export class Station extends BaseEntity{
     static async getByID(id:number){
         if(id<=0)
             throw RangeError("Bad request: The ID must be >= 0")
-        return await Station.findOneBy({ID:id})
+        const station = await Station.findOneBy({ID:id})
+        if(station === null){
+            throw RangeError("Not found")
+        }
+        return station
     }
 }
