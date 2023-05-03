@@ -10,7 +10,7 @@ router.route("/").get(async(req, res) => {
             stations: allStations
         }))
         .catch((err: any)=>{
-            res.status(400).json({
+            res.status(404).json({
                 err: err.message
             })
         })
