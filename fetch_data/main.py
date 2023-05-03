@@ -17,8 +17,8 @@ stations.drop(['FID'], axis=1, inplace=True)
 # Fix column names
 trips.columns = ['Departure_datetime', 'Return_datetime', 'Departure_station_ID', 'Return_station_ID',
                  'Covered_distance', 'Duration']
-stations.columns = ['ID', 'Name_fi', 'Name_sv', 'Name_eng', 'Address_fi', 'Address_sv', 'City_fi',
-                    'City_sv', 'Operator', 'Capacity', 'x', 'y']
+stations.columns = ['ID', 'Name_fi', 'Name_sw', 'Name_eng', 'Address_fi', 'Address_sw', 'City_fi',
+                    'City_sw', 'Operator', 'Capacity', 'x', 'y']
 
 # Conversion from string to datetime
 trips['Departure_datetime'] = to_datetime(trips['Departure_datetime'])
@@ -38,7 +38,7 @@ print("Trips validated")
 
 # Set default value for city name
 stations["City_fi"] = stations['City_fi'].str.strip().replace('', 'Helsinki')
-stations["City_sv"] = stations['City_sv'].str.strip().replace('', 'Helsingfors')
+stations["City_sw"] = stations['City_sw'].str.strip().replace('', 'Helsingfors')
 
 # create database and table
 config = dotenv_values()
