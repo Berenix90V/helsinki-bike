@@ -1,37 +1,38 @@
-import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Journey} from "./Journey";
 
-@Entity({name: "stations"})
+@Entity({name: "stations", synchronize:false})
 export class Station extends BaseEntity{
     @PrimaryGeneratedColumn('increment')
     declare ID: number
 
     @Column({
         type: "varchar",
-        length: 100,
+        length: 100
     })
     declare Name_fi: string
 
     @Column({
         type: "varchar",
-        length: 100,
+        length: 100
     })
-    declare Name_sv: string
+    declare Name_sw: string
 
     @Column({
         type: "varchar",
-        length: 100,
+        length: 100
     })
     declare Name: string
 
     @Column({
-        type: "text"
+        type: "text",
     })
     declare Address_fi: string
 
     @Column({
         type: "text"
     })
-    declare Address_sv: string
+    declare Address_sw: string
 
     @Column({
         type: "varchar",
@@ -41,13 +42,14 @@ export class Station extends BaseEntity{
 
     @Column({
         type: "varchar",
-        length: 100,
+        length: 100
     })
-    declare City_sv: string
+    declare City_sw: string
 
     @Column({
         type: "varchar",
         length: 100,
+        nullable:false
     })
     declare Operator: string
 
@@ -57,12 +59,20 @@ export class Station extends BaseEntity{
     declare Capacity: number
 
     @Column({
-        type: "float"
+        type: "float",
+        nullable:false
     })
     declare x: number
 
     @Column({
-        type: "float"
+        type: "float",
+        nullable:false
     })
     declare y: number
+
+    @OneToMany(type => Journey, journey=> journey.Departure_station)
+    declare Departure_journeys: Journey[]
+
+    @OneToMany(type => Journey, journey=> journey.Return_station)
+    declare Return_journeys: Journey[]
 }
