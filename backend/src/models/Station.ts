@@ -70,9 +70,9 @@ export class Station extends BaseEntity{
     })
     declare y: number
 
-    @OneToMany(type => Journey, journey=> journey.Departure_station)
+    @OneToMany(() => Journey, journey=> journey.Departure_station)
     declare Departure_journeys: Journey[]
 
-    @OneToMany(type => Journey, journey=> journey.Return_station)
+    @OneToMany(() => Journey, journey=> journey.Return_station)
     declare Return_journeys: Journey[]
 }
