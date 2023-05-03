@@ -1,28 +1,7 @@
 import {Table} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import axios from "axios";
-
-interface Station{
-    ID:number,
-    Name_fi: string,
-    Name_sw: string,
-    Name: string,
-    Address_fi: string,
-    Address_sw: string,
-    City_fi: string,
-    City_sw: string,
-    Operator: string,
-    Capacity: number,
-    x: number,
-    y: number
-}
-
-interface Journey{
-    Departure_station: Station,
-    Return_station: Station,
-    Covered_distance: number,
-    Duration: number
-}
+import {Journey} from "../interfaces/Journey";
 
 function renderJourney(journey:Journey, index:number){
     return (
