@@ -79,4 +79,9 @@ export class Station extends BaseEntity{
     static async fetchAll(): Promise<Station[]>{
         return await Station.find()
     }
+    static async getByID(id:number){
+        if(id<=0)
+            throw RangeError("Bad request: The ID must be >= 0")
+        return await Station.findOneBy({ID:id})
+    }
 }
