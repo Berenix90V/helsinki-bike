@@ -1,20 +1,13 @@
 import {Table} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import axios from "axios";
-
-
-interface Journey{
-    Departure_station_ID: string,
-    Return_station_ID: string,
-    Covered_distance: number,
-    Duration: number
-}
+import {Journey} from "../interfaces/Journey";
+import {getAllJourneys} from "../api/journeys_api";
 
 function renderJourney(journey:Journey, index:number){
     return (
         <tr key={index}>
-            <td>{journey.Departure_station_ID}</td>
-            <td>{journey.Return_station_ID}</td>
+            <td>{journey.Departure_station.Name}</td>
+            <td>{journey.Return_station.Name}</td>
             <td>{(journey.Covered_distance/1000.0).toFixed(2)}</td>
             <td>{(journey.Duration/60.0).toFixed(2)}</td>
         </tr>
@@ -23,7 +16,7 @@ function renderJourney(journey:Journey, index:number){
 function JourneysTable(){
     const [journeys, setJourneys] = useState<Journey[]>([])
     useEffect(() => {
-        axios.get("http://localhost:3006/api/v1/journeys/?take=10")
+        getAllJourneys(10)
             .then((response) => {
                 setJourneys(response.data.journeys)
             })
@@ -33,8 +26,8 @@ function JourneysTable(){
         <Table striped bordered hover>
             <thead>
                 <tr>
-                    <th>Departure station ID</th>
-                    <th>Return station ID</th>
+                    <th>Departure station</th>
+                    <th>Return station</th>
                     <th>Covered distance (km)</th>
                     <th>Duration (min)</th>
                 </tr>
