@@ -48,12 +48,12 @@ def create_tables(engine: Engine) -> None:
     trips = Table(
         'trips', meta,
         Column('ID', Integer, primary_key=True),
-        Column('Departure_datetime', DateTime),
-        Column('Return_datetime', DateTime),
+        Column('Departure_datetime', DateTime, nullable=False),
+        Column('Return_datetime', DateTime, nullable=False),
         Column('Departure_station_ID', Integer, ForeignKey("stations.ID"), nullable=False),
         Column('Return_station_ID', Integer, ForeignKey('stations.ID'), nullable=False),
-        Column('Covered_distance', Float, CheckConstraint('"Covered_distance">=10')),
-        Column('Duration', Integer, CheckConstraint('"Duration">=10'))
+        Column('Covered_distance', Float, CheckConstraint('"Covered_distance">=10'), nullable=False),
+        Column('Duration', Integer, CheckConstraint('"Duration">=10'), nullable=False)
     )
     stations = Table(
         'stations', meta,
@@ -73,7 +73,7 @@ def create_tables(engine: Engine) -> None:
     meta.create_all(engine)
 
 
-def populate_table(engine: Engine, df: DataFrame, table: str, index=True) -> None:
+def populate_table(engine: Engine, df: DataFrame, table: str, index: bool) -> None:
     """
     Given the connection, the data and the table, it populates the table with the data through a copy.
     If the index is True one more column that keep the row number will be inserted, otherwise not.
