@@ -75,4 +75,8 @@ export class Station extends BaseEntity{
 
     @OneToMany(() => Journey, journey=> journey.Return_station)
     declare Return_journeys: Journey[]
+
+    static async fetchAll(): Promise<Station[]>{
+        return await Station.find()
+    }
 }
