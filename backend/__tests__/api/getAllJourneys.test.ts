@@ -34,17 +34,19 @@ const expectJourney = expect.objectContaining({
     Return_station: expectStation
 })
 
-describe("Get all journeys route", () =>{
+describe("GET /journeys/?take route", () =>{
     it.each([[-2, 400], [0, 400], [1, 200], [10, 200], [50, 200], [100, 200]])
-    ("GET /journeys when the first %d journeys are required", async(take:number, statusCode:number) =>{
+    ("Test status code when the first %d journeys are required", async(take:number, statusCode:number) =>{
         const res = await request(app).get('/api/v1/journeys/?take=' + take)
         expect(res.statusCode).toBe(statusCode)
-        if(statusCode == 200) {
-            expect(res.body).toHaveProperty('journeys')
-            expect(res.body.journeys).toHaveLength(take)
-            // @ts-ignore
-            res.body.journeys.forEach((element) => {expect(element).toEqual(expectJourney)})
-        }
     })
+    it.each([[1], [10], [50], [100]])
+    ("Test response when the first %d journeys are required", async(take:number)=> {
+        const res = await request(app).get('/api/v1/journeys/?take=' + take)
+        expect(res.body).toHaveProperty('journeys')
+        expect(res.body.journeys).toHaveLength(take)
+        // @ts-ignore
+        res.body.journeys.forEach((element) => {expect(element).toEqual(expectJourney)})
+    } )
 })
 
