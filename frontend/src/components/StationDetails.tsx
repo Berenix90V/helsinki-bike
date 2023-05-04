@@ -2,8 +2,12 @@ import {Station} from "../interfaces/Station";
 import Container from "react-bootstrap/Container";
 import {Col, Row} from "react-bootstrap";
 
+type StationProps = {
+    station: Station
+}
 
-function StationDetails(station: Station){
+function StationDetails({station}:StationProps){
+
     return(
         <>
             <Container fluid>
