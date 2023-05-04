@@ -11,7 +11,7 @@ afterEach(async ()=>{
 
 describe("Test Journey entity: fetchFirstNJourneys", ()=>{
     it.each([[10], [5], [1]])
-    ("Test fetchFirstNJourneys for valid input", async(n)=>{
+    ("Test fetchFirstNJourneys for valid input: first %d journeys", async(n)=>{
         const result:Journey[] = await Journey.fetchFirstNJourneys(n)
         expect(result).toHaveLength(n)
         result.forEach((element) => {
@@ -19,23 +19,23 @@ describe("Test Journey entity: fetchFirstNJourneys", ()=>{
         })
     })
     it.each([[0], [-1], [-5]])
-    ("Test fetchFirstNJourneys for not valid input", async(n)=>{
+    ("Test fetchFirstNJourneys for not valid input: first %d journeys", async(n)=>{
         await expect(Journey.fetchFirstNJourneys(n)).rejects.toThrowError(RangeError)
     })
 })
 
 describe("Test Journey entity: getNumberOfJourneysFromStation", () => {
     it.each([[0], [-2], [-10]])
-    ("Test getNumberOfJourneysFromStation for not valid input", async(id) => {
+    ("Test getNumberOfJourneysFromStation for not valid input: station id %d", async(id) => {
         await expect(Journey.getNumberOfJourneysFromStation(id)).rejects.toThrowError(RangeError)
     })
     it.each([[1, 23800], [503, 3232]])
-    ("Test getNumberOfJourneysFromStation for valid input", async(id, expectedNumberOfJourneys) => {
+    ("Test getNumberOfJourneysFromStation for valid input: station id %d", async(id, expectedNumberOfJourneys) => {
         const numberOfJourneys = await Journey.getNumberOfJourneysFromStation(id)
         expect(numberOfJourneys).toEqual(expectedNumberOfJourneys)
     })
     it.each([[504, 0], [1000, 0]])
-    ("Test getNumberOfJourneysFromStation for not existent station", async(id, expectedNumberOfJourneys) => {
+    ("Test getNumberOfJourneysFromStation for not existent station: station id %d", async(id, expectedNumberOfJourneys) => {
         const numberOfJourneys = await Journey.getNumberOfJourneysFromStation(id)
         expect(numberOfJourneys).toEqual(expectedNumberOfJourneys)
     })
@@ -43,16 +43,16 @@ describe("Test Journey entity: getNumberOfJourneysFromStation", () => {
 
 describe("Test Journey entity: getNumberOfJourneysToStation", () => {
     it.each([[0], [-2], [-10]])
-    ("Test getNumberOfJourneysFromStation for not valid input", async(id) => {
+    ("Test getNumberOfJourneysFromStation for not valid input: station id %d", async(id) => {
         await expect(Journey.getNumberOfJourneysToStation(id)).rejects.toThrowError(RangeError)
     })
     it.each([[1, 24288], [503, 3144]])
-    ("Test getNumberOfJourneysFromStation for valid input", async(id, expectedNumberOfJourneys) => {
+    ("Test getNumberOfJourneysFromStation for valid input: station id %d", async(id, expectedNumberOfJourneys) => {
         const numberOfJourneys = await Journey.getNumberOfJourneysToStation(id)
         expect(numberOfJourneys).toEqual(expectedNumberOfJourneys)
     })
     it.each([[504, 0], [1000, 0]])
-    ("Test getNumberOfJourneysFromStation for not existent station", async(id, expectedNumberOfJourneys) => {
+    ("Test getNumberOfJourneysFromStation for not existent station: station id %d", async(id, expectedNumberOfJourneys) => {
         const numberOfJourney = await Journey.getNumberOfJourneysToStation(id)
         await expect(numberOfJourney).toEqual(expectedNumberOfJourneys)
     })
