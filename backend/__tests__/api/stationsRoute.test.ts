@@ -25,7 +25,7 @@ const expectStation = expect.objectContaining({
     y: expect.any(Number)
 })
 
-describe("Get all stations route", () => {
+describe("Test get all stations route", () => {
     test("Test api returns all stations", async()=>{
         const res = await request(app).get("/api/v1/stations")
         expect(res.statusCode).toBe(200)
@@ -35,4 +35,20 @@ describe("Get all stations route", () => {
             expect(element).toEqual(expectStation)
         })
     })
+})
+
+describe("Test get station by ID route", () => {
+    it.each([["d", 400], ["abc", 400], [true, 400], [-2, 400], [0, 400], [1, 200], [501, 200], [504, 404], [2000, 404]])
+    ("Test correct status code for station %d required", async (id:any, statusCode:number) => {
+        const res = await request(app).get("/api/v1/stations/"+id)
+        expect(res.statusCode).toEqual(statusCode)
+    })
+    it.each([[1], [501]])("Test response for station %d required", async(id) =>{
+        const res = await request(app).get("/api/v1/stations/"+id)
+        expect(res.body).toHaveProperty('station')
+        expect(res.body.station).toEqual(expectStation)
+        expect(res.body.station.ID).toEqual(id)
+    })
+
+
 })
