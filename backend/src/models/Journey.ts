@@ -50,8 +50,28 @@ export class Journey extends BaseEntity{
             skip: 0,
             take: take
         })
+    }
 
+    static async getNumberOfJourneysFromStation(id:number):Promise<number>{
+        if (id<=0){
+            throw RangeError("Bad request: ID must be >=0")
+        }
+        return await Journey
+            .createQueryBuilder('trips')
+            .select("Departure_station_ID")
+            .where("trips.Departure_station_ID = :id", { id: id})
+            .getCount()
+    }
 
-}
+    static async getNumberOfJourneysToStation(id:number):Promise<number>{
+        if (id<=0){
+            throw RangeError("Bad request: ID must be >=0")
+        }
+        return await Journey
+            .createQueryBuilder('trips')
+            .select("Return_station_ID")
+            .where("trips.Return_station_ID = :id", { id: id})
+            .getCount()
+    }
 
 }
