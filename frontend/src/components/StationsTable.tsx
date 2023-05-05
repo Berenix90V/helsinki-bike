@@ -32,8 +32,8 @@ function StationsTable(){
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Address</th>
                 <th>City</th>
+                <th>Address</th>
                 <th>Operator</th>
                 <th>Capacity</th>
             </tr>
