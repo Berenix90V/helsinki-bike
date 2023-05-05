@@ -4,10 +4,10 @@ export function getAllJourneys(take: number){
     return http.get("journeys/", {params:{take:take}})
 }
 
-export function getJourneysFromStation(id:number){
+export function getNJourneysFromStation(id:number){
     return http.get<{njourneys:number}>("journeys/from/"+id)
 }
 
-export function getJourneysToStation(id:number){
+export function getNJourneysToStation(id:number){
     return http.get<{njourneys:number}>("journeys/to/"+id)
 }
