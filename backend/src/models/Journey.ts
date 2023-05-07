@@ -69,7 +69,7 @@ export class Journey extends BaseEntity{
         if (skip<0){
             throw RangeError("Bad request: The beginning point must be >= 0")
         }
-        if (skip>totalJourneys){
+        if (skip>=totalJourneys){
             throw RangeError("Bad request: The beginning point must be < total records")
         }
         return await Journey.find({
