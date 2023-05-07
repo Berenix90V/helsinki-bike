@@ -38,6 +38,12 @@ export class Journey extends BaseEntity{
     })
     declare Duration: number
 
+    static async getTotalNOfJourneys():Promise<number>{
+        return await Journey.count({
+            cache:true
+        })
+    }
+
     static async fetchFirstNJourneys(take:number): Promise<Journey[]>{
         if (take<=0){
             throw RangeError("Bad request: The number of required objects must be > 0")
@@ -52,12 +58,16 @@ export class Journey extends BaseEntity{
         })
     }
 
-    static async getPaginatedJourneys(take:number, skip: number): Promise<Journey[]>{
+    static async getPaginatedJourneys(skip:number, take: number): Promise<Journey[]>{
+        const totalJourneys = await Journey.getTotalNOfJourneys()
         if (take<=0){
             throw RangeError("Bad request: The number of required objects must be > 0")
         }
         if (skip<0){
             throw RangeError("Bad request: The beginning point must be >= 0")
+        }
+        if (skip>totalJourneys){
+            throw RangeError("Bad request: The beginning point must be < total records")
         }
         return await Journey.find({
             relations: {
