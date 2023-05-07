@@ -16,7 +16,6 @@ function App() {
             <NavBar/>
           </header>
                 <Routes>
-
                     <Route path={"/journeys"} element={<JourneysView />}/>
                     <Route path={"/stations"} element={<StationsView/>}/>
                     <Route path={"/stations/:id"} element={<SingleStationView/>}/>
