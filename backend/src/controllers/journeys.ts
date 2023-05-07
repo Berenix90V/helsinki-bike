@@ -1,9 +1,11 @@
 import {Journey} from "../models/Journey";
 
-const getAllJourneys = async (n: number)=>{
-    if(Number.isNaN(n))
+const getAllJourneys = async (skip: number, take:number)=>{
+    if(Number.isNaN(take))
         throw TypeError("Provided \"take\" value is not a number. Please provide a numeric value")
-    return await Journey.fetchFirstNJourneys(n)
+    if(Number.isNaN(skip))
+        throw TypeError("Provided \"skip\" value is not a number. Please provide a numeric value")
+    return await Journey.getPaginatedJourneys(skip, take)
 }
 
 const getNumberOfJourneysFromStation = async(id:number) => {
