@@ -40,7 +40,7 @@ export class Journey extends BaseEntity{
 
     static async fetchFirstNJourneys(take:number): Promise<Journey[]>{
         if (take<=0){
-            throw RangeError("Bad request: The number of required objects must be >= 0")
+            throw RangeError("Bad request: The number of required objects must be > 0")
         }
         return await Journey.find({
             relations: {
@@ -52,9 +52,26 @@ export class Journey extends BaseEntity{
         })
     }
 
+    static async getPaginatedJourneys(take:number, skip: number): Promise<Journey[]>{
+        if (take<=0){
+            throw RangeError("Bad request: The number of required objects must be > 0")
+        }
+        if (skip<0){
+            throw RangeError("Bad request: The beginning point must be >= 0")
+        }
+        return await Journey.find({
+            relations: {
+                Departure_station: true,
+                Return_station: true
+            },
+            skip: skip,
+            take: take
+        })
+    }
+
     static async getNumberOfJourneysFromStation(id:number):Promise<number>{
         if (id<=0){
-            throw RangeError("Bad request: ID must be >=0")
+            throw RangeError("Bad request: ID must be > 0")
         }
         return await Journey
             .createQueryBuilder('trips')
@@ -65,7 +82,7 @@ export class Journey extends BaseEntity{
 
     static async getNumberOfJourneysToStation(id:number):Promise<number>{
         if (id<=0){
-            throw RangeError("Bad request: ID must be >=0")
+            throw RangeError("Bad request: ID must be > 0")
         }
         return await Journey
             .createQueryBuilder('trips')
