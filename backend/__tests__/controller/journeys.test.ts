@@ -15,25 +15,39 @@ afterEach(async ()=>{
 })
 
 describe("Test journey controller: getAllJourneys", () => {
-    it.each([[1], [5], [12]])("Test with valid numeric values: get first %d", async (n)=>{
-        const spy = jest.spyOn(Journey, 'fetchFirstNJourneys');
-        const result =  await getAllJourneys(n)
+    it.each([[0,1], [0,5], [0,12], [5, 1], [5, 10], [103, 1], [103, 7]])
+    ("Test with valid numeric values: skip %d and take %d", async (skip, take)=>{
+        const spy = jest.spyOn(Journey, 'getPaginatedJourneys');
+        const result =  await getAllJourneys(skip, take)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
-        expect(result).toHaveLength(n)
+        expect(result).toHaveLength(take)
         result.forEach((element) => {
             expect(element).toBeInstanceOf(Journey)
         })
     })
-    it.each([[-1], [-5], [0]])("Test with invalid numeric values: get first %d", async (n)=>{
-        const spy = jest.spyOn(Journey, 'fetchFirstNJourneys');
-        await expect(getAllJourneys(n)).rejects.toThrowError(RangeError)
+    test("Test skip at limit of range", async() => {
+        const spy = jest.spyOn(Journey, 'getPaginatedJourneys');
+        const totalJourneys = await Journey.getTotalNOfJourneys()
+        const skip = totalJourneys-2
+        const result =  await getAllJourneys(skip, 9)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(result).toHaveLength(totalJourneys-skip)
+        result.forEach((element) => {
+            expect(element).toBeInstanceOf(Journey)
+        })
+    })
+    it.each([[0,-1], [0,-5], [0,0], [2,0], [-1, 5], [-2,1], [-3,0]])
+    ("Test with invalid numeric values: skip %d and take %d", async (skip, take)=>{
+        const spy = jest.spyOn(Journey, 'getPaginatedJourneys');
+        await expect(getAllJourneys(skip, take)).rejects.toThrowError(RangeError)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
     })
-    test("Test with NaN value", async ()=>{
+    it.each([[0, NaN], [5, NaN], [NaN, 1], [NaN, 10], [NaN,NaN]])("Test with NaN value", async (skip, take)=>{
         const spy = jest.spyOn(Journey, 'fetchFirstNJourneys');
-        await expect(getAllJourneys(NaN)).rejects.toThrowError(TypeError)
+        await expect(getAllJourneys(skip, NaN)).rejects.toThrowError(TypeError)
         expect(spy).not.toHaveBeenCalled()
     })
 })
