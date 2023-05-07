@@ -53,6 +53,9 @@ export class Journey extends BaseEntity{
                 Departure_station: true,
                 Return_station: true
             },
+            order:{
+                ID: "ASC"
+            },
             skip: 0,
             take: take
         })
@@ -73,6 +76,9 @@ export class Journey extends BaseEntity{
             relations: {
                 Departure_station: true,
                 Return_station: true
+            },
+            order:{
+                ID:"ASC"
             },
             skip: skip,
             take: take
