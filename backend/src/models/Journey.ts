@@ -61,7 +61,7 @@ export class Journey extends BaseEntity{
         })
     }
 
-    static async getPaginatedJourneys(skip:number, take: number): Promise<Journey[]>{
+    static async getPaginatedJourneys(skip=0, take=100): Promise<Journey[]>{
         const totalJourneys = await Journey.getTotalNOfJourneys()
         if (take<=0){
             throw RangeError("Bad request: The number of required objects must be > 0")
