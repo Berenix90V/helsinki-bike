@@ -1,7 +1,7 @@
 import {Table} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {Journey} from "../interfaces/Journey";
-import {getAllJourneys} from "../api/journeys_api";
+import {getPaginatedJourneys} from "../api/journeys_api";
 
 function renderJourney(journey:Journey, index:number){
     return (
@@ -15,28 +15,34 @@ function renderJourney(journey:Journey, index:number){
 }
 function JourneysTable(){
     const [journeys, setJourneys] = useState<Journey[]>([])
+    const [page, setPage] = useState<number>(1)
+    const [pageSize, setPageSize] = useState<number>(10)
     useEffect(() => {
-        getAllJourneys(10)
+        const skip = pageSize*(page-1)
+        getPaginatedJourneys(skip, pageSize)
             .then((response) => {
                 setJourneys(response.data.journeys)
             })
-    }, [])
+    }, [page, pageSize])
 
     return (
-        <Table striped bordered hover>
-            <thead>
+        <>
+            <Table striped bordered hover>
+                <thead>
                 <tr>
                     <th>Departure station</th>
                     <th>Return station</th>
                     <th>Covered distance (km)</th>
                     <th>Duration (min)</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 {journeys.map(renderJourney)}
-            </tbody>
+                </tbody>
 
-        </Table>
+            </Table>
+        </>
+
 
     )
 }
