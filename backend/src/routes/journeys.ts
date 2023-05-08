@@ -5,7 +5,8 @@ const router = express.Router()
 
 router.route("/").get(async (req, res) =>{
     const take:number = parseInt(req.query.take as string)
-    await getAllJourneys(take)
+    const skip:number = parseInt(req.query.skip as string)
+    await getAllJourneys(skip, take)
         .then((allJourneys: Journey[]) =>
             res.status(200).json({
                 journeys: allJourneys

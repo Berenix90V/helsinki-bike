@@ -1,6 +1,7 @@
 import app from "../../src/index"
 import {AppDataSource} from "../../src/db/data-sources";
 import request from "supertest";
+import {get_nth_journey_id, totJourneys} from "../helpers";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -34,20 +35,39 @@ const expectJourney = expect.objectContaining({
     Return_station: expectStation
 })
 
-describe("GET /journeys/?take route", () =>{
-    it.each([["abc", 400],[true, 400],[-2, 400], [0, 400], [1, 200], [10, 200], [50, 200], [100, 200]])
-    ("Test status code when the first %d journeys are required", async(take:any, statusCode:number) =>{
-        const res = await request(app).get('/api/v1/journeys/?take=' + take)
+describe("GET /journeys/?take=&skip= route", () =>{
+    it.each([["abc", 2, 400],[true, 3, 400],[-2, 1, 400], [5000000, 2, 400], [0, 1, 200], [2, "abc", 400], [3, false, 400], [5, -3, 400], [2, 10, 200], [3, 50, 200], [5, 100, 200]])
+    ("Test status code when the %d journeys are skipped and %d are required", async(skip, take, statusCode:number) =>{
+        const res = await request(app).get('/api/v1/journeys/?skip='+skip+'&take=' + take)
         expect(res.statusCode).toBe(statusCode)
     })
-    it.each([[1], [10], [50], [100]])
-    ("Test response when the first %d journeys are required", async(take:number)=> {
-        const res = await request(app).get('/api/v1/journeys/?take=' + take)
+    it.each([[0, 1], [0, 10], [5, 1], [5, 8], [23, 15]])
+    ("Test response when %d journeys are skipped and %d are required", async(skip:number, take:number)=> {
+        const res = await request(app).get('/api/v1/journeys/?skip='+skip+'&take=' + take)
+        const firstJourneyID = await get_nth_journey_id(skip)
+        const lastJourneyID = await get_nth_journey_id(skip + take -1)
         expect(res.body).toHaveProperty('journeys')
         expect(res.body.journeys).toHaveLength(take)
         // @ts-ignore
         res.body.journeys.forEach((element) => {expect(element).toEqual(expectJourney)})
-    } )
+        const journeys = res.body.journeys
+        expect(journeys[0].ID).toEqual(firstJourneyID)
+        expect(journeys[take-1].ID).toEqual(lastJourneyID)
+    })
+    test("Test response for border line skip: skip totalJourneys-n journeys and take 10", async()=>{
+        const totalJourneys = await totJourneys()
+        const skip = totalJourneys-3
+        const take = 10
+        const firstJourneyID = await get_nth_journey_id(skip)
+        const lastJourneyID = await get_nth_journey_id(totalJourneys-1)
+        const res = await request(app).get('/api/v1/journeys/?skip='+skip+'&take=' + take)
+        expect(res.body).toHaveProperty('journeys')
+        expect(res.body.journeys).toHaveLength(totalJourneys-skip)
+        // @ts-ignore
+        res.body.journeys.forEach((element) => {expect(element).toEqual(expectJourney)})
+        expect(res.body.journeys[0].ID).toEqual(firstJourneyID)
+        expect(res.body.journeys[totalJourneys-skip-1].ID).toEqual(lastJourneyID)
+    })
 })
 
 describe("GET /journeys/from/:id", ()=>{

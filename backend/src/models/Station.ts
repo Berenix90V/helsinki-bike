@@ -77,7 +77,11 @@ export class Station extends BaseEntity{
     declare Return_journeys: Journey[]
 
     static async fetchAll(): Promise<Station[]>{
-        return await Station.find()
+        return await Station.find({
+            order:{
+                ID: "ASC"
+            }
+        })
     }
     static async getByID(id:number){
         if(id<=0)

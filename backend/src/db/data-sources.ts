@@ -12,5 +12,6 @@ export const AppDataSource = new DataSource({
     password: process.env.PG_PASSWORD,
     database: process.env.PG_DATABASE,
     synchronize: true,
+    cache: true,
     entities: [Journey, Station]
 })
