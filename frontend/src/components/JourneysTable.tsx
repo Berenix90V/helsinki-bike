@@ -1,4 +1,4 @@
-import {Table} from "react-bootstrap";
+import {Pagination, Table} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {Journey} from "../interfaces/Journey";
 import {getPaginatedJourneys} from "../api/journeys_api";
@@ -17,13 +17,22 @@ function JourneysTable(){
     const [journeys, setJourneys] = useState<Journey[]>([])
     const [page, setPage] = useState<number>(1)
     const [pageSize, setPageSize] = useState<number>(10)
+    const totalJourneys = 3126264
     useEffect(() => {
         const skip = pageSize*(page-1)
         getPaginatedJourneys(skip, pageSize)
             .then((response) => {
                 setJourneys(response.data.journeys)
             })
+
     }, [page, pageSize])
+    const items = [1,2,3,4,5]
+
+    function renderPaginationItems(item: number){
+        return(
+            <Pagination.Item key={item} active={item==page} onClick={()=>setPage(item)}>{item}</Pagination.Item>
+        )
+    }
 
     return (
         <>
@@ -39,8 +48,10 @@ function JourneysTable(){
                 <tbody>
                 {journeys.map(renderJourney)}
                 </tbody>
-
             </Table>
+            <Pagination>
+                {items.map(renderPaginationItems)}
+            </Pagination>
         </>
 
 
