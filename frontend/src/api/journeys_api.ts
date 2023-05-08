@@ -4,6 +4,11 @@ export function getAllJourneys(take: number){
     return http.get("journeys/", {params:{take:take}})
 }
 
+export function getPaginatedJourneys(skip:number, take: number){
+    return http.get("journeys/", {params:{skip:skip, take:take}})
+}
+
+
 export function getNJourneysFromStation(id:number){
     return http.get<{njourneys:number}>("journeys/from/"+id)
 }
