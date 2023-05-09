@@ -57,7 +57,6 @@ function JourneysTable(){
                 <Col>
                     <TablePagination page={page} pageSize={pageSize} totalElements={totalJourneys} setPage={setPage}/>
                 </Col>
-
             </Row>
 
 
