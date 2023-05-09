@@ -1,6 +1,7 @@
 import {AppDataSource} from "../../src/db/data-sources";
 import request from "supertest";
 import app from "../../src";
+import {count_stations_instances, get_nth_station_id} from "../helpers";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -34,6 +35,40 @@ describe("Test get all stations route", () => {
         res.body.stations.forEach((element) => {
             expect(element).toEqual(expectStation)
         })
+    })
+})
+
+describe("GET /stations/?take=&skip= route", ()=>{
+    it.each([["abc", 2, 400],[true, 3, 400],[-2, 1, 400], [5000000, 2, 400], [0, 1, 200], [2, "abc", 400], [3, false, 400], [5, -3, 400], [2, 10, 200], [3, 50, 200], [5, 100, 200]])
+    ("Test status code when the %d stations are skipped and %d are required", async(skip, take, statusCode:number) =>{
+        const res = await request(app).get('/api/v1/stations/?skip='+skip+'&take='+take)
+        expect(res.statusCode).toBe(statusCode)
+    })
+    it.each([[0, 1], [0, 10], [5, 1], [5, 8], [23, 15]])("Test response when %d stations are skipped and %d are required", async(skip, take)=>{
+        const res = await request(app).get('/api/v1/stations/?skip='+skip+'&take=' + take)
+        const firstStationID: number = await get_nth_station_id(skip)
+        const lastStationID: number = await get_nth_station_id(skip+take-1)
+        expect(res.body).toHaveProperty('stations')
+        expect(res.body.stations).toHaveLength(take)
+        // @ts-ignore
+        res.body.stations.forEach((element) => {expect(element).toEqual(expectStation)})
+        const stations = res.body.stations
+        expect(stations[0].ID).toEqual(firstStationID)
+        expect(stations[take-1].ID).toEqual(lastStationID)
+    })
+    test("Test response for border line skip: skip totalStations-n stations and take 10", async()=>{
+        const totalStations = await count_stations_instances()
+        const skip = totalStations-3
+        const take = 10
+        const firstStationID = await get_nth_station_id(skip)
+        const lastStationID = await get_nth_station_id(totalStations-1)
+        const res = await request(app).get('/api/v1/stations/?skip='+skip+'&take=' + take)
+        expect(res.body).toHaveProperty('stations')
+        expect(res.body.stations).toHaveLength(totalStations-skip)
+        // @ts-ignore
+        res.body.stations.forEach((element) => {expect(element).toEqual(expectStation)})
+        expect(res.body.stations[0].ID).toEqual(firstStationID)
+        expect(res.body.stations[totalStations-skip-1].ID).toEqual(lastStationID)
     })
 })
 

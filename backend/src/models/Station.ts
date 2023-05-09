@@ -76,6 +76,12 @@ export class Station extends BaseEntity{
     @OneToMany(() => Journey, journey=> journey.Return_station)
     declare Return_journeys: Journey[]
 
+
+    static async countTotal(): Promise<number>{
+        return await Station.count({
+            cache:true
+        })
+    }
     static async fetchAll(): Promise<Station[]>{
         return await Station.find({
             order:{
@@ -83,7 +89,26 @@ export class Station extends BaseEntity{
             }
         })
     }
-    static async getByID(id:number){
+    static async getPaginatedStations(skip: number, take:number){
+        const totalStations = await Journey.countTotal()
+        if (take<=0){
+            throw RangeError("Bad request: The number of required objects must be > 0")
+        }
+        if (skip<0){
+            throw RangeError("Bad request: The beginning point must be >= 0")
+        }
+        if (skip>=totalStations){
+            throw RangeError("Bad request: The beginning point must be < total records")
+        }
+        return await Station.find({
+            order:{
+                ID:"ASC"
+            },
+            skip: skip,
+            take: take
+        })
+    }
+    static async getByID(id:number): Promise<Station>{
         if(id<=0)
             throw RangeError("Bad request: The ID must be >= 0")
         const station = await Station.findOneBy({ID:id})
