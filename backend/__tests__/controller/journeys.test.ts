@@ -48,7 +48,7 @@ describe("Test journey controller: getAllJourneys", () => {
         expect(spy).toBeCalledTimes(1)
     })
     it.each([[0, NaN], [5, NaN], [NaN, 1], [NaN, 10], [NaN,NaN]])("Test with NaN value", async (skip, take)=>{
-        const spy = jest.spyOn(Journey, 'fetchFirstNJourneys');
+        const spy = jest.spyOn(Journey, 'getPaginatedJourneys');
         await expect(getAllJourneys(skip, NaN)).rejects.toThrowError(TypeError)
         expect(spy).not.toHaveBeenCalled()
     })
