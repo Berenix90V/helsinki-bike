@@ -1,4 +1,4 @@
-import {Table} from "react-bootstrap";
+import {Table, Row, Col} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {Journey} from "../interfaces/Journey";
 import {getPaginatedJourneys} from "../api/journeys_api";
@@ -44,9 +44,16 @@ function JourneysTable(){
                 {journeys.map(renderJourney)}
                 </tbody>
             </Table>
+            <Row>
+                <Col>
+                    <PageSize pageSize={pageSize} setPageSize={setPageSize}/>
+                </Col>
+                <Col>
+                    <TablePagination page={page} pageSize={pageSize} totalElements={totalJourneys} setPage={setPage}/>
+                </Col>
 
-            <TablePagination page={page} pageSize={pageSize} totalElements={totalJourneys} setPage={setPage}/>
-            <PageSize pageSize={pageSize} setPageSize={setPageSize}/>
+            </Row>
+
 
 
         </>

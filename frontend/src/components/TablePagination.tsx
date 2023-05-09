@@ -1,5 +1,4 @@
 import {Pagination} from "react-bootstrap";
-import {Form} from "react-bootstrap";
 
 type paginationParameters = {
     page: number,
