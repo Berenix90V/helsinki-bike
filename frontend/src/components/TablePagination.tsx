@@ -41,9 +41,6 @@ function TablePagination({page, pageSize, totalElements, setPage}: paginationPar
                 {items.map(renderItem)}
             </Pagination>
         </>
-
-
-
     )
 }
 

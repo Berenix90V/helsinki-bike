@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {Journey} from "../interfaces/Journey";
 import {getPaginatedJourneys} from "../api/journeys_api";
 import {TablePagination} from "./TablePagination";
+import {PageSize} from "./PageSize";
 
 function renderJourney(journey:Journey, index:number){
     return (
@@ -43,7 +44,11 @@ function JourneysTable(){
                 {journeys.map(renderJourney)}
                 </tbody>
             </Table>
-           <TablePagination page={page} pageSize={pageSize} totalElements={totalJourneys} setPage={setPage}/>
+
+            <TablePagination page={page} pageSize={pageSize} totalElements={totalJourneys} setPage={setPage}/>
+            <PageSize pageSize={pageSize} setPageSize={setPageSize}/>
+
+
         </>
 
 
