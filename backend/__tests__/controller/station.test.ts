@@ -1,8 +1,6 @@
 import {AppDataSource} from "../../src/db/data-sources";
 import {Station} from "../../src/models/Station";
 import {getAllStations, getPaginatedStations, getStationByID} from "../../src/controllers/stations";
-import {Journey} from "../../src/models/Journey";
-import {getAllJourneys} from "../../src/controllers/journeys";
 
 
 beforeEach(async ()=>{
@@ -54,7 +52,7 @@ describe("Test station controller: getPaginatedStations", () => {
     })
     it.each([[0, NaN], [5, NaN], [NaN, 1], [NaN, 10], [NaN,NaN]])("Test with NaN value", async (skip, take)=>{
         const spy = jest.spyOn(Station, 'getPaginatedStations');
-        await expect(getAllJourneys(skip, NaN)).rejects.toThrowError(TypeError)
+        await expect(getPaginatedStations(skip, take)).rejects.toThrowError(TypeError)
         expect(spy).not.toHaveBeenCalled()
     })
 })
