@@ -1,7 +1,9 @@
-import {Table} from "react-bootstrap";
+import {Table, Row, Col} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {Journey} from "../interfaces/Journey";
-import {getAllJourneys} from "../api/journeys_api";
+import {getPaginatedJourneys} from "../api/journeys_api";
+import {TablePagination} from "./TablePagination";
+import {PageSize} from "./PageSize";
 
 function renderJourney(journey:Journey, index:number){
     return (
@@ -15,28 +17,47 @@ function renderJourney(journey:Journey, index:number){
 }
 function JourneysTable(){
     const [journeys, setJourneys] = useState<Journey[]>([])
+    const [page, setPage] = useState<number>(1)
+    const [pageSize, setPageSize] = useState<number>(10)
+    const totalJourneys = 3126264
     useEffect(() => {
-        getAllJourneys(10)
+        const skip = pageSize*(page-1)
+        getPaginatedJourneys(skip, pageSize)
             .then((response) => {
                 setJourneys(response.data.journeys)
             })
-    }, [])
+
+    }, [page, pageSize])
 
     return (
-        <Table striped bordered hover>
-            <thead>
+        <>
+            <Table striped bordered hover>
+                <thead>
                 <tr>
                     <th>Departure station</th>
                     <th>Return station</th>
                     <th>Covered distance (km)</th>
                     <th>Duration (min)</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 {journeys.map(renderJourney)}
-            </tbody>
+                </tbody>
+            </Table>
+            <Row>
+                <Col>
+                    <PageSize pageSize={pageSize} setPageSize={setPageSize}/>
+                </Col>
+                <Col>
+                    <TablePagination page={page} pageSize={pageSize} totalElements={totalJourneys} setPage={setPage}/>
+                </Col>
 
-        </Table>
+            </Row>
+
+
+
+        </>
+
 
     )
 }
