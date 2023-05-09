@@ -8,6 +8,10 @@ const getAllJourneys = async (skip: number, take:number)=>{
     return await Journey.getPaginatedJourneys(skip, take)
 }
 
+const countTotalJourneys = async()=>{
+    return await Journey.countTotal()
+}
+
 const getNumberOfJourneysFromStation = async(id:number) => {
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
@@ -20,4 +24,4 @@ const getNumberOfJourneysToStation = async(id:number) => {
     return await Journey.getNumberOfJourneysToStation(id)
 }
 
-export {getAllJourneys, getNumberOfJourneysFromStation, getNumberOfJourneysToStation}
+export {getAllJourneys, getNumberOfJourneysFromStation, getNumberOfJourneysToStation, countTotalJourneys}

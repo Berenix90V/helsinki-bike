@@ -1,7 +1,7 @@
 import app from "../../src/index"
 import {AppDataSource} from "../../src/db/data-sources";
 import request from "supertest";
-import {get_nth_journey_id, totJourneys} from "../helpers";
+import {count_journeys_instances, get_nth_journey_id, totJourneys} from "../helpers";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -67,6 +67,16 @@ describe("GET /journeys/?take=&skip= route", () =>{
         res.body.journeys.forEach((element) => {expect(element).toEqual(expectJourney)})
         expect(res.body.journeys[0].ID).toEqual(firstJourneyID)
         expect(res.body.journeys[totalJourneys-skip-1].ID).toEqual(lastJourneyID)
+    })
+})
+
+describe("GET /journeys/count", ()=>{
+    test("test response equals the count of journeys", async() => {
+        const res = await request(app).get('/api/v1/journeys/count')
+        const expectedCountJourneys = await count_journeys_instances()
+        expect(res.statusCode).toBe(200)
+        expect(res.body).toHaveProperty('count')
+        expect(res.body.count).toEqual(expectedCountJourneys)
     })
 })
 

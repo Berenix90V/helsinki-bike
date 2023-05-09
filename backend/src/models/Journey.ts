@@ -38,7 +38,7 @@ export class Journey extends BaseEntity{
     })
     declare Duration: number
 
-    static async getTotalNOfJourneys():Promise<number>{
+    static async countTotal():Promise<number>{
         return await Journey.count({
             cache:true
         })
@@ -62,7 +62,7 @@ export class Journey extends BaseEntity{
     }
 
     static async getPaginatedJourneys(skip=0, take=100): Promise<Journey[]>{
-        const totalJourneys = await Journey.getTotalNOfJourneys()
+        const totalJourneys = await Journey.countTotal()
         if (take<=0){
             throw RangeError("Bad request: The number of required objects must be > 0")
         }

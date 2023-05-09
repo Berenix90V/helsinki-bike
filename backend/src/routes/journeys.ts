@@ -1,5 +1,10 @@
 import express from "express"
-import {getAllJourneys, getNumberOfJourneysFromStation, getNumberOfJourneysToStation} from "../controllers/journeys";
+import {
+    countTotalJourneys,
+    getAllJourneys,
+    getNumberOfJourneysFromStation,
+    getNumberOfJourneysToStation
+} from "../controllers/journeys";
 import {Journey} from "../models/Journey";
 const router = express.Router()
 
@@ -23,6 +28,20 @@ router.route("/").get(async (req, res) =>{
                 })
         })
 })
+
+router.route("/count").get(async(req, res) => {
+    await countTotalJourneys()
+        .then((countJourneys: number) =>
+        res.status(200).json({
+            count: countJourneys
+        }))
+        .catch((err) => {
+            res.status(404).json({
+                err: err.message
+            })
+        })
+})
+
 router.route("/from/:id").get(async(req, res) =>{
     const id:number = parseInt(req.params.id)
     await getNumberOfJourneysFromStation(id)

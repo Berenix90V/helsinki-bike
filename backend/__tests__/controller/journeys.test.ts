@@ -1,10 +1,12 @@
 import {
+    countTotalJourneys,
     getAllJourneys,
     getNumberOfJourneysFromStation,
     getNumberOfJourneysToStation
 } from "../../src/controllers/journeys";
 import {Journey} from "../../src/models/Journey";
 import {AppDataSource} from "../../src/db/data-sources";
+import {count_journeys_instances} from "../helpers";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -18,7 +20,7 @@ describe("Test journey controller: getAllJourneys", () => {
     it.each([[0,1], [0,5], [0,12], [5, 1], [5, 10], [103, 1], [103, 7]])
     ("Test with valid numeric values: skip %d and take %d", async (skip, take)=>{
         const spy = jest.spyOn(Journey, 'getPaginatedJourneys');
-        const result =  await getAllJourneys(skip, take)
+        const result: Journey[] =  await getAllJourneys(skip, take)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(result).toHaveLength(take)
@@ -28,9 +30,9 @@ describe("Test journey controller: getAllJourneys", () => {
     })
     test("Test skip at limit of range", async() => {
         const spy = jest.spyOn(Journey, 'getPaginatedJourneys');
-        const totalJourneys = await Journey.getTotalNOfJourneys()
-        const skip = totalJourneys-2
-        const result =  await getAllJourneys(skip, 9)
+        const totalJourneys:number = await Journey.countTotal()
+        const skip:number = totalJourneys-2
+        const result: Journey[] =  await getAllJourneys(skip, 9)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(result).toHaveLength(totalJourneys-skip)
@@ -52,10 +54,18 @@ describe("Test journey controller: getAllJourneys", () => {
     })
 })
 
+describe("Test journey controller: countTotalJourneys", () => {
+    test("Test that it returns the correct count of journeys", async() => {
+        const totalJourneys:number = await countTotalJourneys()
+        const expectedTotalJourneys:number = await count_journeys_instances()
+        expect(totalJourneys).toEqual(expectedTotalJourneys)
+    })
+})
+
 describe("Test journey controller: getNumberOfJourneysFromStation", () => {
     it.each([[1, 23800], [503, 3232]])("Test with valid inputs: station ID %d", async(id, nJourneys) => {
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
-        const res = await getNumberOfJourneysFromStation(id)
+        const res:number = await getNumberOfJourneysFromStation(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(nJourneys)
@@ -68,7 +78,7 @@ describe("Test journey controller: getNumberOfJourneysFromStation", () => {
     })
     it.each([[502, 0], [2000, 0]])("Test with not existent stations, station ID %d", async(id, nJourneys )=>{
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
-        const res = await getNumberOfJourneysFromStation(id)
+        const res: number = await getNumberOfJourneysFromStation(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(nJourneys)
@@ -78,7 +88,7 @@ describe("Test journey controller: getNumberOfJourneysFromStation", () => {
 describe("Test journey controller: getNumberOfJourneysToStation", () => {
     it.each([[1, 24288], [503, 3144]])("Test with invalid inputs: station ID %d", async(id, nJourneys) => {
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysToStation')
-        const res = await getNumberOfJourneysToStation(id)
+        const res: number = await getNumberOfJourneysToStation(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(nJourneys)
@@ -91,7 +101,7 @@ describe("Test journey controller: getNumberOfJourneysToStation", () => {
     })
     it.each([[502, 0], [2000, 0]])("Test with not existent stations: station ID %d", async(id, nJourneys )=>{
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysToStation')
-        const res = await getNumberOfJourneysToStation(id)
+        const res:number = await getNumberOfJourneysToStation(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(nJourneys)

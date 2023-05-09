@@ -12,7 +12,7 @@ afterEach(async ()=>{
 
 describe("Test Journey entity", () => {
     test("Test that the method returns the right value", async ()=>{
-        const totalJourneys = await Journey.getTotalNOfJourneys()
+        const totalJourneys = await Journey.countTotal()
         expect(totalJourneys).toEqual(3126264)
     })
 })
@@ -47,7 +47,7 @@ describe("Test Journey entity: getPaginatedJourneys", ()=>{
         expect(result[take-1].ID).toEqual(lastJourney)
     })
     test("Test getPaginatedJourneys for valid input but borderline skip: skip total-n journeys and take maximum 10 journeys", async()=>{
-        const totalJourneys = await Journey.getTotalNOfJourneys()
+        const totalJourneys = await Journey.countTotal()
         const take = 10
         const skips = [totalJourneys-1, totalJourneys-6, totalJourneys-9]
         for(const skip of skips ){
