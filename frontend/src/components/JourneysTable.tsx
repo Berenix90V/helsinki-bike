@@ -1,7 +1,8 @@
-import {Pagination, Table} from "react-bootstrap";
+import {Table} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {Journey} from "../interfaces/Journey";
 import {getPaginatedJourneys} from "../api/journeys_api";
+import {TablePagination} from "./TablePagination";
 
 function renderJourney(journey:Journey, index:number){
     return (
@@ -26,13 +27,6 @@ function JourneysTable(){
             })
 
     }, [page, pageSize])
-    const items = [1,2,3,4,5]
-
-    function renderPaginationItems(item: number){
-        return(
-            <Pagination.Item key={item} active={item==page} onClick={()=>setPage(item)}>{item}</Pagination.Item>
-        )
-    }
 
     return (
         <>
@@ -49,9 +43,7 @@ function JourneysTable(){
                 {journeys.map(renderJourney)}
                 </tbody>
             </Table>
-            <Pagination>
-                {items.map(renderPaginationItems)}
-            </Pagination>
+           <TablePagination page={page} pageSize={pageSize} totalElements={totalJourneys} setPage={setPage}/>
         </>
 
 
