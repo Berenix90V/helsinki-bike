@@ -134,7 +134,6 @@ describe("Test Journey entity: searchPaginatedJourneysFromStation", ()=>{
         const skips = [totalJourneys-1, totalJourneys-6, totalJourneys-9]
         for(const skip of skips ){
             const result:Journey[] = await Journey.getPaginatedJourneysWithDepartureStationNameStartingWith(skip, take, pattern)
-            const takenJourneys = totalJourneys-skip
             expect(result).toHaveLength(totalJourneys-skip)
             result.forEach((element) => {
                 expect(element).toBeInstanceOf(Journey)
