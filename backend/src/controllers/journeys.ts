@@ -24,4 +24,12 @@ const getNumberOfJourneysToStation = async(id:number) => {
     return await Journey.getNumberOfJourneysToStation(id)
 }
 
-export {getAllJourneys, getNumberOfJourneysFromStation, getNumberOfJourneysToStation, countTotalJourneys}
+const getJourneysWithDepartureStationStartingWith= async(skip:number, take:number, pattern:string)=>{
+    if(Number.isNaN(take))
+        throw TypeError("Provided \"take\" value is not a number. Please provide a numeric value")
+    if(Number.isNaN(skip))
+        throw TypeError("Provided \"skip\" value is not a number. Please provide a numeric value")
+    return await Journey.getPaginatedJourneysWithDepartureStationNameStartingWith(skip, take, pattern)
+}
+
+export {getAllJourneys, getNumberOfJourneysFromStation, getNumberOfJourneysToStation, countTotalJourneys, getJourneysWithDepartureStationStartingWith}

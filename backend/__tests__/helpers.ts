@@ -19,3 +19,8 @@ export async function get_nth_station_id(skip:number){
     const res = await AppDataSource.query(`SELECT "ID" FROM stations ORDER BY "ID" LIMIT 1 OFFSET $1`, [skip])
     return +res[0].ID
 }
+
+export async function count_journeys_departure_station_starting_with(pattern:string){
+    const res = await AppDataSource.query(`SELECT COUNT(*) FROM trips LEFT JOIN stations ON "Departure_station_ID" = stations."ID" WHERE "Name" LIKE $1`, [pattern])
+    return +res[0].count
+}
