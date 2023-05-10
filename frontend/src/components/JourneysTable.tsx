@@ -1,7 +1,7 @@
 import {Table, Row, Col} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {Journey} from "../interfaces/Journey";
-import {countJourneys, getPaginatedJourneys} from "../api/journeys_api";
+import {countJourneys, getPaginatedJourneys, getPaginatedJourneysByDepartureStation} from "../api/journeys_api";
 import {TablePagination} from "./TablePagination";
 import {PageSize} from "./PageSize";
 
@@ -20,6 +20,7 @@ function JourneysTable(){
     const [page, setPage] = useState<number>(1)
     const [pageSize, setPageSize] = useState<number>(10)
     const [totalJourneys, setTotalJourneys] = useState<number>(0)
+    const [pattern, setPattern] = useState<string>("")
     useEffect(() => {
         countJourneys()
             .then((response)=>{
@@ -28,19 +29,28 @@ function JourneysTable(){
     }, [])
     useEffect(() => {
         const skip = pageSize*(page-1)
-        getPaginatedJourneys(skip, pageSize)
-            .then((response) => {
-                setJourneys(response.data.journeys)
-            })
+        if(pattern=="")
+            getPaginatedJourneys(skip, pageSize)
+                .then((response) => {
+                    setJourneys(response.data.journeys)
+                })
+        else
+            getPaginatedJourneysByDepartureStation(skip, pageSize, pattern)
+                .then((response) => {
+                    setJourneys(response.data.journeys)
+                })
 
-    }, [page, pageSize])
+    }, [pattern,page, pageSize])
 
     return (
         <>
             <Table striped bordered hover>
                 <thead>
                 <tr>
-                    <th>Departure station</th>
+                    <th>
+                        Departure station
+                        <input onChange={(e)=>setPattern(e.target.value)}/>
+                    </th>
                     <th>Return station</th>
                     <th>Covered distance (km)</th>
                     <th>Duration (min)</th>
