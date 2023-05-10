@@ -121,7 +121,7 @@ export class Journey extends BaseEntity{
         })
     }
 
-    static async searchPaginatedJourneysFromStation(skip:number, take:number, pattern:string){
+    static async getPaginatedJourneysWithDepartureStationNameStartingWith(skip:number, take:number, pattern:string){
         const totalJourneys = await Journey.countJourneysFromStationNameLike(pattern)
         if (take<=0){
             throw RangeError("Bad request: The number of required objects must be > 0")
@@ -129,7 +129,7 @@ export class Journey extends BaseEntity{
         if (skip<0){
             throw RangeError("Bad request: The beginning point must be >= 0")
         }
-        if (skip>=totalJourneys){
+        if (skip !=0 && skip>=totalJourneys){
             throw RangeError("Bad request: The beginning point must be < total records")
         }
         return await Journey.find({

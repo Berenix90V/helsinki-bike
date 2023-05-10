@@ -110,16 +110,16 @@ describe("Test Journey entity: getNumberOfJourneysToStation", () => {
 })
 
 describe("Test Journey entity: countJourneysFromStationNameLike", ()=>{
-    it.each([["A", 179432], ["Keilalahti", 3232], ["2", 0], ["drop", 0]])("Test for valid patterns that returns correct count of journeys", async (pattern, expectedNumberOfJourneys)=>{
+    it.each([["A", 179432], ["Keilalahti", 3232], ["2", 0], ["drop", 0]])("Test for valid patterns that returns correct count of journeys %d", async (pattern, expectedNumberOfJourneys)=>{
         const countJourneys: number = await Journey.countJourneysFromStationNameLike(pattern)
         expect(countJourneys).toEqual(expectedNumberOfJourneys)
     })
 })
 
 describe("Test Journey entity: searchPaginatedJourneysFromStation", ()=>{
-    it.each([[0,1, "Kirkko"],[0, 5, "A"], [0, 10, "Ki"], [2,3, "A"], [5,1, "A"], [5,7, "La"], [500, 20, "A"]])
+    it.each([[0,1, "Kirkko"],[0, 5, "A"], [0, 10, "Ki"], [2,3, "K"], [5,1, "A"], [5,7, "La"], [500, 20, "A"]])
     ("Test getPaginatedJourneys for valid inputs and Search giving a large number: skip %d journeys and take %d journeys with Departure station beginning with %s", async(skip, take, pattern)=>{
-        const result:Journey[] = await Journey.searchPaginatedJourneysFromStation(skip, take, pattern)
+        const result:Journey[] = await Journey.getPaginatedJourneysWithDepartureStationNameStartingWith(skip, take, pattern)
         expect(result).toHaveLength(take)
         result.forEach((element) => {
             expect(element).toBeInstanceOf(Journey)
@@ -133,7 +133,7 @@ describe("Test Journey entity: searchPaginatedJourneysFromStation", ()=>{
         const take = 10
         const skips = [totalJourneys-1, totalJourneys-6, totalJourneys-9]
         for(const skip of skips ){
-            const result:Journey[] = await Journey.searchPaginatedJourneysFromStation(skip, take, pattern)
+            const result:Journey[] = await Journey.getPaginatedJourneysWithDepartureStationNameStartingWith(skip, take, pattern)
             const takenJourneys = totalJourneys-skip
             expect(result).toHaveLength(totalJourneys-skip)
             result.forEach((element) => {
@@ -145,10 +145,14 @@ describe("Test Journey entity: searchPaginatedJourneysFromStation", ()=>{
     })
     it.each([[-1, 10, "A"], [-5,1, "Kirkko"], [50000000, 6, "A"]])
     ("Test searchPaginatedJourneysFromStation for not valid skip value %d", async(skip, take, pattern)=>{
-        await expect(Journey.searchPaginatedJourneysFromStation(skip, take, pattern)).rejects.toThrowError(RangeError)
+        await expect(Journey.getPaginatedJourneysWithDepartureStationNameStartingWith(skip, take, pattern)).rejects.toThrowError(RangeError)
     })
     it.each([[0, -1, "A"], [5, -2, "A"], [0,0, "A"]])
     ("Test searchPaginatedJourneysFromStation for not valid take value %d", async(skip, take, pattern)=>{
-        await expect(Journey.searchPaginatedJourneysFromStation(skip, take, pattern)).rejects.toThrowError(RangeError)
+        await expect(Journey.getPaginatedJourneysWithDepartureStationNameStartingWith(skip, take, pattern)).rejects.toThrowError(RangeError)
+    })
+    it.each([[0,10, "a2"]])("Test searchPaginatedJourneysFromStation for not valid search", async(skip, take, pattern)=>{
+        const journeys = await Journey.getPaginatedJourneysWithDepartureStationNameStartingWith(skip, take, pattern)
+        expect(journeys).toHaveLength(0)
     })
 })
