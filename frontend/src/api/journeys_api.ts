@@ -19,10 +19,10 @@ export function getNJourneysToStation(id:number){
     return http.get<{njourneys:number}>("journeys/to/"+id)
 }
 
-export function getPaginatedJourneysByDepartureStation(skip:number, take: number, pattern:string){
-    return http.get("journeys/search/from/", {params:{skip:skip, take:take, pattern:pattern}})
+export function getPaginatedJourneysByDepartureStation(skip:number, take: number, patternFrom:string, patternTo:string){
+    return http.get("journeys/search/", {params:{skip:skip, take:take, patternFrom:patternFrom, patternTo: patternTo}})
 }
 
-export function countJourneysWithDepartureStaionStartingWith(pattern:string){
-    return http.get("journeys/count/search/from/", {params:{pattern:pattern}})
+export function countJourneysWithDepartureStaionStartingWith(patternFrom:string, patternTo:string){
+    return http.get("journeys/count/search/", {params:{patternFrom:patternFrom, patternTo: patternTo}})
 }
