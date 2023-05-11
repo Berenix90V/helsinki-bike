@@ -1,7 +1,12 @@
 import {Table, Row, Col} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {Journey} from "../interfaces/Journey";
-import {countJourneys, getPaginatedJourneys, getPaginatedJourneysByDepartureStation} from "../api/journeys_api";
+import {
+    countJourneys,
+    countJourneysWithDepartureStaionStartingWith,
+    getPaginatedJourneys,
+    getPaginatedJourneysByDepartureStation
+} from "../api/journeys_api";
 import {TablePagination} from "./TablePagination";
 import {PageSize} from "./PageSize";
 
@@ -22,11 +27,17 @@ function JourneysTable(){
     const [totalJourneys, setTotalJourneys] = useState<number>(0)
     const [pattern, setPattern] = useState<string>("")
     useEffect(() => {
-        countJourneys()
-            .then((response)=>{
-                setTotalJourneys(response.data.count)
-            })
-    }, [])
+        if(pattern ==="")
+            countJourneys()
+                .then((response)=>{
+                    setTotalJourneys(response.data.count)
+                })
+        else
+            countJourneysWithDepartureStaionStartingWith(pattern)
+                .then((response)=>{
+                    setTotalJourneys(response.data.count)
+                })
+    }, [pattern])
     useEffect(() => {
         const skip = pageSize*(page-1)
         if(pattern==="")
@@ -68,9 +79,6 @@ function JourneysTable(){
                     <TablePagination page={page} pageSize={pageSize} totalElements={totalJourneys} setPage={setPage}/>
                 </Col>
             </Row>
-
-
-
         </>
 
 

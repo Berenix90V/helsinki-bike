@@ -22,3 +22,7 @@ export function getNJourneysToStation(id:number){
 export function getPaginatedJourneysByDepartureStation(skip:number, take: number, pattern:string){
     return http.get("journeys/search/from/", {params:{skip:skip, take:take, pattern:pattern}})
 }
+
+export function countJourneysWithDepartureStaionStartingWith(pattern:string){
+    return http.get("journeys/count/search/from/", {params:{pattern:pattern}})
+}
