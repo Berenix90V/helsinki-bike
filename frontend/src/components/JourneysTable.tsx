@@ -25,33 +25,34 @@ function JourneysTable(){
     const [page, setPage] = useState<number>(1)
     const [pageSize, setPageSize] = useState<number>(10)
     const [totalJourneys, setTotalJourneys] = useState<number>(0)
-    const [pattern, setPattern] = useState<string>("")
+    const [patternFrom, setPatternFrom] = useState<string>("")
+    const [patternTo, setPatternTo] = useState<string>("")
     useEffect(() => {
-        if(pattern ==="")
+        if(patternFrom ==="" && patternTo==="")
             countJourneys()
                 .then((response)=>{
                     setTotalJourneys(response.data.count)
                 })
         else
-            countJourneysWithDepartureStaionStartingWith(pattern)
+            countJourneysWithDepartureStaionStartingWith(patternFrom, patternTo)
                 .then((response)=>{
                     setTotalJourneys(response.data.count)
                 })
-    }, [pattern])
+    }, [patternFrom, patternTo])
     useEffect(() => {
         const skip = pageSize*(page-1)
-        if(pattern==="")
+        if(patternFrom===""  && patternTo==="")
             getPaginatedJourneys(skip, pageSize)
                 .then((response) => {
                     setJourneys(response.data.journeys)
                 })
         else
-            getPaginatedJourneysByDepartureStation(skip, pageSize, pattern)
+            getPaginatedJourneysByDepartureStation(skip, pageSize, patternFrom, patternTo)
                 .then((response) => {
                     setJourneys(response.data.journeys)
                 })
 
-    }, [pattern,page, pageSize])
+    }, [patternFrom, patternTo, page, pageSize])
 
     return (
         <>
@@ -60,9 +61,12 @@ function JourneysTable(){
                 <tr>
                     <th>
                         Departure station
-                        <p><input onChange={(e)=>setPattern(e.target.value)}/></p>
+                        <p><input onChange={(e)=>setPatternFrom(e.target.value)}/></p>
                     </th>
-                    <th >Return station</th>
+                    <th >
+                        Return station
+                        <p><input onChange={(e)=>setPatternTo(e.target.value)}/></p>
+                    </th>
                     <th>Covered distance (km)</th>
                     <th>Duration (min)</th>
                 </tr>
