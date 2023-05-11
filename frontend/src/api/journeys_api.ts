@@ -18,3 +18,7 @@ export function getNJourneysFromStation(id:number){
 export function getNJourneysToStation(id:number){
     return http.get<{njourneys:number}>("journeys/to/"+id)
 }
+
+export function getPaginatedJourneysByDepartureStation(skip:number, take: number, pattern:string){
+    return http.get("journeys/search/from/", {params:{skip:skip, take:take, pattern:pattern}})
+}
