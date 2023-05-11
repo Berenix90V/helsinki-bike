@@ -1,7 +1,7 @@
 import app from "../../src/index"
 import {AppDataSource} from "../../src/db/data-sources";
 import request from "supertest";
-import {count_journeys_departure_station_starting_with, count_journeys_instances, get_nth_journey_id} from "../helpers";
+import {count_journeys_for_search, count_journeys_instances, get_nth_journey_id} from "../helpers";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -109,30 +109,33 @@ describe("GET /journeys/to/:id", ()=>{
 })
 
 
-describe("GET /journeys/search/from/?take=&skip=&pattern= route", () =>{
-    it.each([["abc", 2, "A", 400],[true, 3, "La", 400],[-2, 1, "A", 400], [5000000, 2, "A", 400], [0, 1, "A", 200], [2, "abc", "A", 400], [3, false, "A", 400], [5, -3, "A", 400], [2, 10, "A", 200], [3, 50, "A", 200], [5, 100, "A", 200]])
-    ("Test status code when the %d journeys are skipped and %d are required", async(skip, take, pattern,  statusCode:number) =>{
-        const res = await request(app).get('/api/v1/journeys/search/from/?skip='+skip+'&take=' + take + '&pattern=' + pattern)
+describe("GET /journeys/search/?take=&skip=&patternFrom=&patternTo= route", () =>{
+    it.each([["abc", 2, "A", "", 400], [true, 3, "", "La", 400],[-2, 1, "K", "A", 400], [5000000, 2, "", "", 400], [0, 1, "", "", 200], [2, "abc", "", "A", 400], [3, false, "A", "", 400], [5, -3, "A", "", 400], [2, 10, "A", "", 200], [3, 50, "", "A", 200], [5, 100, "A", "K", 200]])
+    ("Test status code when the %d journeys are skipped and %d are required", async(skip, take, patternFromStation,patternToStation,  statusCode:number) =>{
+        const res = await request(app).get('/api/v1/journeys/search/?skip='+skip+'&take=' + take + '&patternFrom=' + patternFromStation + '&patternTo=' + patternToStation)
         expect(res.statusCode).toBe(statusCode)
     })
-    it.each([[0, 1, "A"], [0, 10, "La"], [5, 1, "Kirkko"], [5, 8, "A"], [23, 15, "Kirkko"]])
-    ("Test response when %d journeys are skipped and %d are required", async(skip:number, take:number, pattern:string)=> {
-        const res = await request(app).get('/api/v1/journeys/search/from/?skip='+skip+'&take=' + take + '&pattern=' + pattern)
+    it.each([[0, 1, "A", ""], [0, 10, "", "La"], [5, 1, "", ""], [5, 8, "A", "La"], [23, 15, "Kirkko", "A"]])
+    ("Test response when %d journeys are skipped and %d are required", async(skip:number, take:number, patternFromStation:string, patternToStation:string)=> {
+        const res = await request(app).get('/api/v1/journeys/search/?skip='+skip+'&take=' + take + '&patternFrom=' + patternFromStation + '&patternTo=' + patternToStation)
         expect(res.body).toHaveProperty('journeys')
         expect(res.body.journeys).toHaveLength(take)
         // @ts-ignore
         res.body.journeys.forEach((element) => {
             expect(element).toEqual(expectJourney)
             expect(element.Departure_station).toEqual(expectStation)
-            expect(element.Departure_station.Name.startsWith(pattern)).toBeTruthy()
+            expect(element.Departure_station.Name.startsWith(patternFromStation)).toBeTruthy()
+            expect(element.Return_station).toEqual(expectStation)
+            expect(element.Return_station.Name.startsWith(patternToStation)).toBeTruthy()
         })
     })
     test("Test response for border line skip: skip totalJourneys-n journeys and take 10", async()=>{
-        const pattern:string = "Kirkko%"
-        const totalJourneys = await count_journeys_departure_station_starting_with(pattern)
+        const patternFromStation:string = "Kirkko%"
+        const patternToStation:string = "A"
+        const totalJourneys = await count_journeys_for_search(patternFromStation, patternToStation)
         const skip = totalJourneys-3
         const take = 10
-        const res = await request(app).get('/api/v1/journeys/search/from/?skip='+skip+'&take=' + take + '&pattern=' +pattern)
+        const res = await request(app).get('/api/v1/journeys/search/?skip='+skip+'&take=' + take + '&patternFrom=' +patternFromStation+'&patternTo='+patternToStation)
         expect(res.body).toHaveProperty('journeys')
         expect(res.body.journeys).toHaveLength(totalJourneys-skip)
         // @ts-ignore
@@ -142,10 +145,11 @@ describe("GET /journeys/search/from/?take=&skip=&pattern= route", () =>{
     })
 })
 
-describe("GET /journeys/count/search/from/", ()=>{
-    it.each([["A"], ["Kirkko"], ["La"], ["A2"]])("test response equals the count of journeys", async(pattern) => {
-        const res = await request(app).get('/api/v1/journeys/count/search/from/?pattern'+pattern)
-        const expectedCountJourneys = await count_journeys_departure_station_starting_with(pattern)
+describe("GET /journeys/count/search/", ()=>{
+    it.each([["A", ""], ["","Kirkko"], ["A", "Kirkko"], ["", ""], ["A2", ""], ["", "A2"], ["A2", "A2"]])
+    ("Test response equals the count of journeys for departure station strting with %s and return %s", async(patternFromStation, patternToStation ) => {
+        const res = await request(app).get('/api/v1/journeys/count/search/?patternFrom='+patternFromStation+'&patternTo='+patternToStation)
+        const expectedCountJourneys = await count_journeys_for_search(patternFromStation, patternToStation)
         expect(res.statusCode).toBe(200)
         expect(res.body).toHaveProperty('count')
         expect(res.body.count).toEqual(expectedCountJourneys)

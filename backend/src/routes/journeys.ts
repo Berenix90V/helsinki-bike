@@ -1,8 +1,8 @@
 import express from "express"
 import {
-    countJourneysWithDepartureStationStartingWith,
+    countJourneysForSearch,
     countTotalJourneys,
-    getAllJourneys, getJourneysWithDepartureStationStartingWith,
+    getAllJourneys, getPaginatedJourneysForSearch,
     getNumberOfJourneysFromStation,
     getNumberOfJourneysToStation
 } from "../controllers/journeys";
@@ -43,11 +43,12 @@ router.route("/count").get(async(req, res) => {
         })
 })
 
-router.route("/search/from/").get(async(req,res)=>{
+router.route("/search/").get(async(req,res)=>{
     const take:number = parseInt(req.query.take as string)
     const skip:number = parseInt(req.query.skip as string)
-    const pattern:string = req.query.pattern as string
-    await getJourneysWithDepartureStationStartingWith(skip, take, pattern)
+    const patternFromStation:string = req.query.patternFrom as string
+    const patternToStation:string = req.query.patternTo as string
+    await getPaginatedJourneysForSearch(skip, take, patternFromStation, patternToStation)
         .then((journeys: Journey[])=>
             res.status(200).json({
                 journeys: journeys
@@ -65,9 +66,10 @@ router.route("/search/from/").get(async(req,res)=>{
         })
 })
 
-router.route("/count/search/from/").get(async(req, res)=>{
-    const pattern:string = req.query.pattern as string
-    await countJourneysWithDepartureStationStartingWith(pattern)
+router.route("/count/search/").get(async(req, res)=>{
+    const patternFromStation:string = req.query.patternFrom as string
+    const patternToStation:string = req.query.patternTo as string
+    await countJourneysForSearch(patternFromStation, patternToStation)
         .then((countJourneys: number)=>
             res.status(200).json({
                 count: countJourneys
