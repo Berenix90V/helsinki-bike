@@ -3,11 +3,11 @@ import {
     getAllJourneys,
     getNumberOfJourneysFromStation,
     getNumberOfJourneysToStation,
-    getJourneysWithDepartureStationStartingWith
+    getJourneysWithDepartureStationStartingWith, countJourneysWithDepartureStationStartingWith
 } from "../../src/controllers/journeys";
 import {Journey} from "../../src/models/Journey";
 import {AppDataSource} from "../../src/db/data-sources";
-import {count_journeys_instances} from "../helpers";
+import {count_journeys_departure_station_starting_with, count_journeys_instances} from "../helpers";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -158,4 +158,11 @@ describe("Test journey controller: getJourneysWithDepartureStationStartingWith",
         expect(spy).not.toHaveBeenCalled()
     })
 
+})
+
+describe("Test journey controller: countJourneysWithDepartureStationStartingWith", ()=>{
+    it.each([["A"], ["Kirkko"], ["La"], ["A2"]])("Test response to be correct for departure station starting with %s", async(pattern:string) =>{
+        const expectedCountJourneys = await count_journeys_departure_station_starting_with(pattern)
+        const countJourneys = await countJourneysWithDepartureStationStartingWith(pattern)
+    })
 })
