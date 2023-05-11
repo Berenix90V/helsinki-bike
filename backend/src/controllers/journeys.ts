@@ -32,4 +32,8 @@ const getJourneysWithDepartureStationStartingWith= async(skip:number, take:numbe
     return await Journey.getPaginatedJourneysWithDepartureStationNameStartingWith(skip, take, pattern)
 }
 
-export {getAllJourneys, getNumberOfJourneysFromStation, getNumberOfJourneysToStation, countTotalJourneys, getJourneysWithDepartureStationStartingWith}
+const countJourneysWithDepartureStationStartingWith = async(pattern:string) =>{
+    return await Journey.countJourneysFromStationNameLike(pattern)
+}
+
+export {getAllJourneys, getNumberOfJourneysFromStation, getNumberOfJourneysToStation, countTotalJourneys, getJourneysWithDepartureStationStartingWith, countJourneysWithDepartureStationStartingWith}
