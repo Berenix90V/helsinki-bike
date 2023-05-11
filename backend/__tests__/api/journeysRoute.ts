@@ -142,3 +142,13 @@ describe("GET /journeys/search/from/?take=&skip=&pattern= route", () =>{
     })
 })
 
+describe("GET /journeys/count/search/from/", ()=>{
+    it.each([["A"], ["Kirkko"], ["La"], ["A2"]])("test response equals the count of journeys", async(pattern) => {
+        const res = await request(app).get('/api/v1/journeys/count/search/from/?pattern'+pattern)
+        const expectedCountJourneys = await count_journeys_departure_station_starting_with(pattern)
+        expect(res.statusCode).toBe(200)
+        expect(res.body).toHaveProperty('count')
+        expect(res.body.count).toEqual(expectedCountJourneys)
+    })
+})
+
