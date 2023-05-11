@@ -29,7 +29,7 @@ function JourneysTable(){
     }, [])
     useEffect(() => {
         const skip = pageSize*(page-1)
-        if(pattern=="")
+        if(pattern==="")
             getPaginatedJourneys(skip, pageSize)
                 .then((response) => {
                     setJourneys(response.data.journeys)
@@ -49,9 +49,9 @@ function JourneysTable(){
                 <tr>
                     <th>
                         Departure station
-                        <input onChange={(e)=>setPattern(e.target.value)}/>
+                        <p><input onChange={(e)=>setPattern(e.target.value)}/></p>
                     </th>
-                    <th>Return station</th>
+                    <th >Return station</th>
                     <th>Covered distance (km)</th>
                     <th>Duration (min)</th>
                 </tr>
