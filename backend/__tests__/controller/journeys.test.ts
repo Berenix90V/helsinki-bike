@@ -3,11 +3,11 @@ import {
     getAllJourneys,
     getNumberOfJourneysFromStation,
     getNumberOfJourneysToStation,
-    getJourneysWithDepartureStationStartingWith, countJourneysWithDepartureStationStartingWith
+    getPaginatedJourneysForSearch, countJourneysForSearch
 } from "../../src/controllers/journeys";
 import {Journey} from "../../src/models/Journey";
 import {AppDataSource} from "../../src/db/data-sources";
-import {count_journeys_departure_station_starting_with, count_journeys_instances} from "../helpers";
+import {count_journeys_for_search, count_journeys_instances} from "../helpers";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -109,11 +109,11 @@ describe("Test journey controller: getNumberOfJourneysToStation", () => {
     })
 })
 
-describe("Test journey controller: getJourneysWithDepartureStationStartingWith", () => {
-    it.each([[0,1, "A"], [0,5, "Kirkko"], [0,12, "A"], [5, 1, "Ki"], [5, 10, "A"], [103, 1, "La"], [103, 7, "A"]])
-    ("Test with valid numeric values: skip %d and take %d", async (skip, take, pattern)=>{
-        const spy = jest.spyOn(Journey, 'getPaginatedJourneysWithDepartureStationNameStartingWith');
-        const result: Journey[] =  await getJourneysWithDepartureStationStartingWith(skip, take, pattern)
+describe("Test journey controller: getPaginatedJourneysForSearch", () => {
+    it.each([[0,1, "A", ""], [0,5, "", "Kirkko"], [0,12, "", ""], [5, 1, "A", "K"], [5, 10, "La", "A"], [103, 1, "Kirkko", ""], [103, 7, "", "A"]])
+    ("Test with valid numeric values: skip %d and take %d and search departure start with %s and return %s", async (skip, take, patternDepartureStation, patternReturnStation)=>{
+        const spy = jest.spyOn(Journey, 'getPaginatedJourneysForSearch');
+        const result: Journey[] =  await getPaginatedJourneysForSearch(skip, take, patternDepartureStation, patternReturnStation)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(result).toHaveLength(take)
@@ -121,10 +121,10 @@ describe("Test journey controller: getJourneysWithDepartureStationStartingWith",
             expect(element).toBeInstanceOf(Journey)
         })
     })
-    it.each([[0, 5, "A2", 0]])
-    ("Test with search input that returns less journeys than the take require: skip %d take 5d search %s expectec %d", async(skip, take, pattern, expectedLength)=>{
-        const spy = jest.spyOn(Journey, 'getPaginatedJourneysWithDepartureStationNameStartingWith');
-        const result: Journey[] =  await getJourneysWithDepartureStationStartingWith(skip, take, pattern)
+    it.each([[0, 5, "A2", "", 0]])
+    ("Test with search input that returns less journeys than the take require: skip %d take 5d search %s, %s expected %d", async(skip, take, patternDepartureStation, patternReturnStation, expectedLength)=>{
+        const spy = jest.spyOn(Journey, 'getPaginatedJourneysForSearch');
+        const result: Journey[] =  await getPaginatedJourneysForSearch(skip, take, patternDepartureStation, patternReturnStation)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(result).toHaveLength(expectedLength)
@@ -133,11 +133,12 @@ describe("Test journey controller: getJourneysWithDepartureStationStartingWith",
         })
     })
     test("Test skip at limit of range", async() => {
-        const pattern:string = "A"
-        const spy = jest.spyOn(Journey, 'getPaginatedJourneysWithDepartureStationNameStartingWith');
-        const totalJourneys:number = await Journey.countJourneysFromStationNameLike(pattern)
+        const patternDepartureStation:string = "A"
+        const patternReturnStation:string = "K"
+        const spy = jest.spyOn(Journey, 'getPaginatedJourneysForSearch');
+        const totalJourneys:number = await Journey.countJourneysForSearch(patternDepartureStation, patternReturnStation)
         const skip:number = totalJourneys-2
-        const result: Journey[] =  await getJourneysWithDepartureStationStartingWith(skip, 9, pattern)
+        const result: Journey[] =  await getPaginatedJourneysForSearch(skip, 9, patternDepartureStation, patternReturnStation)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(result).toHaveLength(totalJourneys-skip)
@@ -145,24 +146,25 @@ describe("Test journey controller: getJourneysWithDepartureStationStartingWith",
             expect(element).toBeInstanceOf(Journey)
         })
     })
-    it.each([[0,-1, "A"], [0,-5, "Kirkko"], [0,0, "La"], [2,0,"A"], [-1, 5, "A"], [-2,1, "Kirkko"], [-3,0, "Kirkko"]])
-    ("Test with invalid numeric values: skip %d and take %d", async (skip, take, pattern)=>{
-        const spy = jest.spyOn(Journey, 'getPaginatedJourneysWithDepartureStationNameStartingWith');
-        await expect(getJourneysWithDepartureStationStartingWith(skip, take, pattern)).rejects.toThrowError(RangeError)
+    it.each([[0,-1, "A", ""], [0,-5, "", "Kirkko"], [0,0, "La", "A"], [2,0,"A", "Ki"], [-1, 5, "", ""], [-2,1, "Kirkko", "A"], [-3,0, "A", "Kirkko"]])
+    ("Test with invalid numeric values: skip %d and take %d", async (skip, take, patternDepartureStation, patternReturnStation)=>{
+        const spy = jest.spyOn(Journey, 'getPaginatedJourneysForSearch');
+        await expect(getPaginatedJourneysForSearch(skip, take, patternDepartureStation, patternReturnStation)).rejects.toThrowError(RangeError)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
     })
-    it.each([[0, NaN], [5, NaN], [NaN, 1], [NaN, 10], [NaN,NaN]])("Test with NaN value", async (skip, take)=>{
-        const spy = jest.spyOn(Journey, 'getPaginatedJourneys');
-        await expect(getAllJourneys(skip, take)).rejects.toThrowError(TypeError)
+    it.each([[0, NaN, "", "A"], [5, NaN, "A", ""], [NaN, 1, "A", "K"], [NaN, 10,"", ""], [NaN,NaN, "La", ""]])("Test with NaN value", async (skip, take, patternDepartureStation, patternReturnStation)=>{
+        const spy = jest.spyOn(Journey, 'getPaginatedJourneysForSearch');
+        await expect(getPaginatedJourneysForSearch(skip, take, patternDepartureStation, patternReturnStation)).rejects.toThrowError(TypeError)
         expect(spy).not.toHaveBeenCalled()
     })
 
 })
 
 describe("Test journey controller: countJourneysWithDepartureStationStartingWith", ()=>{
-    it.each([["A"], ["Kirkko"], ["La"], ["A2"]])("Test response to be correct for departure station starting with %s", async(pattern:string) =>{
-        const expectedCountJourneys = await count_journeys_departure_station_starting_with(pattern)
-        const countJourneys = await countJourneysWithDepartureStationStartingWith(pattern)
+    it.each([["A", ""], ["","Kirkko"], ["", ""], ["A2", "A"], ["A", "La"], ["A", "K"]])("Test response to be correct for search with departure start with %s and return %s", async(patternDepartureStation:string, patternReturnStation:string) =>{
+        const expectedCountJourneys = await count_journeys_for_search(patternDepartureStation, patternReturnStation)
+        const countJourneys = await countJourneysForSearch(patternDepartureStation, patternReturnStation)
+        expect(countJourneys).toEqual(expectedCountJourneys)
     })
 })

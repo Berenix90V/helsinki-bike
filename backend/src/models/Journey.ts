@@ -107,22 +107,26 @@ export class Journey extends BaseEntity{
             .getCount()
     }
 
-    static async countJourneysFromStationNameLike(pattern:string): Promise<number>{
-        pattern = pattern +'%'
+    static async countJourneysForSearch(patternDepartureStation:string, patternReturnStation:string): Promise<number>{
+        patternDepartureStation = patternDepartureStation +'%'
+        patternReturnStation = patternReturnStation + '%'
         return await Journey.count({
             relations:{
                 Departure_station: true
             },
             where:{
                 Departure_station:{
-                    Name: Like(pattern)
+                    Name: Like(patternDepartureStation)
+                },
+                Return_station:{
+                    Name: Like(patternReturnStation)
                 }
             }
         })
     }
 
-    static async getPaginatedJourneysWithDepartureStationNameStartingWith(skip:number, take:number, pattern:string){
-        const totalJourneys = await Journey.countJourneysFromStationNameLike(pattern)
+    static async getPaginatedJourneysForSearch(skip:number, take:number, patternDepartureStation:string, patternReturnStation:string){
+        const totalJourneys = await Journey.countJourneysForSearch(patternDepartureStation, patternReturnStation)
         if (take<=0){
             throw RangeError("Bad request: The number of required objects must be > 0")
         }
@@ -141,7 +145,10 @@ export class Journey extends BaseEntity{
             take: take,
             where:{
                 Departure_station: {
-                    Name:Like(pattern+"%")
+                    Name:Like(patternDepartureStation+"%")
+                },
+                Return_station:{
+                    Name: Like(patternReturnStation+"%")
                 }
             }
         })

@@ -20,7 +20,7 @@ export async function get_nth_station_id(skip:number){
     return +res[0].ID
 }
 
-export async function count_journeys_departure_station_starting_with(pattern:string){
-    const res = await AppDataSource.query(`SELECT COUNT(*) FROM trips LEFT JOIN stations ON "Departure_station_ID" = stations."ID" WHERE "Name" LIKE $1`, [pattern])
+export async function count_journeys_for_search(patternDepartureStation:string, patternReturnStation:string){
+    const res = await AppDataSource.query(`SELECT COUNT(*) FROM trips LEFT JOIN stations as departurestation ON "Departure_station_ID" = departurestation."ID" LEFT JOIN stations as returnstation ON "Return_station_ID" = returnstation."ID" WHERE departurestation."Name" LIKE $1 AND returnstation."Name" LIKE $2`, [patternDepartureStation+'%', patternReturnStation+'%'])
     return +res[0].count
 }
