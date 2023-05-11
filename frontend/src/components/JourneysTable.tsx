@@ -13,6 +13,8 @@ import {PageSize} from "./PageSize";
 function renderJourney(journey:Journey, index:number){
     return (
         <tr key={index}>
+            <td>{journey.Departure_datetime.replace("T", " ").replace(".000Z", "")}</td>
+            <td>{journey.Return_datetime.replace("T", " ").replace(".000Z", "")}</td>
             <td>{journey.Departure_station.Name}</td>
             <td>{journey.Return_station.Name}</td>
             <td>{(journey.Covered_distance/1000.0).toFixed(2)}</td>
@@ -59,6 +61,8 @@ function JourneysTable(){
             <Table striped bordered hover>
                 <thead>
                 <tr>
+                    <th>Departure</th>
+                    <th>Return</th>
                     <th>
                         Departure station
                         <p><input onChange={(e)=>setPatternFrom(e.target.value)}/></p>
