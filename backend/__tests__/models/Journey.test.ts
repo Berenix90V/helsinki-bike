@@ -1,6 +1,11 @@
 import {Journey} from "../../src/models/Journey";
 import {AppDataSource} from "../../src/db/data-sources";
-import {count_journeys_for_search, get_nth_journey_id} from "../helpers";
+import {
+    avg_journeys_from_station,
+    avg_journeys_to_station,
+    count_journeys_for_search,
+    get_nth_journey_id
+} from "../helpers";
 import {Station} from "../../src/models/Station";
 
 beforeEach(async ()=>{
@@ -160,5 +165,35 @@ describe("Test Journey entity: getPaginatedJourneysForSearch", ()=>{
     it.each([[0,10, "a2", ""], [0,10, "", "345"] ])("Test getPaginatedJourneysForSearch for not valid search", async(skip, take, patternDepartureStation, patternReturnStation,)=>{
         const journeys = await Journey.getPaginatedJourneysForSearch(skip, take, patternDepartureStation, patternReturnStation)
         expect(journeys).toHaveLength(0)
+    })
+})
+
+describe("Test Journey entity: getAverageDistanceFrom", ()=>{
+    it.each([[503], [1]])("Test with valid inputs", async(id:number)=>{
+        const expectedAvg: number = await avg_journeys_from_station(id)
+        const avg: number = await Journey.getAverageDistanceFrom(id)
+        expect(avg).toEqual(expectedAvg)
+    })
+    it.each([[-1], [0]])("Test with valid inputs", async(id:number)=>{
+        await expect(Journey.getAverageDistanceFrom(id)).rejects.toThrowError(RangeError)
+    })
+    it.each([[502]])("Test with valid inputs but not existent station", async(id:number)=>{
+        const avg: number = await Journey.getAverageDistanceFrom(id)
+        expect(avg).toEqual(0)
+    })
+})
+
+describe("Test Journey entity: getAverageDistanceTo", ()=>{
+    it.each([[503], [1]])("Test with valid inputs", async(id:number)=>{
+        const expectedAvg: number = await avg_journeys_to_station(id)
+        const avg: number = await Journey.getAverageDistanceTo(id)
+        expect(avg).toEqual(expectedAvg)
+    })
+    it.each([[-1], [0]])("Test with valid inputs", async(id:number)=>{
+        await expect(Journey.getAverageDistanceTo(id)).rejects.toThrowError(RangeError)
+    })
+    it.each([[502]])("Test with valid inputs but not existent station", async(id:number)=>{
+        const avg: number = await Journey.getAverageDistanceTo(id)
+        expect(avg).toEqual(0)
     })
 })

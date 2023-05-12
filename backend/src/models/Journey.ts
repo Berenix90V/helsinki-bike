@@ -153,4 +153,38 @@ export class Journey extends BaseEntity{
             }
         })
     }
+
+    static async getAverageDistanceFrom(id:number){
+        if(id<=0)
+            throw RangeError("ID must be >= 0 ")
+        const response: {avg:number}|undefined = await Journey
+            .createQueryBuilder('trips')
+            .select('AVG("Covered_distance")')
+            .where("trips.Departure_station_ID = :id", { id: id})
+            .getRawOne();
+        if(response === undefined)
+            throw Error("Query not performed")
+        else
+            if(response.avg == null)
+                return 0
+            else
+                return response.avg
+    }
+
+    static async getAverageDistanceTo(id:number){
+        if(id<=0)
+            throw RangeError("ID must be >= 0 ")
+        const response: {avg:number}|undefined = await Journey
+            .createQueryBuilder('trips')
+            .select('AVG("Covered_distance")')
+            .where("trips.Return_station_ID = :id", { id: id})
+            .getRawOne();
+        if(response === undefined)
+            throw Error("Query not performed")
+        else
+        if(response.avg == null)
+            return 0
+        else
+            return response.avg
+    }
 }
