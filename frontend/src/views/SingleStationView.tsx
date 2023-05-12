@@ -39,7 +39,6 @@ function SingleStationView(){
             .catch((err)=>err)
     }, [id])
     if(station){
-        console.log(station)
         return(
             <>
                 <h1 className="text-center">{station.Name}</h1>
