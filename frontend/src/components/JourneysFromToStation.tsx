@@ -9,11 +9,11 @@ function JourneysFromToStation({nJourneysFrom, nJourneysTo}: numberOfJourneys){
         <>
             <Row>
                 <Col sm={6}>
-                    <p>Journeys from station</p>
+                    <p><b>Journeys from station</b></p>
                     <p>{nJourneysFrom}</p>
                 </Col>
                 <Col sm={6}>
-                    <p>Journeys to station</p>
+                    <p><b>Journeys to station</b></p>
                     <p>{nJourneysTo}</p>
                 </Col>
             </Row>
