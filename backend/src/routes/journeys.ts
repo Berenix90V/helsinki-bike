@@ -4,7 +4,7 @@ import {
     countTotalJourneys,
     getAllJourneys, getPaginatedJourneysForSearch,
     getNumberOfJourneysFromStation,
-    getNumberOfJourneysToStation
+    getNumberOfJourneysToStation, getAvgDistanceJourneysFrom, getAvgDistanceJourneysTo
 } from "../controllers/journeys";
 import {Journey} from "../models/Journey";
 const router = express.Router()
@@ -108,6 +108,46 @@ router.route("/to/:id").get(async(req, res) =>{
         .then((nJourneys:number)=>
             res.status(200).json({
                 njourneys: nJourneys
+            })
+        )
+        .catch((err) => {
+            if(err instanceof RangeError || err instanceof TypeError)
+                res.status(400).json({
+                    err: err.message
+                })
+            else
+                res.status(404).json({
+                    err:err.message
+                })
+        })
+})
+
+router.route('/from/:id/distance/avg').get(async(req, res) =>{
+    const id = parseInt(req.params.id)
+    await getAvgDistanceJourneysFrom(id)
+        .then((avgDistance:number)=>
+            res.status(200).json({
+                avg: avgDistance
+            })
+        )
+        .catch((err) => {
+            if(err instanceof RangeError || err instanceof TypeError)
+                res.status(400).json({
+                    err: err.message
+                })
+            else
+                res.status(404).json({
+                    err:err.message
+                })
+        })
+})
+
+router.route('/to/:id/distance/avg').get(async(req, res) =>{
+    const id = parseInt(req.params.id)
+    await getAvgDistanceJourneysTo(id)
+        .then((avgDistance:number)=>
+            res.status(200).json({
+                avg: avgDistance
             })
         )
         .catch((err) => {

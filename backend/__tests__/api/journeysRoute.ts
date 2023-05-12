@@ -1,7 +1,12 @@
 import app from "../../src/index"
 import {AppDataSource} from "../../src/db/data-sources";
 import request from "supertest";
-import {count_journeys_for_search, count_journeys_instances, get_nth_journey_id} from "../helpers";
+import {
+    avg_distance_journeys_from_station, avg_distance_journeys_to_station,
+    count_journeys_for_search,
+    count_journeys_instances,
+    get_nth_journey_id
+} from "../helpers";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -153,6 +158,36 @@ describe("GET /journeys/count/search/", ()=>{
         expect(res.statusCode).toBe(200)
         expect(res.body).toHaveProperty('count')
         expect(res.body.count).toEqual(expectedCountJourneys)
+    })
+})
+
+describe("GET /journeys/from/:id/distance/avg", ()=>{
+    it.each([["abc", 400],[true, 400],[-2, 400], [0, 400], [1, 200], [503, 200], [5000, 200]])
+    ("Test status code for trips from station %d", async(id, statusCode)=>{
+        const res = await request(app).get('/api/v1/journeys/from/' +id+'/distance/avg')
+        expect(res.statusCode).toBe(statusCode)
+    })
+    it.each([[1], [503], [5000]])
+    ("Test response for trips from station %d", async(id: number)=>{
+        const res = await request(app).get('/api/v1/journeys/from/' + id+'/distance/avg')
+        const expectedAvg = await avg_distance_journeys_from_station(id)
+        expect(res.body).toHaveProperty('avg')
+        expect(res.body.avg).toEqual(expectedAvg)
+    })
+})
+
+describe("GET /journeys/to/:id/distance/avg", ()=>{
+    it.each([["abc", 400],[true, 400],[-2, 400], [0, 400], [1, 200], [503, 200], [5000, 200]])
+    ("Test status code for journeys to station %d", async(id, statusCode)=>{
+        const res = await request(app).get('/api/v1/journeys/to/' +id+'/distance/avg')
+        expect(res.statusCode).toBe(statusCode)
+    })
+    it.each([[1], [503], [5000]])
+    ("Test response for journeys to station %d", async(id: number)=>{
+        const res = await request(app).get('/api/v1/journeys/to/' + id+'/distance/avg')
+        const expectedAvg = await avg_distance_journeys_to_station(id)
+        expect(res.body).toHaveProperty('avg')
+        expect(res.body.avg).toEqual(expectedAvg)
     })
 })
 
