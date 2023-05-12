@@ -10,6 +10,5 @@ export function getPaginatedStations(skip:number, take: number){
 }
 
 export function  getStationByID(id:number){
-    console.log(id)
     return http.get<{station: Station}>("stations/"+id)
 }
