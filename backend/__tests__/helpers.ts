@@ -25,12 +25,12 @@ export async function count_journeys_for_search(patternDepartureStation:string, 
     return +res[0].count
 }
 
-export async function avg_journeys_from_station(id:number):Promise<number>{
+export async function avg_distance_journeys_from_station(id:number):Promise<number>{
     const res = await AppDataSource.query('SELECT AVG("Covered_distance") FROM trips WHERE "Departure_station_ID"=$1', [id])
     return +res[0].avg
 }
 
-export async function avg_journeys_to_station(id:number):Promise<number>{
+export async function avg_distance_journeys_to_station(id:number):Promise<number>{
     const res = await AppDataSource.query('SELECT AVG("Covered_distance") FROM trips WHERE "Return_station_ID"=$1', [id])
     return +res[0].avg
 }

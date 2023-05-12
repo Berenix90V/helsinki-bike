@@ -1,8 +1,8 @@
 import {Journey} from "../../src/models/Journey";
 import {AppDataSource} from "../../src/db/data-sources";
 import {
-    avg_journeys_from_station,
-    avg_journeys_to_station,
+    avg_distance_journeys_from_station,
+    avg_distance_journeys_to_station,
     count_journeys_for_search,
     get_nth_journey_id
 } from "../helpers";
@@ -170,7 +170,7 @@ describe("Test Journey entity: getPaginatedJourneysForSearch", ()=>{
 
 describe("Test Journey entity: getAverageDistanceFrom", ()=>{
     it.each([[503], [1]])("Test with valid inputs", async(id:number)=>{
-        const expectedAvg: number = await avg_journeys_from_station(id)
+        const expectedAvg: number = await avg_distance_journeys_from_station(id)
         const avg: number = await Journey.getAverageDistanceFrom(id)
         expect(avg).toEqual(expectedAvg)
     })
@@ -185,7 +185,7 @@ describe("Test Journey entity: getAverageDistanceFrom", ()=>{
 
 describe("Test Journey entity: getAverageDistanceTo", ()=>{
     it.each([[503], [1]])("Test with valid inputs", async(id:number)=>{
-        const expectedAvg: number = await avg_journeys_to_station(id)
+        const expectedAvg: number = await avg_distance_journeys_to_station(id)
         const avg: number = await Journey.getAverageDistanceTo(id)
         expect(avg).toEqual(expectedAvg)
     })
