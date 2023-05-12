@@ -26,3 +26,11 @@ export function getPaginatedJourneysByDepartureStation(skip:number, take: number
 export function countJourneysWithDepartureStaionStartingWith(patternFrom:string, patternTo:string){
     return http.get("journeys/count/search/", {params:{patternFrom:patternFrom, patternTo: patternTo}})
 }
+
+export function avgJourneyFromStation(id:number){
+    return http.get("journeys/from/"+id+"/distance/avg")
+}
+
+export function avgJourneyToStation(id:number){
+    return http.get("journeys/to/"+id+"/distance/avg")
+}
