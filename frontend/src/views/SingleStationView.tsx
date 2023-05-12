@@ -5,6 +5,7 @@ import {getStationByID} from "../api/stations_api";
 import {useParams} from "react-router-dom";
 import {getNJourneysFromStation, getNJourneysToStation} from "../api/journeys_api";
 import {JourneysFromToStation} from "../components/JourneysFromToStation";
+import {Map} from "../components/Map";
 
 function SingleStationView(){
     const id =  parseInt(useParams().id!)
@@ -43,6 +44,7 @@ function SingleStationView(){
             <>
                 <h1 className="text-center">{station.Name}</h1>
                 <h2 className="text-center">Station details</h2>
+                <Map x={station.x} y={station.y}/>
                 <StationDetails
                     station={station}
                 />
