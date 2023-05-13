@@ -34,3 +34,11 @@ export function avgJourneyFromStation(id:number){
 export function avgJourneyToStation(id:number){
     return http.get("journeys/to/"+id+"/distance/avg")
 }
+
+export function topNDestinations(id:number, limit:number){
+    return http.get("journeys/from/"+id+"/top/destinations/?limit="+limit)
+}
+
+export function topNDepartures(id:number, limit:number){
+    return http.get("journeys/to/"+id+"/top/departures/?limit="+limit)
+}
