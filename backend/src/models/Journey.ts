@@ -187,4 +187,42 @@ export class Journey extends BaseEntity{
         else
             return response.avg
     }
+
+    static async getTopNDestinations(id:number, limit:number): Promise<{count:number, Return_station_ID:number, Name:string}[]>{
+        if(id<=0)
+            throw RangeError("ID must be >= 0 ")
+        if(limit<0)
+            throw RangeError("Required number of journeys must be >= 0 ")
+        if(limit==0)
+            return []
+        return await Journey
+            .createQueryBuilder("journey")
+            .innerJoin("journey.Return_station", "Return_station")
+            .select("journey.Return_station_ID, Return_station.Name")
+            .addSelect("COUNT(journey.Return_station_ID)", "count")
+            .where("journey.Departure_station_ID = :id", { id: id})
+            .groupBy("journey.Return_station_ID, Return_station.Name")
+            .orderBy("count", "DESC")
+            .limit(limit)
+            .getRawMany()
+    }
+
+    static async getTopNDepartures(id:number, limit:number):Promise<{count:number, Departure_station_ID:number, Name:string}[]>{
+        if(id<=0)
+            throw RangeError("ID must be >= 0 ")
+        if(limit<0)
+            throw RangeError("Required number of journeys must be >= 0 ")
+        if(limit==0)
+            return []
+        return await Journey
+            .createQueryBuilder("journey")
+            .innerJoin("journey.Departure_station", "Departure_station")
+            .select("journey.Departure_station_ID, Departure_station.Name")
+            .addSelect("COUNT(journey.Departure_station_ID)", "count")
+            .where("journey.Return_station_ID = :id", { id: id})
+            .groupBy("journey.Departure_station_ID, Departure_station.Name")
+            .orderBy("count", "DESC")
+            .limit(limit)
+            .getRawMany()
+    }
 }

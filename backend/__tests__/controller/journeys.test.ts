@@ -3,7 +3,11 @@ import {
     getAllJourneys,
     getNumberOfJourneysFromStation,
     getNumberOfJourneysToStation,
-    getPaginatedJourneysForSearch, countJourneysForSearch, getAvgDistanceJourneysFrom, getAvgDistanceJourneysTo
+    getPaginatedJourneysForSearch,
+    countJourneysForSearch,
+    getAvgDistanceJourneysFrom,
+    getAvgDistanceJourneysTo,
+    getTopNDestinations, getTopNDepartures
 } from "../../src/controllers/journeys";
 import {Journey} from "../../src/models/Journey";
 import {AppDataSource} from "../../src/db/data-sources";
@@ -11,7 +15,7 @@ import {
     avg_distance_journeys_from_station,
     avg_distance_journeys_to_station,
     count_journeys_for_search,
-    count_journeys_instances
+    count_journeys_instances, top_n_departures, top_n_destinations
 } from "../helpers";
 
 beforeEach(async ()=>{
@@ -190,7 +194,6 @@ describe("Test journey controller: avgJourneysFrom", () => {
         expect(spy).toBeCalledTimes(1)
     })
     test("Test with invalid NaN input", async()=>{
-        const spy = jest.spyOn(Journey, 'getAverageDistanceFrom')
         await expect(getAvgDistanceJourneysFrom(NaN)).rejects.toThrowError(TypeError)
     })
     it.each([[502, 0], [2000, 0]])("Test with not existent stations: station ID %d", async(id, nJourneys )=>{
@@ -218,7 +221,6 @@ describe("Test journey controller: avgJourneysTo", () => {
         expect(spy).toBeCalledTimes(1)
     })
     test("Test with invalid NaN input", async()=>{
-        const spy = jest.spyOn(Journey, 'getAverageDistanceTo')
         await expect(getAvgDistanceJourneysTo(NaN)).rejects.toThrowError(TypeError)
     })
     it.each([[502, 0], [2000, 0]])("Test with not existent stations: station ID %d", async(id, nJourneys )=>{
@@ -227,5 +229,61 @@ describe("Test journey controller: avgJourneysTo", () => {
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(nJourneys)
+    })
+})
+
+describe("Test journey controller: getTopNDestinations", ()=>{
+    it.each([[503, 10],[1,5],[1,3], [503, 0]])("Test with invalid inputs: station ID %d and limit %d", async(id:number, limit:number)=>{
+        const spy = jest.spyOn(Journey, 'getTopNDestinations')
+        const res:{count:number, Return_station_ID: number, Name:string }[] = await getTopNDestinations(id, limit)
+        const expectedStations = await top_n_destinations(id, limit)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res.length).toBeLessThanOrEqual(limit)
+        expect(res.length).toEqual(expectedStations.length)
+        for(let i=0; i<limit-1; i++){
+            expect(res[i]).toMatchObject(expectedStations[i])
+        }
+    })
+    it.each([[-5, 10], [0, 5], [503, -1]])("Test with invalid inputs: station ID %d and limit %d", async(id:number, limit:number) =>{
+        const spy = jest.spyOn(Journey, 'getTopNDestinations')
+        await expect(getTopNDestinations(id, limit)).rejects.toThrowError(RangeError)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+    })
+    it.each([[5000, 5], [502, 10]])("Test with not existent stations: station ID %d", async(id:number, limit:number)=>{
+        const spy = jest.spyOn(Journey, 'getTopNDestinations')
+        const res: {count:number, Return_station_ID: number, Name:string}[] = await getTopNDestinations(id, limit)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res).toHaveLength(0)
+    })
+})
+
+describe("Test journey controller: getTopNDepartures", ()=>{
+    it.each([[503, 10],[1,5],[1,3], [503, 0]])("Test with invalid inputs: station ID %d and limit %d", async(id:number, limit:number)=>{
+        const spy = jest.spyOn(Journey, 'getTopNDepartures')
+        const res:{count:number, Departure_station_ID: number, Name:string }[] = await getTopNDepartures(id, limit)
+        const expectedStations = await top_n_departures(id, limit)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res.length).toBeLessThanOrEqual(limit)
+        expect(res.length).toEqual(expectedStations.length)
+        for(let i=0; i<limit-1; i++){
+            expect(res[i]).toMatchObject(expectedStations[i])
+        }
+    })
+    it.each([[-5, 10], [0, 5], [503, -1]])("Test with invalid inputs: station ID %d and limit %d", async(id:number, limit:number) =>{
+        const spy = jest.spyOn(Journey, 'getTopNDepartures')
+        await expect(getTopNDepartures(id, limit)).rejects.toThrowError(RangeError)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+    })
+    it.each([[5000, 5], [502, 10]])("Test with not existent stations: station ID %d", async(id:number, limit:number)=>{
+        const spy = jest.spyOn(Journey, 'getTopNDepartures')
+        const res: {count:number, Departure_station_ID: number, Name:string}[] = await getTopNDepartures(id, limit)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res).toHaveLength(0)
     })
 })
