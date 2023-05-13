@@ -59,35 +59,29 @@ function JourneysStats({id}: JourneysParameters){
                 <Col sm={6}>
                     <p><b>Journeys from station</b></p>
                     <p>{nJourneysFrom}</p>
+                    <Row>
+                        <p><b>Average distance</b></p>
+                        <p>{(avgJourneyFrom/1000).toFixed(2)}</p>
+                    </Row>
+                    <Row>
+                        <p><b>Top 5 Destinations</b></p>
+                        <DestinationsTable departure_id={id}/>
+                    </Row>
+
                 </Col>
                 <Col sm={6}>
                     <p><b>Journeys to station</b></p>
                     <p>{nJourneysTo}</p>
+                    <Row>
+                        <p><b>Average distance</b></p>
+                        <p>{(avgJourneyTo/1000).toFixed(2)}</p>
+                    </Row>
+                    <Row>
+                        <p><b>Top 5 Departures</b></p>
+                        <DeparturesTable return_id={id}/>
+                    </Row>
                 </Col>
             </Row>
-
-            <Row>
-                <Col sm={6}>
-                    <p><b>Average distance</b></p>
-                    <p>{(avgJourneyFrom/1000).toFixed(2)}</p>
-                </Col>
-                <Col sm={6}>
-                    <p><b>Average distance</b></p>
-                    <p>{(avgJourneyTo/1000).toFixed(2)}</p>
-                </Col>
-            </Row>
-            <Row>
-                <Col sm={6}>
-                    <p><b>Top 5 Destinations</b></p>
-                    <DestinationsTable departure_id={id}/>
-                </Col>
-                <Col sm={6}>
-                    <p><b>Top 5 Departures</b></p>
-                    <DeparturesTable return_id={id}/>
-                </Col>
-
-            </Row>
-
         </>
     )
 }
