@@ -5,7 +5,7 @@ import {
     avg_distance_journeys_from_station, avg_distance_journeys_to_station,
     count_journeys_for_search,
     count_journeys_instances,
-    get_nth_journey_id
+    get_nth_journey_id, top_n_departures, top_n_destinations
 } from "../helpers";
 
 beforeEach(async ()=>{
@@ -190,4 +190,41 @@ describe("GET /journeys/to/:id/distance/avg", ()=>{
         expect(res.body.avg).toEqual(expectedAvg)
     })
 })
+
+describe("GET /journeys/from/:id/top/destinations/", ()=>{
+    it.each([["abc", 5, 400], [true, 10, 400], [503, "abc", 400], [1, true, 400], [5000, 10, 200], [503, 5, 200]])
+    ("Test status code for journeys from %d and get top %d destinations ", async(id, limit, statusCode:number)=>{
+        const res = await request(app).get('/api/v1/journeys/from/'+id+'/top/destinations/?limit='+limit)
+        expect(res.statusCode).toBe(statusCode)
+    })
+    it.each([[503, 5], [22, 3], [1, 10]])("Test response for journey from %d: get top %d destinations", async (id:number, limit:number)=>{
+        const res = await request(app).get('/api/v1/journeys/from/'+id+'/top/destinations/?limit='+limit)
+        const expectedTopNDestinations = await top_n_destinations(id, limit)
+        expect(res.body).toHaveProperty('destinations')
+        expect(res.body.destinations).toHaveLength(limit)
+        expect(res.body.destinations).toMatchObject(expectedTopNDestinations)
+        for(let i=0; i<res.body.destinations.length; i++){
+            expect(res.body.destinations[i]).toMatchObject(expectedTopNDestinations[i])
+        }
+    })
+})
+
+describe("GET /journeys/to/:id/top/departures/", ()=>{
+    it.each([["abc", 5, 400], [true, 10, 400], [503, "abc", 400], [1, true, 400], [5000, 10, 200], [503, 5, 200]])
+    ("Test status code for journeys to %d and get top %d departures ", async(id, limit, statusCode:number)=>{
+        const res = await request(app).get('/api/v1/journeys/to/'+id+'/top/departures/?limit='+limit)
+        expect(res.statusCode).toBe(statusCode)
+    })
+    it.each([[503, 5], [22, 3], [1, 10]])("Test response for journey from %d: get top %d departures", async (id:number, limit:number)=>{
+        const res = await request(app).get('/api/v1/journeys/to/'+id+'/top/departures/?limit='+limit)
+        const expectedTopNDepartures = await top_n_departures(id, limit)
+        expect(res.body).toHaveProperty('departures')
+        expect(res.body.departures).toHaveLength(limit)
+        expect(res.body.departures).toMatchObject(expectedTopNDepartures)
+        for(let i=0; i<res.body.departures.length; i++){
+            expect(res.body.departures[i]).toMatchObject(expectedTopNDepartures[i])
+        }
+    })
+})
+
 
