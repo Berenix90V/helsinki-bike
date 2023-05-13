@@ -1,4 +1,6 @@
 import http from "./http_common"
+import {Destination} from "../interfaces/Destination";
+import {Departure} from "../interfaces/Departure";
 
 export function getAllJourneys(take: number){
     return http.get("journeys/", {params:{take:take}})
@@ -36,9 +38,9 @@ export function avgJourneyToStation(id:number){
 }
 
 export function topNDestinations(id:number, limit:number){
-    return http.get("journeys/from/"+id+"/top/destinations/?limit="+limit)
+    return http.get<{destinations: Destination[]}>("journeys/from/"+id+"/top/destinations/?limit="+limit)
 }
 
 export function topNDepartures(id:number, limit:number){
-    return http.get("journeys/to/"+id+"/top/departures/?limit="+limit)
+    return http.get<{departures: Departure[]}>("journeys/to/"+id+"/top/departures/?limit="+limit)
 }
