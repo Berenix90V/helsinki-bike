@@ -37,10 +37,8 @@ export async function avg_distance_journeys_to_station(id:number):Promise<number
 
 export async function top_n_destinations(id:number, limit:number){
     return await AppDataSource.query('SELECT COUNT("Return_station_ID"), "Return_station_ID", "Name" FROM trips LEFT JOIN stations ON "Return_station_ID"=stations."ID" WHERE "Departure_station_ID"=$1 group by "Return_station_ID", "Name" ORDER BY  count("Return_station_ID") DESC LIMIT $2', [id, limit])
-
 }
 
 export async function top_n_departures(id:number, limit:number){
     return await AppDataSource.query('SELECT COUNT("Departure_station_ID"), "Departure_station_ID", "Name" FROM trips LEFT JOIN stations ON "Departure_station_ID"=stations."ID" WHERE "Return_station_ID"=$1 group by "Departure_station_ID", "Name" ORDER BY  count("Departure_station_ID") DESC LIMIT $2', [id, limit])
-
 }
