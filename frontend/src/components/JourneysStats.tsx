@@ -6,6 +6,8 @@ import {
     getNJourneysFromStation,
     getNJourneysToStation
 } from "../api/journeys_api";
+import {DestinationsTable} from "./DestinationsTable";
+import {DeparturesTable} from "./DeparturesTable";
 
 type JourneysParameters = {
     id: number
@@ -15,6 +17,7 @@ function JourneysStats({id}: JourneysParameters){
     const [nJourneysTo, setNJourneysTo] = useState<number>(0)
     const [avgJourneyFrom, setAvgJourneyFrom] = useState<number>(0)
     const [avgJourneyTo, setAvgJourneyTo] = useState<number>(0)
+
     useEffect(()=>{
         const getNJourneysFrom = async () => {
             return await getNJourneysFromStation(id)
@@ -31,12 +34,12 @@ function JourneysStats({id}: JourneysParameters){
                 .then((response)=> response.data.avg)
                 .catch((err)=>err)
         }
-
         const getAvgJourneyToStation = async () => {
             return await avgJourneyToStation(id)
                 .then((response)=> response.data.avg)
                 .catch((err)=>err)
         }
+
         getNJourneysFrom()
             .then(setNJourneysFrom)
             .catch((err)=>err)
@@ -72,6 +75,17 @@ function JourneysStats({id}: JourneysParameters){
                     <p><b>Average distance</b></p>
                     <p>{(avgJourneyTo/1000).toFixed(2)}</p>
                 </Col>
+            </Row>
+            <Row>
+                <Col sm={6}>
+                    <p><b>Top 5 Destinations</b></p>
+                    <DestinationsTable departure_id={id}/>
+                </Col>
+                <Col sm={6}>
+                    <p><b>Top 5 Departures</b></p>
+                    <DeparturesTable return_id={id}/>
+                </Col>
+
             </Row>
 
         </>
