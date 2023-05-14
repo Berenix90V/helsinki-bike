@@ -1,7 +1,12 @@
 
 import {AppDataSource} from "../../src/db/data-sources";
 import {Station} from "../../src/models/Station";
-import {count_stations_instances, get_nth_station_id} from "../helpers";
+import {
+    count_journeys_for_search,
+    count_stations_for_search,
+    count_stations_instances,
+    get_nth_station_id
+} from "../helpers";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -42,7 +47,7 @@ describe("Test Station entity: getPaginatedStations", ()=>{
             const takenStations:number = totalStations-skip
             const firstStation:number = await get_nth_station_id(skip)
             const lastStation:number = await get_nth_station_id(totalStations-1)
-            expect(result).toHaveLength(totalStations-skip)
+            expect(result).toHaveLength(takenStations)
             result.forEach((element) => {
                 expect(element).toBeInstanceOf(Station)
             })
@@ -82,5 +87,54 @@ describe("Test Station entity: getByID", () =>{
         const result = await Station.getByID(id)
         expect(result).toBeInstanceOf(Station)
         expect(result.ID).toEqual(id)
+    })
+})
+
+describe("Test Station entity: countStationForSearch", ()=>{
+    it.each([["A"], ["Keilalahti"], ["K"], ["2"], [""]])
+    ("Test for valid patterns that returns correct count of journeys for search %s, %s", async (patternName)=>{
+        const countStations: number = await Station.countStationForSearch(patternName)
+        const expectedNumberOfStations = await count_stations_for_search(patternName)
+        expect(countStations).toEqual(expectedNumberOfStations)
+    })
+})
+
+describe("Test Station entity: getPaginatedStationsForSearch", ()=>{
+    it.each([[0,1, "A"],[0, 5, ""], [0, 10, "K"], [2,3, "L"], [5,1, "K"], [5,7, ""]])
+    ("Test getPaginatedStationsForSearch for valid input: skip %d stations and take %d stations with name starting with %s", async(skip, take, patternName)=>{
+        const result:Station[] = await Station.getPaginatedStationsForSearch(skip, take, patternName)
+        expect(result).toHaveLength(take)
+        result.forEach((element) => {
+            expect(element).toBeInstanceOf(Station)
+            expect(element.Name.startsWith(patternName)).toBeTruthy()
+        })
+    })
+    test("Test getPaginatedStationsForSearch for valid input but borderline skip: skip total-n stations and take maximum 10 stations", async()=>{
+        const patternName = "A"
+        const totalStations = await Station.countStationForSearch(patternName)
+        const take = 10
+        const skips: number[] = [totalStations-1, totalStations-6, totalStations-9]
+        for(const skip of skips ){
+            const result:Station[] = await Station.getPaginatedStationsForSearch(skip, take, patternName)
+            const takenStations:number = totalStations-skip
+            expect(result).toHaveLength(takenStations)
+            result.forEach((element) => {
+                expect(element).toBeInstanceOf(Station)
+                expect(element.Name.startsWith(patternName))
+            })
+        }
+    })
+    it.each([[-1, 10, "A"], [-5,1, "K"], [50000000, 6, ""]])
+    ("Test getPaginatedStationsForSearch for not valid skip value %d", async(skip, take, patternName)=>{
+        await expect(Station.getPaginatedStationsForSearch(skip, take, patternName)).rejects.toThrowError(RangeError)
+    })
+    it.each([[0, -1, "A"], [5, -2, "La"], [0,0, ""]])
+    ("Test getPaginatedStationsForSearch for not valid take value %d", async(skip, take, patternName)=>{
+        await expect(Station.getPaginatedStationsForSearch(skip, take, patternName)).rejects.toThrowError(RangeError)
+    })
+    it.each([[0,10, "345"], [5, 10, "abc"], [2, 5, "2"]])
+    ("Test getPaginatedStationsForSearch for not valid search: skip %d, take %d stations beginning with %s", async (skip, take, patternName) => {
+       const stations: Station[] = await Station.getPaginatedStationsForSearch(skip, take, patternName)
+        expect(stations).toHaveLength(0)
     })
 })

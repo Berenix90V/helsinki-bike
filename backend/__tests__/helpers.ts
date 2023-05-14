@@ -25,6 +25,11 @@ export async function count_journeys_for_search(patternDepartureStation:string, 
     return +res[0].count
 }
 
+export async function count_stations_for_search(patternName:string): Promise<number>{
+    const res = await AppDataSource.query(`SELECT COUNT(*) FROM stations WHERE "Name" LIKE $1`, [patternName])
+    return +res[0].count
+}
+
 export async function avg_distance_journeys_from_station(id:number):Promise<number>{
     const res = await AppDataSource.query('SELECT AVG("Covered_distance") FROM trips WHERE "Departure_station_ID"=$1', [id])
     return +res[0].avg
