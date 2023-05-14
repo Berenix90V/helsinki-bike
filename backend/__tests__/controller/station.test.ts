@@ -1,7 +1,12 @@
 import {AppDataSource} from "../../src/db/data-sources";
 import {Station} from "../../src/models/Station";
-import {getAllStations, getPaginatedStations, getStationByID} from "../../src/controllers/stations";
-
+import {
+    getAllStations,
+    getPaginatedSearchedStations,
+    getPaginatedStations,
+    getStationByID
+} from "../../src/controllers/stations";
+import {Journey} from "../../src/models/Journey";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -73,6 +78,56 @@ describe("Test stations controller getStationByID", () => {
     test("Test the function with NaN value", async() => {
         const spy = jest.spyOn(Station, 'getByID')
         await expect(getStationByID(NaN)).rejects.toThrowError(TypeError)
+        expect(spy).not.toHaveBeenCalled()
+    })
+})
+
+describe("test stations controller getPaginatedSearchedStations", () => {
+    it.each([[5,1,"A"], [0,5, "L"], [0,12, ""], [0, 1,"Kirkko"]])
+    ("Test with valid numeric and search values: akip %d, take %d and begin witth %s", async(skip, take, patternName)=>{
+        const spy = jest.spyOn(Station, 'getPaginatedStationsForSearch')
+        const result: Station[] = await getPaginatedSearchedStations(skip, take, patternName)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(result).toHaveLength(take)
+        result.forEach((element) => {
+            expect(element).toBeInstanceOf(Station)
+        })
+    })
+    it.each([[0,5,"A2", 0], [0,2,"true", 0]])
+    ("Test with search input that returns less journeys than the take require: skip %d take %d search %s, %s expected %d", async(skip, take, patternName, expectedLength)=>{
+        const spy = jest.spyOn(Station, "getPaginatedStationsForSearch")
+        const result:Station[] = await getPaginatedSearchedStations(skip, take, patternName)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(result).toHaveLength(expectedLength)
+        result.forEach((element) => {
+            expect(element).toBeInstanceOf(Station)
+        })
+    })
+    test("Test skip at limit of range", async() => {
+        const patternName:string = "K"
+        const spy = jest.spyOn(Station, 'getPaginatedStationsForSearch')
+        const totalStations = await Station.countStationForSearch(patternName)
+        const skip: number = totalStations-2
+        const result: Station[] = await getPaginatedSearchedStations(skip, 9, patternName)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(result).toHaveLength(totalStations-skip)
+        result.forEach((element)=>{
+            expect(element).toBeInstanceOf(Station)
+        })
+    })
+    it.each([[0,-1, "A"], [0,0,"K"], [2,0,""], [-1,5,"Kirkko"], [-2,1,"A"], [-3,0, ""]])
+    ("Test with invalid numeric values: skip %d and take %d beginning with %s", async (skip, take, patternName)=>{
+        const spy = jest.spyOn(Station, 'getPaginatedStationsForSearch');
+        await expect(getPaginatedSearchedStations(skip, take, patternName)).rejects.toThrowError(RangeError)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+    })
+    it.each([[0, NaN, ""], [5, NaN, "A"], [NaN, 1, "A"], [NaN, 10,""], [NaN,NaN, "La"]])("Test with NaN value", async (skip, take, patternName)=>{
+        const spy = jest.spyOn(Journey, 'getPaginatedJourneysForSearch');
+        await expect(getPaginatedSearchedStations(skip, take, patternName)).rejects.toThrowError(TypeError)
         expect(spy).not.toHaveBeenCalled()
     })
 })
