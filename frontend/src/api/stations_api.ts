@@ -9,6 +9,10 @@ export function getPaginatedStations(skip:number, take: number){
     return http.get("stations/", {params:{skip:skip, take:take}})
 }
 
+export function countStations(){
+    return http.get("stations/count/")
+}
+
 export function countSearchedStationsByName(patternName:string){
     return http.get("stations/count/search/?patternName="+patternName)
 }
