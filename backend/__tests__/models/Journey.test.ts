@@ -315,6 +315,9 @@ describe("Test Journey entity: getTopNDestinations", ()=>{
         const topNDestination: {count:number, Return_station_ID: number, Name:string}[] = await Journey.getTopNDestinations(id, limit, month)
         expect(topNDestination).toHaveLength(0)
     })
+    it.each([[503,5,-3], [1,10,14]])("Test with valid ids and not valid months: id %d, limit %d, month %d", async(id: number, limit:number, month:number) =>{
+        await expect(Journey.getTopNDestinations(id, limit, month)).rejects.toThrowError(RangeError)
+    })
     it.each([[-20,5,-3], [0,10,14]])("Test with not valid ids and months: id %d, limit %d, month %d", async(id: number, limit:number, month:number) =>{
         await expect(Journey.getTopNDestinations(id, limit, month)).rejects.toThrowError(RangeError)
     })
