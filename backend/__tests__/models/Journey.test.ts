@@ -1,12 +1,19 @@
 import {Journey} from "../../src/models/Journey";
 import {AppDataSource} from "../../src/db/data-sources";
 import {
-    avg_distance_journeys_from_station, avg_distance_journeys_from_station_filtered_by_month,
-    avg_distance_journeys_to_station, avg_distance_journeys_to_station_filtered_by_month,
+    avg_distance_journeys_from_station,
+    avg_distance_journeys_from_station_filtered_by_month,
+    avg_distance_journeys_to_station,
+    avg_distance_journeys_to_station_filtered_by_month,
     count_journeys_for_search,
-    get_nth_journey_id, top_n_departures, top_n_destinations
+    get_nth_journey_id,
+    top_n_departures,
+    top_n_departures_filtered_by_month,
+    top_n_destinations,
+    top_n_destinations_filtered_by_month
 } from "../helpers";
 import {Station} from "../../src/models/Station";
+import {resourceLimits} from "worker_threads";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -255,6 +262,28 @@ describe("Test Journey entity: getTopNDestinations", ()=>{
         const topNDestinations: {count:number, Return_station_ID: number, Name:string}[] = await Journey.getTopNDestinations(id, limit)
         expect(topNDestinations.length).toBeLessThanOrEqual(0)
     })
+    it.each([[503, 5,5], [1, 1,6], [22, 3,7], [503, 0,6]])("Test with valid inputs and filter by month: id %d, limit %d, month %d", async(id:number, limit:number, month:number) => {
+        const topNDestinations: {count:number, Return_station_ID: number, Name:string}[] = await Journey.getTopNDestinations(id, limit, month)
+        const expectedDestinations = await top_n_destinations_filtered_by_month(id, limit, month)
+        expect(topNDestinations.length).toEqual(expectedDestinations.length)
+        expect(topNDestinations).toMatchObject(expectedDestinations)
+        topNDestinations.forEach((element)=>{
+            expect(element).toHaveProperty('count')
+            expect(element).toHaveProperty('Return_station_ID')
+            expect(element).toHaveProperty('Name')
+        })
+    })
+    it.each([[503, 5, 4], [503, 10, 8]])("Test with valid ids, limit and invalid months: id %d, limit %d, month %d", async(id:number, limit:number, month:number) =>{
+        const topNDestinations: {count:number, Return_station_ID: number, Name:string}[] = await Journey.getTopNDestinations(id, limit, month)
+        expect(topNDestinations).toHaveLength(0)
+    })
+    it.each([[502, 5, 5], [5000, 6, 6]])("Test with not existent ids: id %d, limit %d, month %d", async(id:number, limit:number, month:number) =>{
+        const topNDestination: {count:number, Return_station_ID: number, Name:string}[] = await Journey.getTopNDestinations(id, limit, month)
+        expect(topNDestination).toHaveLength(0)
+    })
+    it.each([[-20,5,-3], [0,10,14]])("Test with not valid ids and months: id %d, limit %d, month %d", async(id: number, limit:number, month:number) =>{
+        await expect(Journey.getTopNDestinations(id, limit, month)).rejects.toThrowError(RangeError)
+    })
 })
 
 describe("Test Journey entity: getTopNDepartures", ()=>{
@@ -275,5 +304,30 @@ describe("Test Journey entity: getTopNDepartures", ()=>{
     it.each([[502, 10], [50000, 1]])("Test with not existent Id %d limit %d", async(id: number, limit: number) => {
         const topNDepartures: {count:number, Departure_station_ID: number, Name:string}[] = await Journey.getTopNDepartures(id, limit)
         expect(topNDepartures.length).toBeLessThanOrEqual(0)
+    })
+    it.each([[503, 5, 5], [1, 10, 6], [22, 12, 7]])("Test with valid inputs and filtering by month: id %d limit %d month %d", async(id:number, limit:number, month: number) => {
+        const topNDepartures = await Journey.getTopNDepartures(id, limit, month)
+        const expectedTopNDepartures: {count:number, Departure_station_ID: number, Name:string}[] = await top_n_departures_filtered_by_month(id, limit, month)
+        expect(topNDepartures.length).toEqual(expectedTopNDepartures.length)
+        expect(topNDepartures).toMatchObject(expectedTopNDepartures)
+        expectedTopNDepartures.forEach((element)=>{
+            expect(element).toHaveProperty('count')
+            expect(element).toHaveProperty('Departure_station_ID')
+            expect(element).toHaveProperty('Name')
+        })
+    })
+    it.each([[503, 5, -1], [1, 10, 13], [22, 6, 0]])("Test with valid ids and limit, but not valid month: id %d limit %d month %d", async(id:number, limit:number, month:number) =>{
+        await expect(Journey.getTopNDepartures(id, limit, month)).rejects.toThrowError(RangeError)
+    })
+    it.each([[503, 6, 4], [1, 8, 12]])("Test with valid inputs but month not in database: id %d limit %d month %d", async(id:number, limit:number, month:number) =>{
+        const topNDepartures = await Journey.getTopNDepartures(id, limit, month)
+        expect(topNDepartures).toHaveLength(0)
+    })
+    it.each([[502, 5, 5], [5000, 6, 6]])("Test with not existent ids: id %d, limit %d, month %d", async(id:number, limit:number, month:number) =>{
+        const topNDepartures: {count:number, Departure_station_ID: number, Name:string}[] = await Journey.getTopNDepartures(id, limit, month)
+        expect(topNDepartures).toHaveLength(0)
+    })
+    it.each([[-20,5,-3], [0,10,14]])("Test with not valid ids and months: id %d, limit %d, month %d", async(id: number, limit:number, month:number) =>{
+        await expect(Journey.getTopNDepartures(id, limit, month)).rejects.toThrowError(RangeError)
     })
 })
