@@ -85,26 +85,46 @@ export class Journey extends BaseEntity{
         })
     }
 
-    static async getNumberOfJourneysFromStation(id:number):Promise<number>{
+    static async getNumberOfJourneysFromStation(id:number, month?:number):Promise<number>{
         if (id<=0){
             throw RangeError("Bad request: ID must be > 0")
         }
-        return await Journey
-            .createQueryBuilder('trips')
-            .select("Departure_station_ID")
-            .where("trips.Departure_station_ID = :id", { id: id})
-            .getCount()
+        if(month!==undefined)
+            if(month<1 || month >12)
+                throw RangeError("Month not valid")
+            else
+                return await Journey
+                    .createQueryBuilder('trips')
+                    .select("Departure_station_ID")
+                    .where("trips.Departure_station_ID = :id AND EXTRACT(MONTH FROM trips.Departure_datetime) = :month ", { id: id, month:month})
+                    .getCount()
+        else
+            return await Journey
+                .createQueryBuilder('trips')
+                .select("Departure_station_ID")
+                .where("trips.Departure_station_ID = :id", { id: id})
+                .getCount()
     }
 
-    static async getNumberOfJourneysToStation(id:number):Promise<number>{
+    static async getNumberOfJourneysToStation(id:number, month?:number):Promise<number>{
         if (id<=0){
             throw RangeError("Bad request: ID must be > 0")
         }
-        return await Journey
-            .createQueryBuilder('trips')
-            .select("Return_station_ID")
-            .where("trips.Return_station_ID = :id", { id: id})
-            .getCount()
+        if(month !==undefined)
+            if(month<1 || month >12)
+                throw RangeError("Month not valid")
+            else
+                return await Journey
+                    .createQueryBuilder('trips')
+                    .select("Return_station_ID")
+                    .where("trips.Return_station_ID = :id AND EXTRACT(MONTH FROM trips.Return_datetime)=:month", { id: id, month:month})
+                    .getCount()
+        else
+            return await Journey
+                .createQueryBuilder('trips')
+                .select("Return_station_ID")
+                .where("trips.Return_station_ID = :id", { id: id})
+                .getCount()
     }
 
     static async countJourneysForSearch(patternDepartureStation:string, patternReturnStation:string): Promise<number>{

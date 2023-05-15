@@ -25,6 +25,27 @@ export async function count_journeys_for_search(patternDepartureStation:string, 
     return +res[0].count
 }
 
+export async function count_journeys_from_station(id:number): Promise<number>{
+    const res = await AppDataSource.query(`SELECT COUNT(*) FROM trips WHERE "Departure_station_ID" = $1 `, [id])
+    return +res[0].count
+}
+
+export async function count_journeys_from_station_filter_by_month(id:number, month:number):Promise<number>{
+    const res = await AppDataSource.query(`SELECT COUNT(*) FROM trips WHERE "Departure_station_ID" = $1 AND EXTRACT(MONTH FROM "Departure_datetime")=$2`, [id, month])
+    return +res[0].count
+}
+
+export async function count_journeys_to_station(id:number){
+    const res = await AppDataSource.query(`SELECT COUNT(*) FROM trips WHERE "Return_station_ID" = $1 `, [id])
+    return +res[0].count
+}
+
+export async function count_journeys_to_station_filter_by_month(id:number, month:number):Promise<number>{
+    const res = await AppDataSource.query(`SELECT COUNT(*) FROM trips WHERE "Return_station_ID" = $1 AND EXTRACT(MONTH FROM "Return_datetime")=$2`, [id, month])
+    return +res[0].count
+}
+
+
 export async function count_stations_for_search(patternName:string): Promise<number>{
     const res = await AppDataSource.query(`SELECT COUNT(*) FROM stations WHERE "Name" LIKE $1`, [patternName])
     return +res[0].count

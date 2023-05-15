@@ -6,6 +6,9 @@ import {
     avg_distance_journeys_to_station,
     avg_distance_journeys_to_station_filtered_by_month,
     count_journeys_for_search,
+    count_journeys_from_station,
+    count_journeys_from_station_filter_by_month,
+    count_journeys_to_station, count_journeys_to_station_filter_by_month,
     get_nth_journey_id,
     top_n_departures,
     top_n_departures_filtered_by_month,
@@ -13,7 +16,6 @@ import {
     top_n_destinations_filtered_by_month
 } from "../helpers";
 import {Station} from "../../src/models/Station";
-import {resourceLimits} from "worker_threads";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -88,36 +90,68 @@ describe("Test Journey entity: getPaginatedJourneys", ()=>{
 })
 
 describe("Test Journey entity: getNumberOfJourneysFromStation", () => {
-    it.each([[0], [-2], [-10]])
-    ("Test getNumberOfJourneysFromStation for not valid input: station id %d", async(id) => {
-        await expect(Journey.getNumberOfJourneysFromStation(id)).rejects.toThrowError(RangeError)
-    })
-    it.each([[1, 23800], [503, 3232]])
-    ("Test getNumberOfJourneysFromStation for valid input: station id %d", async(id, expectedNumberOfJourneys) => {
+    it.each([[1,], [503]])
+    ("Test for valid input: station id %d", async(id) => {
         const numberOfJourneys = await Journey.getNumberOfJourneysFromStation(id)
+        const expectedNumberOfJourneys:number = await count_journeys_from_station(id)
         expect(numberOfJourneys).toEqual(expectedNumberOfJourneys)
     })
     it.each([[504, 0], [1000, 0]])
-    ("Test getNumberOfJourneysFromStation for not existent station: station id %d", async(id, expectedNumberOfJourneys) => {
+    ("Test for not existent station: station id %d", async(id, expectedNumberOfJourneys) => {
         const numberOfJourneys = await Journey.getNumberOfJourneysFromStation(id)
         expect(numberOfJourneys).toEqual(expectedNumberOfJourneys)
+    })
+    it.each([[0], [-2], [-10]])
+    ("Test for not valid input: station id %d", async(id) => {
+        await expect(Journey.getNumberOfJourneysFromStation(id)).rejects.toThrowError(RangeError)
+    })
+    it.each([[503, 5], [1, 6], [22, 7]])("Test for valid ids and valid months: id %d, month %d", async(id:number, month:number) =>{
+        const numberOfJourneys:number = await Journey.getNumberOfJourneysFromStation(id, month)
+        const expectedNumberOfJourneys:number = await count_journeys_from_station_filter_by_month(id, month)
+        expect(numberOfJourneys).toEqual(expectedNumberOfJourneys)
+    })
+    it.each([[503, 4], [1, 8], [503, 1]])("Test for valid ids and month not in database: id %d, month %d", async(id:number, month:number) => {
+        const numberOfJourneys:number = await Journey.getNumberOfJourneysFromStation(id, month)
+        expect(numberOfJourneys).toEqual(0)
+    })
+    it.each([[503, -1], [1, 0], [503, 13]])("Test for valid ids and month not in database: id %d, month %d", async(id:number, month:number) => {
+        await expect(Journey.getNumberOfJourneysFromStation(id, month)).rejects.toThrowError(RangeError)
+    })
+    it.each([[502, -1], [5000, 0], [502, 13]])("Test for valid but not existent ids and month not in database: id %d, month %d", async(id:number, month:number) => {
+        await expect(Journey.getNumberOfJourneysFromStation(id, month)).rejects.toThrowError(RangeError)
     })
 })
 
 describe("Test Journey entity: getNumberOfJourneysToStation", () => {
     it.each([[0], [-2], [-10]])
-    ("Test getNumberOfJourneysFromStation for not valid input: station id %d", async(id) => {
+    ("Test for not valid ids: station id %d", async(id:number) => {
         await expect(Journey.getNumberOfJourneysToStation(id)).rejects.toThrowError(RangeError)
     })
-    it.each([[1, 24288], [503, 3144]])
-    ("Test getNumberOfJourneysFromStation for valid input: station id %d", async(id, expectedNumberOfJourneys) => {
-        const numberOfJourneys = await Journey.getNumberOfJourneysToStation(id)
+    it.each([[1], [503]])
+    ("Test for valid input: station id %d", async(id:number) => {
+        const numberOfJourneys:number = await Journey.getNumberOfJourneysToStation(id)
+        const expectedNumberOfJourneys:number = await count_journeys_to_station(id)
         expect(numberOfJourneys).toEqual(expectedNumberOfJourneys)
     })
-    it.each([[504, 0], [1000, 0]])
-    ("Test getNumberOfJourneysFromStation for not existent station: station id %d", async(id, expectedNumberOfJourneys) => {
-        const numberOfJourney = await Journey.getNumberOfJourneysToStation(id)
-        await expect(numberOfJourney).toEqual(expectedNumberOfJourneys)
+    it.each([[504], [1000]])
+    ("Test for not existent station: station id %d", async(id:number) => {
+        const numberOfJourney:number = await Journey.getNumberOfJourneysToStation(id)
+        await expect(numberOfJourney).toEqual(0)
+    })
+    it.each([[503, 5], [1, 6], [22, 7]])("Test for valid ids and valid months: id %d, month %d", async(id:number, month:number) =>{
+        const numberOfJourneys:number = await Journey.getNumberOfJourneysToStation(id, month)
+        const expectedNumberOfJourneys:number = await count_journeys_to_station_filter_by_month(id, month)
+        expect(numberOfJourneys).toEqual(expectedNumberOfJourneys)
+    })
+    it.each([[503, 4], [1, 9], [503, 1]])("Test for valid ids and month not in database: id %d, month %d", async(id:number, month:number) => {
+        const numberOfJourneys:number = await Journey.getNumberOfJourneysToStation(id, month)
+        expect(numberOfJourneys).toEqual(0)
+    })
+    it.each([[503, -1], [1, 0], [503, 13]])("Test for valid ids and month not in database: id %d, month %d", async(id:number, month:number) => {
+        await expect(Journey.getNumberOfJourneysToStation(id, month)).rejects.toThrowError(RangeError)
+    })
+    it.each([[502, -1], [5000, 0], [502, 13]])("Test for valid but not existent ids and month not in database: id %d, month %d", async(id:number, month:number) => {
+        await expect(Journey.getNumberOfJourneysToStation(id, month)).rejects.toThrowError(RangeError)
     })
 })
 
