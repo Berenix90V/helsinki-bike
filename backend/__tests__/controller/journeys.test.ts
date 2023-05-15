@@ -15,7 +15,13 @@ import {
     avg_distance_journeys_from_station,
     avg_distance_journeys_to_station,
     count_journeys_for_search,
-    count_journeys_instances, top_n_departures, top_n_destinations
+    count_journeys_from_station,
+    count_journeys_from_station_filter_by_month,
+    count_journeys_instances,
+    count_journeys_to_station,
+    count_journeys_to_station_filter_by_month,
+    top_n_departures,
+    top_n_destinations
 } from "../helpers";
 
 beforeEach(async ()=>{
@@ -73,12 +79,13 @@ describe("Test journey controller: countTotalJourneys", () => {
 })
 
 describe("Test journey controller: getNumberOfJourneysFromStation", () => {
-    it.each([[1, 23800], [503, 3232]])("Test with valid inputs: station ID %d", async(id, nJourneys) => {
+    it.each([[1], [503]])("Test with valid inputs: station ID %d", async(id) => {
+        const expectedNJourneys = await count_journeys_from_station(id)
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
         const res:number = await getNumberOfJourneysFromStation(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
-        expect(res).toEqual(nJourneys)
+        expect(res).toEqual(expectedNJourneys)
     })
     it.each([[-1], [-5]])("Test with invalid numeric inputs, station ID %d", async(id)=>{
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
@@ -86,22 +93,47 @@ describe("Test journey controller: getNumberOfJourneysFromStation", () => {
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
     })
-    it.each([[502, 0], [2000, 0]])("Test with not existent stations, station ID %d", async(id, nJourneys )=>{
+    it.each([[502], [2000]])("Test with not existent stations, station ID %d", async(id)=>{
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
         const res: number = await getNumberOfJourneysFromStation(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
-        expect(res).toEqual(nJourneys)
+        expect(res).toEqual(0)
+    })
+    it.each([[503, 5], [1,6], [22,7]])("Test with valid ids and month: id %d month%d", async (id:number, month:number) =>{
+        const expectedNJourneys:number = await count_journeys_from_station_filter_by_month(id, month)
+        const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
+        const res:number = await getNumberOfJourneysFromStation(id, month)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res).toEqual(expectedNJourneys)
+    })
+    it.each([[503, 4], [1, 3], [1, 9]])("Test with valid ids and months but month not in database: id %d month %d", async (id:number, month:number) =>{
+        const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
+        const res: number = await getNumberOfJourneysFromStation(id, month)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res).toEqual(0)
+    })
+    it.each([[503, 0], [1, 14]])("Test with valid ids and month not valid: id %d month %d", async(id:number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
+        await expect(getNumberOfJourneysFromStation(id, month)).rejects.toThrowError(RangeError)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+    })
+    it.each([[NaN, 6], [NaN, 1], [NaN, 14], [503, NaN], [502, NaN], [50000, NaN]])("Test for NaN values: id %d month %d", async(id:number, month:number)=>{
+        await expect(getNumberOfJourneysFromStation(id, month)).rejects.toThrowError(TypeError)
     })
 })
 
 describe("Test journey controller: getNumberOfJourneysToStation", () => {
-    it.each([[1, 24288], [503, 3144]])("Test with invalid inputs: station ID %d", async(id, nJourneys) => {
+    it.each([[1], [503]])("Test with invalid inputs: station ID %d", async(id:number) => {
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysToStation')
         const res: number = await getNumberOfJourneysToStation(id)
+        const expectedNJourneys = await count_journeys_to_station(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
-        expect(res).toEqual(nJourneys)
+        expect(res).toEqual(expectedNJourneys)
     })
     it.each([[-1], [-5]])("Test with invalid numeric inputs: station ID %d", async(id)=>{
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysToStation')
@@ -109,12 +141,36 @@ describe("Test journey controller: getNumberOfJourneysToStation", () => {
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
     })
-    it.each([[502, 0], [2000, 0]])("Test with not existent stations: station ID %d", async(id, nJourneys )=>{
+    it.each([[502], [2000]])("Test with not existent stations: station ID %d", async(id:number)=>{
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysToStation')
         const res:number = await getNumberOfJourneysToStation(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
-        expect(res).toEqual(nJourneys)
+        expect(res).toEqual(0)
+    })
+    it.each([[503, 5], [1,6], [22,7]])("Test with valid ids and month: id %d month%d", async (id:number, month:number) =>{
+        const expectedNJourneys:number = await count_journeys_to_station_filter_by_month(id, month)
+        const spy = jest.spyOn(Journey, 'getNumberOfJourneysToStation')
+        const res:number = await getNumberOfJourneysToStation(id, month)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res).toEqual(expectedNJourneys)
+    })
+    it.each([[503, 4], [1, 3], [1, 9]])("Test with valid ids and months but month not in database: id %d month %d", async (id:number, month:number) =>{
+        const spy = jest.spyOn(Journey, 'getNumberOfJourneysToStation')
+        const res: number = await getNumberOfJourneysToStation(id, month)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res).toEqual(0)
+    })
+    it.each([[503, 0], [1, 14]])("Test with valid ids and month not valid: id %d month %d", async(id:number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getNumberOfJourneysToStation')
+        await expect(getNumberOfJourneysToStation(id, month)).rejects.toThrowError(RangeError)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+    })
+    it.each([[NaN, 6], [NaN, 1], [NaN, 14], [503, NaN], [502, NaN], [50000, NaN]])("Test for NaN values: id %d month %d", async(id:number, month:number)=>{
+        await expect(getNumberOfJourneysToStation(id, month)).rejects.toThrowError(TypeError)
     })
 })
 
