@@ -55,32 +55,35 @@ function JourneysStats({id}: JourneysParameters){
     }, [id])
     return(
         <>
+            <h3>Journeys from station</h3>
             <Row>
-                <Col sm={6}>
-                    <p><b>Journeys from station</b></p>
+                <Col>
+                    <p><b>Total journeys</b></p>
                     <p>{nJourneysFrom}</p>
-                    <Row>
-                        <p><b>Average distance</b></p>
-                        <p>{(avgJourneyFrom/1000).toFixed(2)}</p>
-                    </Row>
-                    <Row>
-                        <p><b>Top 5 Destinations</b></p>
-                        <DestinationsTable departure_id={id}/>
-                    </Row>
-
                 </Col>
-                <Col sm={6}>
-                    <p><b>Journeys to station</b></p>
+                <Col>
+                    <p><b>Average distance</b></p>
+                    <p>{(avgJourneyFrom/1000).toFixed(2)}</p>
+                </Col>
+            </Row>
+            <Row>
+                <p><b>Top 5 Destinations</b></p>
+                <DestinationsTable departure_id={id}/>
+            </Row>
+            <h3>Journeys to station</h3>
+            <Row>
+                <Col>
+                    <p><b>Total journeys</b></p>
                     <p>{nJourneysTo}</p>
-                    <Row>
-                        <p><b>Average distance</b></p>
-                        <p>{(avgJourneyTo/1000).toFixed(2)}</p>
-                    </Row>
-                    <Row>
-                        <p><b>Top 5 Departures</b></p>
-                        <DeparturesTable return_id={id}/>
-                    </Row>
                 </Col>
+                <Col>
+                    <p><b>Average distance</b></p>
+                    <p>{(avgJourneyTo/1000).toFixed(2)}</p>
+                </Col>
+            </Row>
+            <Row>
+                <p><b>Top 5 Departures</b></p>
+                <DeparturesTable return_id={id}/>
             </Row>
         </>
     )
