@@ -35,6 +35,11 @@ export async function avg_distance_journeys_from_station(id:number):Promise<numb
     return +res[0].avg
 }
 
+export async function avg_distance_journeys_from_station_filtered_by_month(id:number, month:number){
+    const res = await AppDataSource.query(`SELECT AVG(trips."Covered_distance") FROM trips WHERE "Departure_station_ID"=$1 AND extract(month from "Departure_datetime")=$2`, [id, month])
+    return +res[0].avg
+}
+
 export async function avg_distance_journeys_to_station(id:number):Promise<number>{
     const res = await AppDataSource.query('SELECT AVG("Covered_distance") FROM trips WHERE "Return_station_ID"=$1', [id])
     return +res[0].avg
