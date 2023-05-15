@@ -224,10 +224,10 @@ export class Journey extends BaseEntity{
         if(response === undefined)
             throw Error("Query not performed")
         else
-        if(response.avg == null)
-            return 0
-        else
-            return response.avg
+            if(response.avg == null)
+                return 0
+            else
+                return response.avg
     }
 
     static async getTopNDestinations(id:number, limit:number, month?:number): Promise<{count:number, Return_station_ID:number, Name:string}[]>{
