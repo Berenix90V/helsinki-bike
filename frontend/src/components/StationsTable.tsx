@@ -2,7 +2,7 @@ import {Col, Row, Table} from "react-bootstrap"
 import {useEffect, useState} from "react"
 import {Station} from "../interfaces/Station";
 import {
-    countSearchedStationsByName,
+    countSearchedStationsByName, countStations,
     getPaginatedSearchedStationsByName,
     getPaginatedStations
 } from "../api/stations_api";
@@ -20,7 +20,10 @@ function StationsTable(){
 
     useEffect(()=>{
         if(patternName==="")
-            setTotalStation(457)
+            countStations()
+                .then((response) => {
+                    setTotalStation(response.data.count)
+                })
         else
             countSearchedStationsByName(patternName)
                 .then((response)=>{
