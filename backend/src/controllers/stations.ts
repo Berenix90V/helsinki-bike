@@ -4,6 +4,10 @@ const getAllStations = async () => {
     return await Station.fetchAll()
 }
 
+const countStations = async () => {
+    return await Station.countTotal()
+}
+
 const getPaginatedStations = async (skip: number, take:number)=> {
     if (Number.isNaN(take))
         throw TypeError("Provided \"take\" value is not a number. Please provide a numeric value")
@@ -32,4 +36,4 @@ const getPaginatedSearchedStations = async(skip:number, take:number, patternName
 }
 
 
-export {getAllStations, getPaginatedStations, getStationByID, getPaginatedSearchedStations, countSearchedStations}
+export {getAllStations, getPaginatedStations, getStationByID, getPaginatedSearchedStations, countSearchedStations, countStations}

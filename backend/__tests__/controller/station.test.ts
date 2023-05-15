@@ -1,12 +1,14 @@
 import {AppDataSource} from "../../src/db/data-sources";
 import {Station} from "../../src/models/Station";
 import {
+    countStations,
     getAllStations,
     getPaginatedSearchedStations,
     getPaginatedStations,
     getStationByID
 } from "../../src/controllers/stations";
 import {Journey} from "../../src/models/Journey";
+import {count_stations_instances} from "../helpers";
 
 beforeEach(async ()=>{
     await AppDataSource.initialize()
@@ -21,6 +23,16 @@ describe("Test stations controller getAllStation", ()=> {
         const spy = jest.spyOn(Station, 'fetchAll')
         await getAllStations()
         expect(spy).toHaveBeenCalled()
+    })
+})
+
+describe("Test stations controller countStations", () =>{
+    test("Test that the response is correct", async() =>{
+        const spy = jest.spyOn(Station, 'countTotal')
+        const totalStations = await countStations()
+        const expectedTotalStations = await count_stations_instances()
+        expect(spy).toHaveBeenCalled()
+        expect(totalStations).toEqual(expectedTotalStations)
     })
 })
 

@@ -1,6 +1,6 @@
 import express from "express";
 import {
-    countSearchedStations,
+    countSearchedStations, countStations,
     getPaginatedSearchedStations,
     getPaginatedStations,
     getStationByID
@@ -28,6 +28,19 @@ router.route("/").get(async(req, res) => {
         })
 })
 
+router.route("/count/").get(async(req, res)=>{
+    await countStations()
+        .then((countStations: number) =>
+            res.status(200).json({
+                count: countStations
+            })
+        )
+        .catch((err) =>
+            res.status(404).json({
+                err: err.message
+            })
+        )
+})
 router.route("/count/search/").get(async(req, res)=>{
     const patternName:string = req.query.patternName as string
     console.log(patternName)
