@@ -39,6 +39,15 @@ describe("Test get all stations route", () => {
     })
 })
 
+describe("GET /stations/count/", ()=>{
+    test("Test api returns the correct count", async() => {
+        const res = await request(app).get("/api/v1/stations/count/")
+        const totalStations:number = await count_stations_instances()
+        expect(res.statusCode).toBe(200)
+        expect(res.body.count).toEqual(totalStations)
+    })
+})
+
 describe("GET /stations/count/search/ route", ()=>{
     it.each([[""], ["A"], ["Kirkko"], ["La"], ["2"]])("Test count station for station name beginning with %s", async(patternName:string)=>{
         const countStations:number = await countSearchedStations(patternName)
