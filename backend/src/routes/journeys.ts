@@ -135,7 +135,10 @@ router.route("/to/:id").get(async(req, res) =>{
 
 router.route('/from/:id/distance/avg').get(async(req, res) =>{
     const id = parseInt(req.params.id)
-    await getAvgDistanceJourneysFrom(id)
+    let month:string|undefined|number = req.query.month as string
+    if (month !== undefined)
+        month = parseInt(month)
+    await getAvgDistanceJourneysFrom(id, month)
         .then((avgDistance:number)=>
             res.status(200).json({
                 avg: avgDistance
@@ -154,8 +157,11 @@ router.route('/from/:id/distance/avg').get(async(req, res) =>{
 })
 
 router.route('/to/:id/distance/avg').get(async(req, res) =>{
-    const id = parseInt(req.params.id)
-    await getAvgDistanceJourneysTo(id)
+    const id: number = parseInt(req.params.id)
+    let month:string|undefined|number = req.query.month as string
+    if (month !== undefined)
+        month = parseInt(month)
+    await getAvgDistanceJourneysTo(id, month)
         .then((avgDistance:number)=>
             res.status(200).json({
                 avg: avgDistance

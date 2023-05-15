@@ -2,10 +2,18 @@ import app from "../../src/index"
 import {AppDataSource} from "../../src/db/data-sources";
 import request from "supertest";
 import {
-    avg_distance_journeys_from_station, avg_distance_journeys_to_station,
-    count_journeys_for_search, count_journeys_from_station, count_journeys_from_station_filter_by_month,
-    count_journeys_instances, count_journeys_to_station, count_journeys_to_station_filter_by_month,
-    get_nth_journey_id, top_n_departures, top_n_destinations
+    avg_distance_journeys_from_station, avg_distance_journeys_from_station_filtered_by_month,
+    avg_distance_journeys_to_station,
+    avg_distance_journeys_to_station_filtered_by_month,
+    count_journeys_for_search,
+    count_journeys_from_station,
+    count_journeys_from_station_filter_by_month,
+    count_journeys_instances,
+    count_journeys_to_station,
+    count_journeys_to_station_filter_by_month,
+    get_nth_journey_id,
+    top_n_departures,
+    top_n_destinations
 } from "../helpers";
 
 beforeEach(async ()=>{
@@ -224,6 +232,28 @@ describe("GET /journeys/from/:id/distance/avg", ()=>{
         expect(res.body).toHaveProperty('avg')
         expect(res.body.avg).toEqual(expectedAvg)
     })
+    it.each([[503, "abc",  400],[503, true, 400],[1, -2, 400], [2, 0, 400], [503, 1, 200], [503, 6, 200], [5000, 13, 400]])
+    ("Test status code for trips from station %d and month %d", async(id, month, statusCode)=>{
+        const res = await request(app).get('/api/v1/journeys/from/' +id+'/distance/avg/?month='+month)
+        expect(res.statusCode).toBe(statusCode)
+    })
+    it.each([[1, 6], [503, 5], [22, 7]])
+    ("Test response valid ids and month in databases", async(id: number, month:number)=>{
+        const res = await request(app).get('/api/v1/journeys/from/' + id+'/distance/avg/?month='+ month)
+        const expectedAvg = await avg_distance_journeys_from_station_filtered_by_month(id, month)
+        expect(res.body).toHaveProperty('avg')
+        expect(res.body.avg).toEqual(expectedAvg)
+    })
+    it.each([[504, 6],[5000, 5]])("Test for not existent ids but month in database. id %d month %d", async(id:number, month:number) => {
+        const res = await request(app).get('/api/v1/journeys/from/' + id+'/distance/avg/?month='+ month)
+        expect(res.body).toHaveProperty('avg')
+        expect(res.body.avg).toEqual(0)
+    })
+    it.each([[503, 9],[1, 2]])("Test for existent ids but month not in database. id %d month %d", async(id:number, month:number) => {
+        const res = await request(app).get('/api/v1/journeys/from/' + id+'/distance/avg/?month='+ month)
+        expect(res.body).toHaveProperty('avg')
+        expect(res.body.avg).toEqual(0)
+    })
 })
 
 describe("GET /journeys/to/:id/distance/avg", ()=>{
@@ -238,6 +268,28 @@ describe("GET /journeys/to/:id/distance/avg", ()=>{
         const expectedAvg = await avg_distance_journeys_to_station(id)
         expect(res.body).toHaveProperty('avg')
         expect(res.body.avg).toEqual(expectedAvg)
+    })
+    it.each([[503, "abc",  400],[503, true, 400],[1, -2, 400], [2, 0, 400], [503, 1, 200], [503, 6, 200], [5000, 13, 400]])
+    ("Test status code for trips from station %d and month %d", async(id, month, statusCode)=>{
+        const res = await request(app).get('/api/v1/journeys/to/' +id+'/distance/avg/?month='+month)
+        expect(res.statusCode).toBe(statusCode)
+    })
+    it.each([[1, 6], [503, 5], [22, 7]])
+    ("Test response valid ids and month in databases", async(id: number, month:number)=>{
+        const res = await request(app).get('/api/v1/journeys/to/' + id+'/distance/avg/?month='+ month)
+        const expectedAvg = await avg_distance_journeys_to_station_filtered_by_month(id, month)
+        expect(res.body).toHaveProperty('avg')
+        expect(res.body.avg).toEqual(expectedAvg)
+    })
+    it.each([[504, 6],[5000, 5]])("Test for not existent ids but month in database. id %d month %d", async(id:number, month:number) => {
+        const res = await request(app).get('/api/v1/journeys/to/' + id+'/distance/avg/?month='+ month)
+        expect(res.body).toHaveProperty('avg')
+        expect(res.body.avg).toEqual(0)
+    })
+    it.each([[503, 9],[1, 2]])("Test for existent ids but month not in database. id %d month %d", async(id:number, month:number) => {
+        const res = await request(app).get('/api/v1/journeys/to/' + id+'/distance/avg/?month='+ month)
+        expect(res.body).toHaveProperty('avg')
+        expect(res.body.avg).toEqual(0)
     })
 })
 
