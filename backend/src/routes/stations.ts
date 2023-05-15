@@ -1,5 +1,10 @@
 import express from "express";
-import {getAllStations, getPaginatedStations, getStationByID} from "../controllers/stations";
+import {
+    countSearchedStations,
+    getPaginatedSearchedStations,
+    getPaginatedStations,
+    getStationByID
+} from "../controllers/stations";
 import {Station} from "../models/Station";
 const router = express.Router()
 
@@ -11,6 +16,45 @@ router.route("/").get(async(req, res) => {
             res.status(200).json({
                 stations: allStations
         }))
+        .catch((err) => {
+            if (err instanceof RangeError || err instanceof TypeError)
+                res.status(400).json({
+                    err: err.message
+                })
+            else
+                res.status(404).json({
+                    err: err.message
+                })
+        })
+})
+
+router.route("/count/search/").get(async(req, res)=>{
+    const patternName:string = req.query.patternName as string
+    console.log(patternName)
+    await countSearchedStations(patternName)
+        .then((countStations: number) =>
+            res.status(200).json({
+                count: countStations
+            })
+        )
+        .catch((err) => {
+            res.status(404).json({
+                err: err.message
+            })
+        })
+})
+
+router.route("/search/").get(async(req, res)=>{
+    const patternName:string = req.query.patternName as string
+    const take:number = parseInt(req.query.take as string)
+    const skip:number = parseInt(req.query.skip as string)
+    console.log(patternName)
+    await getPaginatedSearchedStations(skip, take, patternName)
+        .then((stations: Station[]) =>
+            res.status(200).json({
+                stations: stations
+            })
+        )
         .catch((err) => {
             if (err instanceof RangeError || err instanceof TypeError)
                 res.status(400).json({
@@ -48,5 +92,7 @@ router.route("/:id").get(async(req, res) => {
             }
         })
 })
+
+
 
 export {router}

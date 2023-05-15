@@ -1,4 +1,4 @@
-import {BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity, Column, Entity, Like, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Journey} from "./Journey";
 
 @Entity({name: "stations", synchronize:false})
@@ -106,6 +106,34 @@ export class Station extends BaseEntity{
             },
             skip: skip,
             take: take
+        })
+    }
+
+    static async countStationForSearch(patternName:string){
+        return await Station.count({
+            where:{
+                Name:Like(patternName+"%")
+            }
+        })
+    }
+
+    static async getPaginatedStationsForSearch(skip:number, take:number, patternName:string){
+        const totalStations:number = await Station.countStationForSearch(patternName)
+        if (take<=0){
+            throw RangeError("Bad request: The number of required objects must be > 0")
+        }
+        if (skip<0){
+            throw RangeError("Bad request: The beginning point must be >= 0")
+        }
+        if (skip !=0 && skip>=totalStations){
+            throw RangeError("Bad request: The beginning point must be < total records")
+        }
+        return await Station.find({
+            skip:skip,
+            take:take,
+            where:{
+                Name:Like(patternName+"%")
+            }
         })
     }
     static async getByID(id:number): Promise<Station>{

@@ -19,4 +19,17 @@ const getStationByID = async(id:number) => {
     return await Station.getByID(id)
 }
 
-export {getAllStations, getPaginatedStations, getStationByID}
+const countSearchedStations = async(patternName:string)=>{
+    return await Station.countStationForSearch(patternName)
+}
+
+const getPaginatedSearchedStations = async(skip:number, take:number, patternName:string) => {
+    if (Number.isNaN(take))
+        throw TypeError("Provided \"take\" value is not a number. Please provide a numeric value")
+    if (Number.isNaN(skip))
+        throw TypeError("Provided \"skip\" value is not a number. Please provide a numeric value")
+    return await Station.getPaginatedStationsForSearch(skip, take, patternName)
+}
+
+
+export {getAllStations, getPaginatedStations, getStationByID, getPaginatedSearchedStations, countSearchedStations}
