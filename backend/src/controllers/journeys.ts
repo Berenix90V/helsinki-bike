@@ -48,15 +48,25 @@ export const countJourneysForSearch = async(patternDepartureStation:string, patt
     return await Journey.countJourneysForSearch(patternDepartureStation, patternReturnStation)
 }
 
-export const getAvgDistanceJourneysFrom = async(id:number)=>{
+export const getAvgDistanceJourneysFrom = async(id:number, month?:number)=>{
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
+    if(month !== undefined)
+        if(Number.isNaN(month))
+            throw TypeError("Provided \"month\" value is not a number. Please provide a numeric value")
+        else
+            return await Journey.getAverageDistanceFrom(id, month)
     return await Journey.getAverageDistanceFrom(id)
 }
 
-export const getAvgDistanceJourneysTo = async(id:number)=>{
+export const getAvgDistanceJourneysTo = async(id:number, month?:number)=>{
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
+    if(month !== undefined)
+        if(Number.isNaN(month))
+            throw TypeError("Provided \"month\" value is not a number. Please provide a numeric value")
+        else
+            return await Journey.getAverageDistanceTo(id, month)
     return await Journey.getAverageDistanceTo(id)
 }
 

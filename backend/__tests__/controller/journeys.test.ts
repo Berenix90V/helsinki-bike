@@ -12,8 +12,8 @@ import {
 import {Journey} from "../../src/models/Journey";
 import {AppDataSource} from "../../src/db/data-sources";
 import {
-    avg_distance_journeys_from_station,
-    avg_distance_journeys_to_station,
+    avg_distance_journeys_from_station, avg_distance_journeys_from_station_filtered_by_month,
+    avg_distance_journeys_to_station, avg_distance_journeys_to_station_filtered_by_month,
     count_journeys_for_search,
     count_journeys_from_station,
     count_journeys_from_station_filter_by_month,
@@ -235,7 +235,7 @@ describe("Test journey controller: countJourneysWithDepartureStationStartingWith
 })
 
 describe("Test journey controller: avgJourneysFrom", () => {
-    it.each([[1], [503]])("Test with invalid inputs: station ID %d", async(id) => {
+    it.each([[1], [503]])("Test with valid inputs: station ID %d", async(id) => {
         const spy = jest.spyOn(Journey, 'getAverageDistanceFrom')
         const res: number = await getAvgDistanceJourneysFrom(id)
         const expectedAvg = await avg_distance_journeys_from_station(id)
@@ -250,14 +250,35 @@ describe("Test journey controller: avgJourneysFrom", () => {
         expect(spy).toBeCalledTimes(1)
     })
     test("Test with invalid NaN input", async()=>{
+        const spy = jest.spyOn(Journey, 'getAverageDistanceFrom')
         await expect(getAvgDistanceJourneysFrom(NaN)).rejects.toThrowError(TypeError)
+        expect(spy).not.toHaveBeenCalled()
     })
-    it.each([[502, 0], [2000, 0]])("Test with not existent stations: station ID %d", async(id, nJourneys )=>{
+    it.each([[502], [2000]])("Test with not existent stations: station ID %d", async(id:number )=>{
         const spy = jest.spyOn(Journey, 'getAverageDistanceFrom')
         const res:number = await getAvgDistanceJourneysFrom(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
-        expect(res).toEqual(nJourneys)
+        expect(res).toEqual(0)
+    })
+    it.each([[1, 5], [503, 6], [503, 9]])("Test with valid inputs: station ID %d month %d", async(id:number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getAverageDistanceFrom')
+        const res: number = await getAvgDistanceJourneysFrom(id, month)
+        const expectedAvg = await avg_distance_journeys_from_station_filtered_by_month(id, month)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res).toEqual(expectedAvg)
+    })
+    it.each([[1, -2], [503, 13], [503, 0]])("Test not valid months: station ID %d month %d", async(id:number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getAverageDistanceFrom')
+        await expect(getAvgDistanceJourneysFrom(id, month)).rejects.toThrowError(RangeError)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+    })
+    it.each([[503, NaN], [NaN, NaN]])("Test with not valid types NaN: id %d month %d", async(id: number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getAverageDistanceFrom')
+        await expect(getAvgDistanceJourneysFrom(NaN)).rejects.toThrowError(TypeError)
+        expect(spy).not.toHaveBeenCalled()
     })
 })
 
@@ -277,14 +298,35 @@ describe("Test journey controller: avgJourneysTo", () => {
         expect(spy).toBeCalledTimes(1)
     })
     test("Test with invalid NaN input", async()=>{
+        const spy = jest.spyOn(Journey, 'getAverageDistanceTo')
         await expect(getAvgDistanceJourneysTo(NaN)).rejects.toThrowError(TypeError)
+        expect(spy).not.toHaveBeenCalled()
     })
-    it.each([[502, 0], [2000, 0]])("Test with not existent stations: station ID %d", async(id, nJourneys )=>{
+    it.each([[502], [2000]])("Test with not existent stations: station ID %d", async(id:number)=>{
         const spy = jest.spyOn(Journey, 'getAverageDistanceTo')
         const res:number = await getAvgDistanceJourneysTo(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
-        expect(res).toEqual(nJourneys)
+        expect(res).toEqual(0)
+    })
+    it.each([[1, 5], [503, 6], [503, 9]])("Test with valid inputs: station ID %d month %d", async(id:number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getAverageDistanceTo')
+        const res: number = await getAvgDistanceJourneysTo(id, month)
+        const expectedAvg = await avg_distance_journeys_to_station_filtered_by_month(id, month)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res).toEqual(expectedAvg)
+    })
+    it.each([[1, -2], [503, 13], [503, 0]])("Test not valid months: station ID %d month %d", async(id:number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getAverageDistanceTo')
+        await expect(getAvgDistanceJourneysTo(id, month)).rejects.toThrowError(RangeError)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+    })
+    it.each([[503, NaN], [NaN, NaN]])("Test with not valid types NaN: id %d month %d", async(id: number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getAverageDistanceTo')
+        await expect(getAvgDistanceJourneysTo(NaN)).rejects.toThrowError(TypeError)
+        expect(spy).not.toHaveBeenCalled()
     })
 })
 
