@@ -115,7 +115,7 @@ describe("Test journey controller: getNumberOfJourneysFromStation", () => {
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(0)
     })
-    it.each([[503, 0], [1, 14]])("Test with valid ids and month not valid: id %d month %d", async(id:number, month:number) => {
+    it.each([[503, 0], [1, 14], [503, -2]])("Test with valid ids and month not valid: id %d month %d", async(id:number, month:number) => {
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
         await expect(getNumberOfJourneysFromStation(id, month)).rejects.toThrowError(RangeError)
         expect(spy).toHaveBeenCalled()

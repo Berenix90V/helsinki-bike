@@ -43,7 +43,6 @@ router.route("/count/").get(async(req, res)=>{
 })
 router.route("/count/search/").get(async(req, res)=>{
     const patternName:string = req.query.patternName as string
-    console.log(patternName)
     await countSearchedStations(patternName)
         .then((countStations: number) =>
             res.status(200).json({
@@ -61,7 +60,6 @@ router.route("/search/").get(async(req, res)=>{
     const patternName:string = req.query.patternName as string
     const take:number = parseInt(req.query.take as string)
     const skip:number = parseInt(req.query.skip as string)
-    console.log(patternName)
     await getPaginatedSearchedStations(skip, take, patternName)
         .then((stations: Station[]) =>
             res.status(200).json({
