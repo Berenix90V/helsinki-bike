@@ -1,25 +1,46 @@
 import {Col, Row, Table} from "react-bootstrap"
 import {useEffect, useState} from "react"
 import {Station} from "../interfaces/Station";
-import {getPaginatedStations} from "../api/stations_api";
+import {
+    countSearchedStationsByName,
+    getPaginatedSearchedStationsByName,
+    getPaginatedStations
+} from "../api/stations_api";
 import {useNavigate} from "react-router-dom";
 import {PageSize} from "./PageSize";
 import {TablePagination} from "./TablePagination";
-
 
 function StationsTable(){
     const[stations, setStations] = useState<Station[]>([])
     const [page, setPage] = useState<number>(1)
     const [pageSize, setPageSize] = useState<number>(10)
-    const totalStations = 457
+    const [patternName, setPatternName] = useState<string>("")
+    const [totalStations, setTotalStation] = useState<number>(457)
     const navigate = useNavigate()
+
+    useEffect(()=>{
+        if(patternName==="")
+            setTotalStation(457)
+        else
+            countSearchedStationsByName(patternName)
+                .then((response)=>{
+                    setTotalStation(response.data.count)
+                })
+    }, [totalStations, patternName])
+
     useEffect(() => {
         const skip = pageSize*(page-1)
-        getPaginatedStations(skip, pageSize)
-            .then((response) => {
-                setStations(response.data.stations)
-            })
-    }, [page, pageSize])
+        if(patternName==="")
+            getPaginatedStations(skip, pageSize)
+                .then((response) => {
+                    setStations(response.data.stations)
+                })
+        else
+            getPaginatedSearchedStationsByName(skip, pageSize, patternName)
+                .then((response)=>{
+                    setStations(response.data.stations)
+                })
+    }, [patternName, page, pageSize])
     function RenderStation(station: Station, index:number){
 
         return (
@@ -40,7 +61,10 @@ function StationsTable(){
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
+                    <th>
+                        Name
+                        <p><input onChange={(e)=>setPatternName(e.target.value)}/></p>
+                    </th>
                     <th>City</th>
                     <th>Address</th>
                     <th>Operator</th>

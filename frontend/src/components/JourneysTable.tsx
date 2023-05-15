@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {Journey} from "../interfaces/Journey";
 import {
     countJourneys,
-    countJourneysWithDepartureStaionStartingWith,
+    countJourneysWithDepartureStationStartingWith,
     getPaginatedJourneys,
     getPaginatedJourneysByDepartureStation
 } from "../api/journeys_api";
@@ -36,7 +36,7 @@ function JourneysTable(){
                     setTotalJourneys(response.data.count)
                 })
         else
-            countJourneysWithDepartureStaionStartingWith(patternFrom, patternTo)
+            countJourneysWithDepartureStationStartingWith(patternFrom, patternTo)
                 .then((response)=>{
                     setTotalJourneys(response.data.count)
                 })
