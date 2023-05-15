@@ -112,7 +112,10 @@ router.route("/from/:id").get(async(req, res) =>{
 
 router.route("/to/:id").get(async(req, res) =>{
     const id:number = parseInt(req.params.id)
-    await getNumberOfJourneysToStation(id)
+    let month:string|undefined|number = req.query.month as string
+    if (month !== undefined)
+        month = parseInt(month)
+    await getNumberOfJourneysToStation(id, month)
         .then((nJourneys:number)=>
             res.status(200).json({
                 njourneys: nJourneys
