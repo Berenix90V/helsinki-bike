@@ -45,6 +45,12 @@ export async function avg_distance_journeys_to_station(id:number):Promise<number
     return +res[0].avg
 }
 
+export async function avg_distance_journeys_to_station_filtered_by_month(id:number, month:number){
+    const res = await AppDataSource.query(`SELECT AVG(trips."Covered_distance") FROM trips WHERE "Return_station_ID"=$1 AND extract(month from "Return_datetime")=$2`, [id, month])
+    return +res[0].avg
+}
+
+
 export async function top_n_destinations(id:number, limit:number){
     return await AppDataSource.query('SELECT COUNT("Return_station_ID"), "Return_station_ID", "Name" FROM trips LEFT JOIN stations ON "Return_station_ID"=stations."ID" WHERE "Departure_station_ID"=$1 group by "Return_station_ID", "Name" ORDER BY  count("Return_station_ID") DESC LIMIT $2', [id, limit])
 }

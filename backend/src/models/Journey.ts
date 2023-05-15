@@ -182,14 +182,25 @@ export class Journey extends BaseEntity{
                 return response.avg
     }
 
-    static async getAverageDistanceTo(id:number){
+    static async getAverageDistanceTo(id:number, month?:number){
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
-        const response: {avg:number}|undefined = await Journey
-            .createQueryBuilder('trips')
-            .select('AVG("Covered_distance")')
-            .where("trips.Return_station_ID = :id", { id: id})
-            .getRawOne();
+        let response: {avg:number}|undefined
+        if(month !== undefined)
+            if(month < 1 || month > 12)
+                throw RangeError("Month not valid")
+            else
+                response = await Journey
+                    .createQueryBuilder('trips')
+                    .select('AVG("Covered_distance")')
+                    .where("trips.Return_station_ID = :id AND EXTRACT(MONTH FROM trips.Return_datetime) = :month", { id: id, month:month})
+                    .getRawOne();
+        else
+            response = await Journey
+                .createQueryBuilder('trips')
+                .select('AVG("Covered_distance")')
+                .where("trips.Return_station_ID = :id", { id: id})
+                .getRawOne();
         if(response === undefined)
             throw Error("Query not performed")
         else

@@ -2,7 +2,7 @@ import {Journey} from "../../src/models/Journey";
 import {AppDataSource} from "../../src/db/data-sources";
 import {
     avg_distance_journeys_from_station, avg_distance_journeys_from_station_filtered_by_month,
-    avg_distance_journeys_to_station,
+    avg_distance_journeys_to_station, avg_distance_journeys_to_station_filtered_by_month,
     count_journeys_for_search,
     get_nth_journey_id, top_n_departures, top_n_destinations
 } from "../helpers";
@@ -211,9 +211,28 @@ describe("Test Journey entity: getAverageDistanceTo", ()=>{
     it.each([[-1], [0]])("Test with valid inputs", async(id:number)=>{
         await expect(Journey.getAverageDistanceTo(id)).rejects.toThrowError(RangeError)
     })
-    it.each([[502]])("Test with valid inputs but not existent station", async(id:number)=>{
+    it.each([[502], [5000]])("Test with valid inputs but not existent station", async(id:number)=>{
         const avg: number = await Journey.getAverageDistanceTo(id)
         expect(avg).toEqual(0)
+    })
+    it.each([[503, 5], [1,6], [22,7]])("Test with month selection and valid ids: month %d and  id %d", async(id, month)=>{
+        const avg:number = await Journey.getAverageDistanceTo(id, month)
+        const expectedAvg:number = await avg_distance_journeys_to_station_filtered_by_month(id, month)
+        expect(avg).toEqual(expectedAvg)
+    })
+    it.each([[503, 4], [22, 8]])("Test with month not in database and existing id: id %d month %d", async (id:number, month:number) =>{
+        const avg:number = await Journey.getAverageDistanceTo(id, month)
+        expect(avg).toEqual(0)
+    })
+    it.each([[502, 5], [5000, 9]])("Test with not existing id and month not in database: id %id, month %d", async(id:number, month:number) =>{
+        const avg: number = await Journey.getAverageDistanceTo(id, month)
+        expect(avg).toEqual(0)
+    })
+    it.each([[-10, 20], [0, 0], [-2,-4]])("Test with not valid ids and months: id %d and month %d", async(id:number, month:number) =>{
+        await expect(Journey.getAverageDistanceTo(id, month)).rejects.toThrowError(RangeError)
+    })
+    it.each([[503, -1], [22, 0], [1, 13]])("Test with existing ids and not valid months", async(id:number, month:number) =>{
+        await expect(Journey.getAverageDistanceTo(id, month)).rejects.toThrowError(RangeError)
     })
 })
 
