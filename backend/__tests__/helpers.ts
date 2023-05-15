@@ -47,7 +47,7 @@ export async function count_journeys_to_station_filter_by_month(id:number, month
 
 
 export async function count_stations_for_search(patternName:string): Promise<number>{
-    const res = await AppDataSource.query(`SELECT COUNT(*) FROM stations WHERE "Name" LIKE $1`, [patternName])
+    const res = await AppDataSource.query(`SELECT COUNT(*) FROM stations WHERE "Name" LIKE $1`, [patternName+'%'])
     return +res[0].count
 }
 
