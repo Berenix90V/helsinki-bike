@@ -13,12 +13,18 @@ export function getPaginatedJourneys(skip:number, take: number){
 export function countJourneys(){
     return http.get("journeys/count")
 }
-export function getNJourneysFromStation(id:number){
-    return http.get<{njourneys:number}>("journeys/from/"+id)
+export function getNJourneysFromStation(id:number, month?:number){
+    if(Number.isNaN(month))
+        return http.get<{njourneys:number}>("journeys/from/"+id)
+    else
+        return http.get<{njourneys:number}>("journeys/from/"+id+"/?month="+month)
 }
 
-export function getNJourneysToStation(id:number){
-    return http.get<{njourneys:number}>("journeys/to/"+id)
+export function getNJourneysToStation(id:number, month?:number){
+    if(Number.isNaN(month))
+        return http.get<{njourneys:number}>("journeys/to/"+id)
+    else
+        return http.get<{njourneys:number}>("journeys/to/"+id+"/?month="+month)
 }
 
 export function getPaginatedJourneysByDepartureStation(skip:number, take: number, patternFrom:string, patternTo:string){
