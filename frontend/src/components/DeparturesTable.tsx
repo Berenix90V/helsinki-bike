@@ -4,13 +4,14 @@ import {Table} from "react-bootstrap";
 import {Departure} from "../interfaces/Departure";
 
 type DestinationsParameters={
-    return_id: number
+    return_id: number,
+    month: string
 }
-export function DeparturesTable({return_id}: DestinationsParameters){
+export function DeparturesTable({return_id, month}: DestinationsParameters){
     const [topDepartures, setTopDepartures] = useState<Departure[]>([])
     useEffect(()=>{
         const getTopNDepartures = async () =>{
-            return await topNDepartures(return_id,5)
+            return await topNDepartures(return_id,5, month)
                 .then((response)=> {
                     return response.data.departures
                 })
@@ -20,7 +21,7 @@ export function DeparturesTable({return_id}: DestinationsParameters){
             .then(setTopDepartures)
             .catch((err)=>err)
 
-    }, [return_id])
+    }, [return_id, month])
 
     function renderDestination(departure:Departure, index:number){
         return(

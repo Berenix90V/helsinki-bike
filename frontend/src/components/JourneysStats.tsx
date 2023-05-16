@@ -1,4 +1,4 @@
-import {Col, Row} from "react-bootstrap";
+import {Col, Row, Form} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {
     avgJourneyFromStation,
@@ -17,25 +17,26 @@ function JourneysStats({id}: JourneysParameters){
     const [nJourneysTo, setNJourneysTo] = useState<number>(0)
     const [avgJourneyFrom, setAvgJourneyFrom] = useState<number>(0)
     const [avgJourneyTo, setAvgJourneyTo] = useState<number>(0)
+    const [month, setMonth] = useState<string>("")
 
     useEffect(()=>{
         const getNJourneysFrom = async () => {
-            return await getNJourneysFromStation(id)
+            return await getNJourneysFromStation(id, month)
                 .then((response) => response.data.njourneys)
                 .catch((err)=>err)
         }
         const getNJourneysTo = async () =>{
-            return await getNJourneysToStation(id)
+            return await getNJourneysToStation(id, month)
                 .then((response) => response.data.njourneys)
                 .catch((err) => err)
         }
         const getAvgJourneyFromStation = async () => {
-            return await avgJourneyFromStation(id)
+            return await avgJourneyFromStation(id, month)
                 .then((response)=> response.data.avg)
                 .catch((err)=>err)
         }
         const getAvgJourneyToStation = async () => {
-            return await avgJourneyToStation(id)
+            return await avgJourneyToStation(id, month)
                 .then((response)=> response.data.avg)
                 .catch((err)=>err)
         }
@@ -52,10 +53,16 @@ function JourneysStats({id}: JourneysParameters){
         getAvgJourneyToStation()
             .then(setAvgJourneyTo)
             .catch((err)=>err)
-    }, [id])
+    }, [id, month])
     return(
         <>
             <h3>Journeys from station</h3>
+            <Form.Select aria-label="Filter statistics by month" onChange={(el)=>setMonth(el.target.value)}>
+                <option value="">Total</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+            </Form.Select>
             <Row>
                 <Col>
                     <p><b>Total journeys</b></p>
@@ -68,7 +75,7 @@ function JourneysStats({id}: JourneysParameters){
             </Row>
             <Row>
                 <p><b>Top 5 Destinations</b></p>
-                <DestinationsTable departure_id={id}/>
+                <DestinationsTable departure_id={id} month={month}/>
             </Row>
             <h3>Journeys to station</h3>
             <Row>
@@ -83,7 +90,7 @@ function JourneysStats({id}: JourneysParameters){
             </Row>
             <Row>
                 <p><b>Top 5 Departures</b></p>
-                <DeparturesTable return_id={id}/>
+                <DeparturesTable return_id={id} month={month}/>
             </Row>
         </>
     )
