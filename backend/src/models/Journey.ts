@@ -246,7 +246,7 @@ export class Journey extends BaseEntity{
                     .innerJoin("journey.Return_station", "Return_station")
                     .select("journey.Return_station_ID, Return_station.Name")
                     .addSelect("COUNT(journey.Return_station_ID)", "count")
-                    .where("journey.Departure_station_ID = :id AND EXTRACT(MONTH FROM journey.Return_datetime) = :month", { id: id, month:month})
+                    .where("journey.Departure_station_ID = :id AND EXTRACT(MONTH FROM journey.Departure_datetime) = :month", { id: id, month:month})
                     .groupBy("journey.Return_station_ID, Return_station.Name")
                     .orderBy("count", "DESC")
                     .limit(limit)

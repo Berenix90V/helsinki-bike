@@ -182,7 +182,10 @@ router.route('/to/:id/distance/avg').get(async(req, res) =>{
 router.route('/from/:id/top/destinations/').get(async(req,res)=>{
     const id:number = parseInt(req.params.id)
     const limit:number = parseInt(req.query.limit as string)
-    await getTopNDestinations(id, limit)
+    let month:string|undefined|number = req.query.month as string
+    if (month !== undefined)
+        month = parseInt(month)
+    await getTopNDestinations(id, limit, month)
         .then((topNDestinations:{count:number, Return_station_ID:number, Name:string}[]) => {
             res.status(200).json({
                 destinations: topNDestinations
@@ -203,7 +206,10 @@ router.route('/from/:id/top/destinations/').get(async(req,res)=>{
 router.route('/to/:id/top/departures/').get(async(req,res)=>{
     const id:number = parseInt(req.params.id)
     const limit:number = parseInt(req.query.limit as string)
-    await getTopNDepartures(id, limit)
+    let month:string|undefined|number = req.query.month as string
+    if (month !== undefined)
+        month = parseInt(month)
+    await getTopNDepartures(id, limit, month)
         .then((topNDepartures:{count:number, Departure_station_ID:number, Name:string}[]) => {
             res.status(200).json({
                 departures: topNDepartures
@@ -220,6 +226,5 @@ router.route('/to/:id/top/departures/').get(async(req,res)=>{
                 })
         })
 })
-
 
 export {router}

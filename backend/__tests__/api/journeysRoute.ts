@@ -12,8 +12,8 @@ import {
     count_journeys_to_station,
     count_journeys_to_station_filter_by_month,
     get_nth_journey_id,
-    top_n_departures,
-    top_n_destinations
+    top_n_departures, top_n_departures_filtered_by_month,
+    top_n_destinations, top_n_destinations_filtered_by_month
 } from "../helpers";
 
 beforeEach(async ()=>{
@@ -294,7 +294,7 @@ describe("GET /journeys/to/:id/distance/avg", ()=>{
 })
 
 describe("GET /journeys/from/:id/top/destinations/", ()=>{
-    it.each([["abc", 5, 400], [true, 10, 400], [503, "abc", 400], [1, true, 400], [5000, 10, 200], [503, 5, 200]])
+    it.each([["abc", 5, 400], [true, 10, 400], [503, "abc", 400], [1, true, 400], [-1, 5, 400], [1, -5, 400], [5000, 10, 200], [503, 5, 200]])
     ("Test status code for journeys from %d and get top %d destinations ", async(id, limit, statusCode:number)=>{
         const res = await request(app).get('/api/v1/journeys/from/'+id+'/top/destinations/?limit='+limit)
         expect(res.statusCode).toBe(statusCode)
@@ -308,6 +308,26 @@ describe("GET /journeys/from/:id/top/destinations/", ()=>{
         for(let i=0; i<res.body.destinations.length; i++){
             expect(res.body.destinations[i]).toMatchObject(expectedTopNDestinations[i])
         }
+    })
+    it.each([[1, 5, -1, 400], [503, 10, 13, 400], [503, 5, 0, 400], [1, 10, 5, 200], [2, 5, "abc", 400], [1, 4, true, 400], [5000, 10, 6, 200], [503, 5, 5, 200]])
+    ("Test status code for journeys from %d and get top %d destinations for every possible value of month: month %d ", async(id, limit, month, statusCode:number)=>{
+        const res = await request(app).get('/api/v1/journeys/from/'+id+'/top/destinations/?limit='+limit+'&month='+month)
+        expect(res.statusCode).toBe(statusCode)
+    })
+    it.each([[503, 5, 6], [1, 4, 5], [2, 7, 6], [1, 1, 5], [1, 0, 5]])("Test valid ids, limit and months: id %d, limit %d, month %d", async (id:number, limit:number, month:number) =>{
+        const res = await request(app).get('/api/v1/journeys/from/'+id+'/top/destinations/?limit='+limit+'&month='+month)
+        const expectedTopNDestinations = await top_n_destinations_filtered_by_month(id, limit, month)
+        expect(res.body).toHaveProperty('destinations')
+        expect(res.body.destinations).toHaveLength(limit)
+        expect(res.body.destinations).toMatchObject(expectedTopNDestinations)
+        for(let i=0; i<res.body.destinations.length; i++){
+            expect(res.body.destinations[i]).toMatchObject(expectedTopNDestinations[i])
+        }
+    })
+    it.each([[503, 5, 3], [2, 10, 12]])("Test valid ids, limit and month, but month not in database: id %d, limit %d, month %d", async(id:number, limit:number, month:number) => {
+        const res = await request(app).get('/api/v1/journeys/from/'+id+'/top/destinations/?limit='+limit+'&month='+month)
+        expect(res.body).toHaveProperty('destinations')
+        expect(res.body.destinations).toHaveLength(0)
     })
 })
 
@@ -326,6 +346,26 @@ describe("GET /journeys/to/:id/top/departures/", ()=>{
         for(let i=0; i<res.body.departures.length; i++){
             expect(res.body.departures[i]).toMatchObject(expectedTopNDepartures[i])
         }
+    })
+    it.each([[1, 5, -1, 400], [503, 10, 13, 400], [503, 5, 0, 400], [1, 10, 5, 200], [2, 5, "abc", 400], [1, 4, true, 400], [5000, 10, 6, 200], [503, 5, 5, 200]])
+    ("Test status code for journeys from %d and get top %d destinations for every possible value of month: month %d ", async(id, limit, month, statusCode:number)=>{
+        const res = await request(app).get('/api/v1/journeys/to/'+id+'/top/departures/?limit='+limit+'&month='+month)
+        expect(res.statusCode).toBe(statusCode)
+    })
+    it.each([[503, 5, 6], [1, 4, 5], [2, 7, 6], [1, 1, 5], [1, 0, 5]])("Test valid ids, limit and months: id %d, limit %d, month %d", async (id:number, limit:number, month:number) =>{
+        const res = await request(app).get('/api/v1/journeys/to/'+id+'/top/departures/?limit='+limit+'&month='+month)
+        const expectedTopNDepartures = await top_n_departures_filtered_by_month(id, limit, month)
+        expect(res.body).toHaveProperty('departures')
+        expect(res.body.departures).toHaveLength(limit)
+        expect(res.body.departures).toMatchObject(expectedTopNDepartures)
+        for(let i=0; i<res.body.departures.length; i++){
+            expect(res.body.departures[i]).toMatchObject(expectedTopNDepartures[i])
+        }
+    })
+    it.each([[503, 5, 3], [2, 10, 12]])("Test valid ids, limit and month, but month not in database: id %d, limit %d, month %d", async(id:number, limit:number, month:number) => {
+        const res = await request(app).get('/api/v1/journeys/to/'+id+'/top/departures/?limit='+limit+'&month='+month)
+        expect(res.body).toHaveProperty('departures')
+        expect(res.body.departures).toHaveLength(0)
     })
 })
 
