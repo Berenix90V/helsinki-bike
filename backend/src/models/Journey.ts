@@ -85,26 +85,46 @@ export class Journey extends BaseEntity{
         })
     }
 
-    static async getNumberOfJourneysFromStation(id:number):Promise<number>{
+    static async getNumberOfJourneysFromStation(id:number, month?:number):Promise<number>{
         if (id<=0){
             throw RangeError("Bad request: ID must be > 0")
         }
-        return await Journey
-            .createQueryBuilder('trips')
-            .select("Departure_station_ID")
-            .where("trips.Departure_station_ID = :id", { id: id})
-            .getCount()
+        if(month!==undefined)
+            if(month<1 || month >12)
+                throw RangeError("Month not valid")
+            else
+                return await Journey
+                    .createQueryBuilder('trips')
+                    .select("Departure_station_ID")
+                    .where("trips.Departure_station_ID = :id AND EXTRACT(MONTH FROM trips.Departure_datetime) = :month ", { id: id, month:month})
+                    .getCount()
+        else
+            return await Journey
+                .createQueryBuilder('trips')
+                .select("Departure_station_ID")
+                .where("trips.Departure_station_ID = :id", { id: id})
+                .getCount()
     }
 
-    static async getNumberOfJourneysToStation(id:number):Promise<number>{
+    static async getNumberOfJourneysToStation(id:number, month?:number):Promise<number>{
         if (id<=0){
             throw RangeError("Bad request: ID must be > 0")
         }
-        return await Journey
-            .createQueryBuilder('trips')
-            .select("Return_station_ID")
-            .where("trips.Return_station_ID = :id", { id: id})
-            .getCount()
+        if(month !==undefined)
+            if(month<1 || month >12)
+                throw RangeError("Month not valid")
+            else
+                return await Journey
+                    .createQueryBuilder('trips')
+                    .select("Return_station_ID")
+                    .where("trips.Return_station_ID = :id AND EXTRACT(MONTH FROM trips.Return_datetime)=:month", { id: id, month:month})
+                    .getCount()
+        else
+            return await Journey
+                .createQueryBuilder('trips')
+                .select("Return_station_ID")
+                .where("trips.Return_station_ID = :id", { id: id})
+                .getCount()
     }
 
     static async countJourneysForSearch(patternDepartureStation:string, patternReturnStation:string): Promise<number>{
@@ -154,14 +174,25 @@ export class Journey extends BaseEntity{
         })
     }
 
-    static async getAverageDistanceFrom(id:number){
+    static async getAverageDistanceFrom(id:number, month?:number){
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
-        const response: {avg:number}|undefined = await Journey
-            .createQueryBuilder('trips')
-            .select('AVG("Covered_distance")')
-            .where("trips.Departure_station_ID = :id", { id: id})
-            .getRawOne();
+        let response:{avg:number}|undefined
+        if(month !== undefined)
+            if(month < 1 || month > 12)
+                throw RangeError("Month not valid")
+            else
+                response = await Journey
+                    .createQueryBuilder('trips')
+                    .select('AVG("Covered_distance")')
+                    .where("trips.Departure_station_ID = :id AND EXTRACT(MONTH FROM trips.Departure_datetime) = :month", { id: id, month:month})
+                    .getRawOne();
+        else
+            response = await Journey
+                .createQueryBuilder('trips')
+                .select('AVG("Covered_distance")')
+                .where("trips.Departure_station_ID = :id", { id: id})
+                .getRawOne();
         if(response === undefined)
             throw Error("Query not performed")
         else
@@ -171,58 +202,99 @@ export class Journey extends BaseEntity{
                 return response.avg
     }
 
-    static async getAverageDistanceTo(id:number){
+    static async getAverageDistanceTo(id:number, month?:number){
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
-        const response: {avg:number}|undefined = await Journey
-            .createQueryBuilder('trips')
-            .select('AVG("Covered_distance")')
-            .where("trips.Return_station_ID = :id", { id: id})
-            .getRawOne();
+        let response: {avg:number}|undefined
+        if(month !== undefined)
+            if(month < 1 || month > 12)
+                throw RangeError("Month not valid")
+            else
+                response = await Journey
+                    .createQueryBuilder('trips')
+                    .select('AVG("Covered_distance")')
+                    .where("trips.Return_station_ID = :id AND EXTRACT(MONTH FROM trips.Return_datetime) = :month", { id: id, month:month})
+                    .getRawOne();
+        else
+            response = await Journey
+                .createQueryBuilder('trips')
+                .select('AVG("Covered_distance")')
+                .where("trips.Return_station_ID = :id", { id: id})
+                .getRawOne();
         if(response === undefined)
             throw Error("Query not performed")
         else
-        if(response.avg == null)
-            return 0
+            if(response.avg == null)
+                return 0
+            else
+                return response.avg
+    }
+
+    static async getTopNDestinations(id:number, limit:number, month?:number): Promise<{count:number, Return_station_ID:number, Name:string}[]>{
+        if(id<=0)
+            throw RangeError("ID must be >= 0 ")
+        if(limit<0)
+            throw RangeError("Required number of journeys must be >= 0 ")
+        if(limit==0)
+            return []
+        if(month!==undefined)
+            if(month<1 || month >12)
+                throw RangeError("Month not valid")
+            else
+                return await Journey
+                    .createQueryBuilder("journey")
+                    .innerJoin("journey.Return_station", "Return_station")
+                    .select("journey.Return_station_ID, Return_station.Name")
+                    .addSelect("COUNT(journey.Return_station_ID)", "count")
+                    .where("journey.Departure_station_ID = :id AND EXTRACT(MONTH FROM journey.Departure_datetime) = :month", { id: id, month:month})
+                    .groupBy("journey.Return_station_ID, Return_station.Name")
+                    .orderBy("count", "DESC")
+                    .limit(limit)
+                    .getRawMany()
         else
-            return response.avg
+            return await Journey
+                .createQueryBuilder("journey")
+                .innerJoin("journey.Return_station", "Return_station")
+                .select("journey.Return_station_ID, Return_station.Name")
+                .addSelect("COUNT(journey.Return_station_ID)", "count")
+                .where("journey.Departure_station_ID = :id", { id: id})
+                .groupBy("journey.Return_station_ID, Return_station.Name")
+                .orderBy("count", "DESC")
+                .limit(limit)
+                .getRawMany()
     }
 
-    static async getTopNDestinations(id:number, limit:number): Promise<{count:number, Return_station_ID:number, Name:string}[]>{
+    static async getTopNDepartures(id:number, limit:number, month?:number):Promise<{count:number, Departure_station_ID:number, Name:string}[]>{
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
         if(limit<0)
             throw RangeError("Required number of journeys must be >= 0 ")
         if(limit==0)
             return []
-        return await Journey
-            .createQueryBuilder("journey")
-            .innerJoin("journey.Return_station", "Return_station")
-            .select("journey.Return_station_ID, Return_station.Name")
-            .addSelect("COUNT(journey.Return_station_ID)", "count")
-            .where("journey.Departure_station_ID = :id", { id: id})
-            .groupBy("journey.Return_station_ID, Return_station.Name")
-            .orderBy("count", "DESC")
-            .limit(limit)
-            .getRawMany()
-    }
-
-    static async getTopNDepartures(id:number, limit:number):Promise<{count:number, Departure_station_ID:number, Name:string}[]>{
-        if(id<=0)
-            throw RangeError("ID must be >= 0 ")
-        if(limit<0)
-            throw RangeError("Required number of journeys must be >= 0 ")
-        if(limit==0)
-            return []
-        return await Journey
-            .createQueryBuilder("journey")
-            .innerJoin("journey.Departure_station", "Departure_station")
-            .select("journey.Departure_station_ID, Departure_station.Name")
-            .addSelect("COUNT(journey.Departure_station_ID)", "count")
-            .where("journey.Return_station_ID = :id", { id: id})
-            .groupBy("journey.Departure_station_ID, Departure_station.Name")
-            .orderBy("count", "DESC")
-            .limit(limit)
-            .getRawMany()
+        if(month !== undefined)
+            if(month<1 || month >12)
+                throw RangeError('Month not valid')
+            else
+                return await Journey
+                    .createQueryBuilder("journey")
+                    .innerJoin("journey.Departure_station", "Departure_station")
+                    .select("journey.Departure_station_ID, Departure_station.Name")
+                    .addSelect("COUNT(journey.Departure_station_ID)", "count")
+                    .where("journey.Return_station_ID = :id AND EXTRACT(MONTH FROM journey.Return_datetime) = :month", { id: id, month:month})
+                    .groupBy("journey.Departure_station_ID, Departure_station.Name")
+                    .orderBy("count", "DESC")
+                    .limit(limit)
+                    .getRawMany()
+        else
+            return await Journey
+                .createQueryBuilder("journey")
+                .innerJoin("journey.Departure_station", "Departure_station")
+                .select("journey.Departure_station_ID, Departure_station.Name")
+                .addSelect("COUNT(journey.Departure_station_ID)", "count")
+                .where("journey.Return_station_ID = :id", { id: id})
+                .groupBy("journey.Departure_station_ID, Departure_station.Name")
+                .orderBy("count", "DESC")
+                .limit(limit)
+                .getRawMany()
     }
 }

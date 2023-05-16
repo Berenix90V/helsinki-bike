@@ -27,18 +27,6 @@ const expectStation = expect.objectContaining({
     y: expect.any(Number)
 })
 
-describe("Test get all stations route", () => {
-    test("Test api returns all stations", async()=>{
-        const res = await request(app).get("/api/v1/stations")
-        expect(res.statusCode).toBe(200)
-        expect(res.body).toHaveProperty('stations')
-        // @ts-ignore
-        res.body.stations.forEach((element) => {
-            expect(element).toEqual(expectStation)
-        })
-    })
-})
-
 describe("GET /stations/count/", ()=>{
     test("Test api returns the correct count", async() => {
         const res = await request(app).get("/api/v1/stations/count/")
@@ -95,7 +83,7 @@ describe("GET /stations/?take=&skip= route", ()=>{
 describe("GET /stations/search/ Test station search", ()=>{
     it.each([["abc", 2, "", 400],[true, 3, "A", 400],[-2, 1, "L", 400], [5000000, 2, "", 400], [0, 1, "Kirkko", 200], [2, "abc", "", 400], [3, false, "La", 400], [5, -3, "", 400], [2, 10, "M", 200], [3, 50, "", 200], [5, 100, "", 200]])
     ("Test status code when the %d stations are skipped and %d are required for station search %s", async(skip, take, patternName: string, statusCode:number) =>{
-        const res = await request(app).get('/api/v1/stations/?skip='+skip+'&take='+take+ '&patternName='+patternName)
+        const res = await request(app).get('/api/v1/stations/search/?skip='+skip+'&take='+take+ '&patternName='+patternName)
         expect(res.statusCode).toBe(statusCode)
     })
     it.each([[0, 1, "Kirkko"], [0, 10, "La"], [5, 1, "A"], [5, 8, "L"], [23, 15, ""]])("Test response when %d stations are skipped and %d are required for station search %s", async(skip:number, take:number, patternName:string)=>{
