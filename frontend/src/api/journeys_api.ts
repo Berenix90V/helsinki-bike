@@ -13,18 +13,18 @@ export function getPaginatedJourneys(skip:number, take: number){
 export function countJourneys(){
     return http.get("journeys/count")
 }
-export function getNJourneysFromStation(id:number, month?:number){
-    if(Number.isNaN(month))
+export function getNJourneysFromStation(id:number, month?:string){
+    if(month==="")
         return http.get<{njourneys:number}>("journeys/from/"+id)
     else
-        return http.get<{njourneys:number}>("journeys/from/"+id+"/?month="+month)
+        return http.get<{njourneys:number}>("journeys/from/"+id+"/?month="+parseInt(month as string))
 }
 
-export function getNJourneysToStation(id:number, month?:number){
-    if(Number.isNaN(month))
+export function getNJourneysToStation(id:number, month?:string){
+    if(month ==="")
         return http.get<{njourneys:number}>("journeys/to/"+id)
     else
-        return http.get<{njourneys:number}>("journeys/to/"+id+"/?month="+month)
+        return http.get<{njourneys:number}>("journeys/to/"+id+"/?month="+parseInt(month as string))
 }
 
 export function getPaginatedJourneysByDepartureStation(skip:number, take: number, patternFrom:string, patternTo:string){
@@ -35,12 +35,18 @@ export function countJourneysWithDepartureStationStartingWith(patternFrom:string
     return http.get("journeys/count/search/", {params:{patternFrom:patternFrom, patternTo: patternTo}})
 }
 
-export function avgJourneyFromStation(id:number){
-    return http.get("journeys/from/"+id+"/distance/avg")
+export function avgJourneyFromStation(id:number, month:string){
+    if(month==="")
+        return http.get("journeys/from/"+id+"/distance/avg")
+    else
+        return http.get("journeys/from/"+id+"/distance/avg?month"+month)
 }
 
-export function avgJourneyToStation(id:number){
-    return http.get("journeys/to/"+id+"/distance/avg")
+export function avgJourneyToStation(id:number, month:string){
+    if(month==="")
+        return http.get("journeys/to/"+id+"/distance/avg")
+    else
+        return http.get("journeys/to/"+id+"/distance/avg?month="+month)
 }
 
 export function topNDestinations(id:number, limit:number){
