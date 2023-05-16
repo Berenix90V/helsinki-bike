@@ -70,18 +70,28 @@ export const getAvgDistanceJourneysTo = async(id:number, month?:number)=>{
     return await Journey.getAverageDistanceTo(id)
 }
 
-export const getTopNDestinations = async(id:number, limit: number) =>{
+export const getTopNDestinations = async(id:number, limit: number, month?:number) =>{
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
     if(Number.isNaN(limit))
         throw TypeError("Provided \"limit\" value is not a number. Please provide a numeric value")
+    if(month !== undefined)
+        if(Number.isNaN(month))
+            throw TypeError("Provided \"month\" value is not a number. Please provide a numeric value")
+        else
+            return await Journey.getTopNDestinations(id, limit, month)
     return await Journey.getTopNDestinations(id, limit)
 }
 
-export const getTopNDepartures = async(id:number, limit:number) =>{
+export const getTopNDepartures = async(id:number, limit:number, month?:number) =>{
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
     if(Number.isNaN(limit))
         throw TypeError("Provided \"limit\" value is not a number. Please provide a numeric value")
+    if(month !== undefined)
+        if(Number.isNaN(month))
+            throw TypeError("Provided \"month\" value is not a number. Please provide a numeric value")
+        else
+            return await Journey.getTopNDepartures(id, limit, month)
     return await Journey.getTopNDepartures(id, limit)
 }

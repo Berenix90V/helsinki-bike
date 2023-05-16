@@ -20,8 +20,8 @@ import {
     count_journeys_instances,
     count_journeys_to_station,
     count_journeys_to_station_filter_by_month,
-    top_n_departures,
-    top_n_destinations
+    top_n_departures, top_n_departures_filtered_by_month,
+    top_n_destinations, top_n_destinations_filtered_by_month
 } from "../helpers";
 
 beforeEach(async ()=>{
@@ -356,6 +356,36 @@ describe("Test journey controller: getTopNDestinations", ()=>{
         expect(spy).toBeCalledTimes(1)
         expect(res).toHaveLength(0)
     })
+    it.each([[503, 10, 5], [503, 1, 7], [1, 5, 6]])("Test for existent id, valid limit and month in the database: id %d limit %d month %d", async(id:number, limit:number, month:number) =>{
+        const spy = jest.spyOn(Journey, 'getTopNDestinations')
+        const res: {count:number, Return_station_ID:number, Name:string}[] = await getTopNDestinations(id, limit, month)
+        const expectedStations = await top_n_destinations_filtered_by_month(id, limit, month)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res.length).toBeLessThanOrEqual(limit)
+        expect(res.length).toEqual(expectedStations.length)
+        for(let i=0; i<limit-1; i++){
+            expect(res[i]).toMatchObject(expectedStations[i])
+        }
+    })
+    it.each([[503,10, 2], [1, 4, 12], [2, 5, 9]])("Test for existent id, valid limit and month in database: id %d limit %d month %d", async (id:number, limit:number, month:number) =>{
+        const spy = jest.spyOn(Journey, 'getTopNDestinations')
+        const res: {count:number, Return_station_ID:number, Name:string}[] = await getTopNDestinations(id, limit, month)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res).toHaveLength(0)
+    })
+    it.each([[NaN, 10, 8], [1, NaN, 6], [503, 5, NaN]])("Test Nan values: id %d, limit %d, month %d", async(id:number, limit:number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getTopNDestinations')
+        await expect(getTopNDestinations(id, limit, month)).rejects.toThrowError(TypeError)
+        expect(spy).not.toHaveBeenCalled()
+    })
+    it.each([[503, 10, 13], [1, 5, 0], [503, 5, -1]])("Test month not valid: id %d, limit %d, month %d", async(id:number, limit:number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getTopNDestinations')
+        await expect(getTopNDestinations(id, limit, month)).rejects.toThrowError(RangeError)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+    })
 })
 
 describe("Test journey controller: getTopNDepartures", ()=>{
@@ -383,5 +413,35 @@ describe("Test journey controller: getTopNDepartures", ()=>{
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(res).toHaveLength(0)
+    })
+    it.each([[503, 10, 5], [503, 1, 7], [1, 5, 6]])("Test for existent id, valid limit and month in the database: id %d limit %d month %d", async(id:number, limit:number, month:number) =>{
+        const spy = jest.spyOn(Journey, 'getTopNDepartures')
+        const res: {count:number, Departure_station_ID:number, Name:string}[] = await getTopNDepartures(id, limit, month)
+        const expectedStations = await top_n_departures_filtered_by_month(id, limit, month)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res.length).toBeLessThanOrEqual(limit)
+        expect(res.length).toEqual(expectedStations.length)
+        for(let i=0; i<limit-1; i++){
+            expect(res[i]).toMatchObject(expectedStations[i])
+        }
+    })
+    it.each([[503,10, 2], [1, 4, 12], [2, 5, 9]])("Test for existent id, valid limit and month in database: id %d limit %d month %d", async (id:number, limit:number, month:number) =>{
+        const spy = jest.spyOn(Journey, 'getTopNDepartures')
+        const res: {count:number, Departure_station_ID:number, Name:string}[] = await getTopNDepartures(id, limit, month)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
+        expect(res).toHaveLength(0)
+    })
+    it.each([[NaN, 10, 8], [1, NaN, 6], [503, 5, NaN]])("Test Nan values: id %d, limit %d, month %d", async(id:number, limit:number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getTopNDepartures')
+        await expect(getTopNDepartures(id, limit, month)).rejects.toThrowError(TypeError)
+        expect(spy).not.toHaveBeenCalled()
+    })
+    it.each([[503, 10, 13], [1, 5, 0], [503, 5, -1]])("Test month not valid: id %d, limit %d, month %d", async(id:number, limit:number, month:number) => {
+        const spy = jest.spyOn(Journey, 'getTopNDepartures')
+        await expect(getTopNDepartures(id, limit, month)).rejects.toThrowError(RangeError)
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toBeCalledTimes(1)
     })
 })
