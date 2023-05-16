@@ -49,10 +49,16 @@ export function avgJourneyToStation(id:number, month:string){
         return http.get("journeys/to/"+id+"/distance/avg?month="+month)
 }
 
-export function topNDestinations(id:number, limit:number){
-    return http.get<{destinations: Destination[]}>("journeys/from/"+id+"/top/destinations/?limit="+limit)
+export function topNDestinations(id:number, limit:number, month?:string){
+    if(month === "")
+        return http.get<{destinations: Destination[]}>("journeys/from/"+id+"/top/destinations/?limit="+limit)
+    else
+        return http.get<{destinations: Destination[]}>("journeys/from/"+id+"/top/destinations/?limit="+limit+"&month="+month)
 }
 
-export function topNDepartures(id:number, limit:number){
-    return http.get<{departures: Departure[]}>("journeys/to/"+id+"/top/departures/?limit="+limit)
+export function topNDepartures(id:number, limit:number, month?:string){
+    if(month==="")
+        return http.get<{departures: Departure[]}>("journeys/to/"+id+"/top/departures/?limit="+limit)
+    else
+        return http.get<{departures: Departure[]}>("journeys/to/"+id+"/top/departures/?limit="+limit+"&month="+month)
 }

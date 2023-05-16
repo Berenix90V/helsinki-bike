@@ -75,7 +75,7 @@ function JourneysStats({id}: JourneysParameters){
             </Row>
             <Row>
                 <p><b>Top 5 Destinations</b></p>
-                <DestinationsTable departure_id={id}/>
+                <DestinationsTable departure_id={id} month={month}/>
             </Row>
             <h3>Journeys to station</h3>
             <Row>
@@ -90,7 +90,7 @@ function JourneysStats({id}: JourneysParameters){
             </Row>
             <Row>
                 <p><b>Top 5 Departures</b></p>
-                <DeparturesTable return_id={id}/>
+                <DeparturesTable return_id={id} month={month}/>
             </Row>
         </>
     )
