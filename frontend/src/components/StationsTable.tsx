@@ -66,7 +66,10 @@ function StationsTable(){
                     <th>ID</th>
                     <th>
                         Name
-                        <p><input onChange={(e)=>setPatternName(e.target.value)}/></p>
+                        <p><input onChange={(e)=> {
+                            setPage(1)
+                            setPatternName(e.target.value)
+                        }}/></p>
                     </th>
                     <th>City</th>
                     <th>Address</th>
