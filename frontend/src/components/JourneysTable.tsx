@@ -65,11 +65,17 @@ function JourneysTable(){
                     <th>Return</th>
                     <th>
                         Departure station
-                        <p><input onChange={(e)=>setPatternFrom(e.target.value)}/></p>
+                        <p><input onChange={(e)=> {
+                            setPage(1)
+                            setPatternFrom(e.target.value)
+                        }}/></p>
                     </th>
                     <th >
                         Return station
-                        <p><input onChange={(e)=>setPatternTo(e.target.value)}/></p>
+                        <p><input onChange={(e)=> {
+                            setPage(1)
+                            setPatternTo(e.target.value)
+                        }}/></p>
                     </th>
                     <th>Covered distance (km)</th>
                     <th>Duration (min)</th>
