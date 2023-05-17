@@ -34,13 +34,13 @@ afterEach(async ()=>{
 
 describe("Test journey controller: getAllJourneys", () => {
     it.each([[0,1], [0,5], [0,12], [5, 1], [5, 10], [103, 1], [103, 7]])
-    ("Test with valid numeric values: skip %d and take %d", async (skip, take)=>{
+    ("Test with valid numeric values: skip %d and take %d", async (skip: number, take: number)=>{
         const spy = jest.spyOn(Journey, 'getPaginatedJourneys');
         const result: Journey[] =  await getAllJourneys(skip, take)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(result).toHaveLength(take)
-        result.forEach((element) => {
+        result.forEach((element: Journey) => {
             expect(element).toBeInstanceOf(Journey)
         })
     })
@@ -52,18 +52,18 @@ describe("Test journey controller: getAllJourneys", () => {
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(result).toHaveLength(totalJourneys-skip)
-        result.forEach((element) => {
+        result.forEach((element: Journey) => {
             expect(element).toBeInstanceOf(Journey)
         })
     })
     it.each([[0,-1], [0,-5], [0,0], [2,0], [-1, 5], [-2,1], [-3,0]])
-    ("Test with invalid numeric values: skip %d and take %d", async (skip, take)=>{
+    ("Test with invalid numeric values: skip %d and take %d", async (skip:number, take: number)=>{
         const spy = jest.spyOn(Journey, 'getPaginatedJourneys');
         await expect(getAllJourneys(skip, take)).rejects.toThrowError(RangeError)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
     })
-    it.each([[0, NaN], [5, NaN], [NaN, 1], [NaN, 10], [NaN,NaN]])("Test with NaN value", async (skip, take)=>{
+    it.each([[0, NaN], [5, NaN], [NaN, 1], [NaN, 10], [NaN,NaN]])("Test with NaN value", async (skip: number, take: number)=>{
         const spy = jest.spyOn(Journey, 'getPaginatedJourneys');
         await expect(getAllJourneys(skip, take)).rejects.toThrowError(TypeError)
         expect(spy).not.toHaveBeenCalled()
@@ -79,7 +79,7 @@ describe("Test journey controller: countTotalJourneys", () => {
 })
 
 describe("Test journey controller: getNumberOfJourneysFromStation", () => {
-    it.each([[1], [503]])("Test with valid inputs: station ID %d", async(id) => {
+    it.each([[1], [503]])("Test with valid inputs: station ID %d", async(id: number) => {
         const expectedNJourneys = await count_journeys_from_station(id)
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
         const res:number = await getNumberOfJourneysFromStation(id)
@@ -87,13 +87,13 @@ describe("Test journey controller: getNumberOfJourneysFromStation", () => {
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(expectedNJourneys)
     })
-    it.each([[-1], [-5]])("Test with invalid numeric inputs, station ID %d", async(id)=>{
+    it.each([[-1], [-5]])("Test with invalid numeric inputs, station ID %d", async(id: number)=>{
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
         await expect(getNumberOfJourneysFromStation(id)).rejects.toThrowError(RangeError)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
     })
-    it.each([[502], [2000]])("Test with not existent stations, station ID %d", async(id)=>{
+    it.each([[502], [2000]])("Test with not existent stations, station ID %d", async(id: number)=>{
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysFromStation')
         const res: number = await getNumberOfJourneysFromStation(id)
         expect(spy).toHaveBeenCalled()
@@ -135,7 +135,7 @@ describe("Test journey controller: getNumberOfJourneysToStation", () => {
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(expectedNJourneys)
     })
-    it.each([[-1], [-5]])("Test with invalid numeric inputs: station ID %d", async(id)=>{
+    it.each([[-1], [-5]])("Test with invalid numeric inputs: station ID %d", async(id: number)=>{
         const spy = jest.spyOn(Journey, 'getNumberOfJourneysToStation')
         await expect(getNumberOfJourneysToStation(id)).rejects.toThrowError(RangeError)
         expect(spy).toHaveBeenCalled()
@@ -176,7 +176,7 @@ describe("Test journey controller: getNumberOfJourneysToStation", () => {
 
 describe("Test journey controller: getPaginatedJourneysForSearch", () => {
     it.each([[0,1, "A", ""], [0,5, "", "Kirkko"], [0,12, "", ""], [5, 1, "A", "K"], [5, 10, "La", "A"], [103, 1, "Kirkko", ""], [103, 7, "", "A"]])
-    ("Test with valid numeric values: skip %d and take %d and search departure start with %s and return %s", async (skip, take, patternDepartureStation, patternReturnStation)=>{
+    ("Test with valid numeric values: skip %d and take %d and search departure start with %s and return %s", async (skip: number, take: number, patternDepartureStation: string, patternReturnStation: string)=>{
         const spy = jest.spyOn(Journey, 'getPaginatedJourneysForSearch');
         const result: Journey[] =  await getPaginatedJourneysForSearch(skip, take, patternDepartureStation, patternReturnStation)
         expect(spy).toHaveBeenCalled()
@@ -187,13 +187,13 @@ describe("Test journey controller: getPaginatedJourneysForSearch", () => {
         })
     })
     it.each([[0, 5, "A2", "", 0]])
-    ("Test with search input that returns less journeys than the take require: skip %d take 5d search %s, %s expected %d", async(skip, take, patternDepartureStation, patternReturnStation, expectedLength)=>{
+    ("Test with search input that returns less journeys than the take require: skip %d take 5d search %s, %s expected %d", async(skip: number, take: number, patternDepartureStation: string, patternReturnStation: string, expectedLength: number)=>{
         const spy = jest.spyOn(Journey, 'getPaginatedJourneysForSearch');
         const result: Journey[] =  await getPaginatedJourneysForSearch(skip, take, patternDepartureStation, patternReturnStation)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(result).toHaveLength(expectedLength)
-        result.forEach((element) => {
+        result.forEach((element: Journey) => {
             expect(element).toBeInstanceOf(Journey)
         })
     })
@@ -212,13 +212,13 @@ describe("Test journey controller: getPaginatedJourneysForSearch", () => {
         })
     })
     it.each([[0,-1, "A", ""], [0,-5, "", "Kirkko"], [0,0, "La", "A"], [2,0,"A", "Ki"], [-1, 5, "", ""], [-2,1, "Kirkko", "A"], [-3,0, "A", "Kirkko"]])
-    ("Test with invalid numeric values: skip %d and take %d", async (skip, take, patternDepartureStation, patternReturnStation)=>{
+    ("Test with invalid numeric values: skip %d and take %d", async (skip: number, take: number, patternDepartureStation: string, patternReturnStation:string)=>{
         const spy = jest.spyOn(Journey, 'getPaginatedJourneysForSearch');
         await expect(getPaginatedJourneysForSearch(skip, take, patternDepartureStation, patternReturnStation)).rejects.toThrowError(RangeError)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
     })
-    it.each([[0, NaN, "", "A"], [5, NaN, "A", ""], [NaN, 1, "A", "K"], [NaN, 10,"", ""], [NaN,NaN, "La", ""]])("Test with NaN value", async (skip, take, patternDepartureStation, patternReturnStation)=>{
+    it.each([[0, NaN, "", "A"], [5, NaN, "A", ""], [NaN, 1, "A", "K"], [NaN, 10,"", ""], [NaN,NaN, "La", ""]])("Test with NaN value", async (skip: number, take: number, patternDepartureStation:string, patternReturnStation:string)=>{
         const spy = jest.spyOn(Journey, 'getPaginatedJourneysForSearch');
         await expect(getPaginatedJourneysForSearch(skip, take, patternDepartureStation, patternReturnStation)).rejects.toThrowError(TypeError)
         expect(spy).not.toHaveBeenCalled()
@@ -228,22 +228,22 @@ describe("Test journey controller: getPaginatedJourneysForSearch", () => {
 
 describe("Test journey controller: countJourneysWithDepartureStationStartingWith", ()=>{
     it.each([["A", ""], ["","Kirkko"], ["", ""], ["A2", "A"], ["A", "La"], ["A", "K"]])("Test response to be correct for search with departure start with %s and return %s", async(patternDepartureStation:string, patternReturnStation:string) =>{
-        const expectedCountJourneys = await count_journeys_for_search(patternDepartureStation, patternReturnStation)
-        const countJourneys = await countJourneysForSearch(patternDepartureStation, patternReturnStation)
+        const expectedCountJourneys: number = await count_journeys_for_search(patternDepartureStation, patternReturnStation)
+        const countJourneys: number = await countJourneysForSearch(patternDepartureStation, patternReturnStation)
         expect(countJourneys).toEqual(expectedCountJourneys)
     })
 })
 
 describe("Test journey controller: avgJourneysFrom", () => {
-    it.each([[1], [503]])("Test with valid inputs: station ID %d", async(id) => {
+    it.each([[1], [503]])("Test with valid inputs: station ID %d", async(id: number) => {
         const spy = jest.spyOn(Journey, 'getAverageDistanceFrom')
         const res: number = await getAvgDistanceJourneysFrom(id)
-        const expectedAvg = await avg_distance_journeys_from_station(id)
+        const expectedAvg: number = await avg_distance_journeys_from_station(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(expectedAvg)
     })
-    it.each([[-1], [-5]])("Test with invalid numeric inputs: station ID %d", async(id)=>{
+    it.each([[-1], [-5]])("Test with invalid numeric inputs: station ID %d", async(id: number)=>{
         const spy = jest.spyOn(Journey, 'getAverageDistanceFrom')
         await expect(getAvgDistanceJourneysFrom(id)).rejects.toThrowError(RangeError)
         expect(spy).toHaveBeenCalled()
@@ -264,7 +264,7 @@ describe("Test journey controller: avgJourneysFrom", () => {
     it.each([[1, 5], [503, 6], [503, 9]])("Test with valid inputs: station ID %d month %d", async(id:number, month:number) => {
         const spy = jest.spyOn(Journey, 'getAverageDistanceFrom')
         const res: number = await getAvgDistanceJourneysFrom(id, month)
-        const expectedAvg = await avg_distance_journeys_from_station_filtered_by_month(id, month)
+        const expectedAvg: number = await avg_distance_journeys_from_station_filtered_by_month(id, month)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(expectedAvg)
@@ -283,10 +283,10 @@ describe("Test journey controller: avgJourneysFrom", () => {
 })
 
 describe("Test journey controller: avgJourneysTo", () => {
-    it.each([[1], [503]])("Test with invalid inputs: station ID %d", async(id) => {
+    it.each([[1], [503]])("Test with invalid inputs: station ID %d", async(id: number) => {
         const spy = jest.spyOn(Journey, 'getAverageDistanceTo')
         const res: number = await getAvgDistanceJourneysTo(id)
-        const expectedAvg = await avg_distance_journeys_to_station(id)
+        const expectedAvg: number = await avg_distance_journeys_to_station(id)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(expectedAvg)
@@ -312,7 +312,7 @@ describe("Test journey controller: avgJourneysTo", () => {
     it.each([[1, 5], [503, 6], [503, 9]])("Test with valid inputs: station ID %d month %d", async(id:number, month:number) => {
         const spy = jest.spyOn(Journey, 'getAverageDistanceTo')
         const res: number = await getAvgDistanceJourneysTo(id, month)
-        const expectedAvg = await avg_distance_journeys_to_station_filtered_by_month(id, month)
+        const expectedAvg: number = await avg_distance_journeys_to_station_filtered_by_month(id, month)
         expect(spy).toHaveBeenCalled()
         expect(spy).toBeCalledTimes(1)
         expect(res).toEqual(expectedAvg)
@@ -339,7 +339,7 @@ describe("Test journey controller: getTopNDestinations", ()=>{
         expect(spy).toBeCalledTimes(1)
         expect(res.length).toBeLessThanOrEqual(limit)
         expect(res.length).toEqual(expectedStations.length)
-        for(let i=0; i<limit-1; i++){
+        for(let i: number=0; i<limit-1; i++){
             expect(res[i]).toMatchObject(expectedStations[i])
         }
     })

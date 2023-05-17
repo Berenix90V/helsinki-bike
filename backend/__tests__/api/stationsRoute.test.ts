@@ -52,7 +52,7 @@ describe("GET /stations/?take=&skip= route", ()=>{
         const res = await request(app).get('/api/v1/stations/?skip='+skip+'&take='+take)
         expect(res.statusCode).toBe(statusCode)
     })
-    it.each([[0, 1], [0, 10], [5, 1], [5, 8], [23, 15]])("Test response when %d stations are skipped and %d are required", async(skip, take)=>{
+    it.each([[0, 1], [0, 10], [5, 1], [5, 8], [23, 15]])("Test response when %d stations are skipped and %d are required", async(skip: number, take: number)=>{
         const res = await request(app).get('/api/v1/stations/?skip='+skip+'&take=' + take)
         const firstStationID: number = await get_nth_station_id(skip)
         const lastStationID: number = await get_nth_station_id(skip+take-1)
@@ -65,11 +65,11 @@ describe("GET /stations/?take=&skip= route", ()=>{
         expect(stations[take-1].ID).toEqual(lastStationID)
     })
     test("Test response for border line skip: skip totalStations-n stations and take 10", async()=>{
-        const totalStations = await count_stations_instances()
-        const skip = totalStations-3
+        const totalStations: number = await count_stations_instances()
+        const skip: number = totalStations-3
         const take = 10
-        const firstStationID = await get_nth_station_id(skip)
-        const lastStationID = await get_nth_station_id(totalStations-1)
+        const firstStationID: number = await get_nth_station_id(skip)
+        const lastStationID: number = await get_nth_station_id(totalStations-1)
         const res = await request(app).get('/api/v1/stations/?skip='+skip+'&take=' + take)
         expect(res.body).toHaveProperty('stations')
         expect(res.body.stations).toHaveLength(totalStations-skip)
@@ -97,8 +97,8 @@ describe("GET /stations/search/ Test station search", ()=>{
     })
     test("Test response for border line skip: skip totalStations-n stations and take 10", async()=>{
         const patternName = "A"
-        const totalStations = await countSearchedStations(patternName)
-        const skip = totalStations-3
+        const totalStations: number = await countSearchedStations(patternName)
+        const skip: number = totalStations-3
         const take = 10
         const res = await request(app).get('/api/v1/stations/search/?skip='+skip+'&take=' + take + '&patternName=' + patternName)
         expect(res.body).toHaveProperty('stations')
@@ -115,7 +115,7 @@ describe("Test get station by ID route", () => {
         const res = await request(app).get("/api/v1/stations/"+id)
         expect(res.statusCode).toEqual(statusCode)
     })
-    it.each([[1], [501]])("Test response for station %d required", async(id) =>{
+    it.each([[1], [501]])("Test response for station %d required", async(id: number) =>{
         const res = await request(app).get("/api/v1/stations/"+id)
         expect(res.body).toHaveProperty('station')
         expect(res.body.station).toEqual(expectStation)

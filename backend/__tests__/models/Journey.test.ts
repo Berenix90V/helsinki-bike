@@ -27,7 +27,7 @@ afterEach(async ()=>{
 
 describe("Test Journey entity", () => {
     test("Test that the method returns the right value", async ()=>{
-        const totalJourneys = await Journey.countTotal()
+        const totalJourneys:number = await Journey.countTotal()
         expect(totalJourneys).toEqual(3126264)
     })
 })
@@ -35,12 +35,12 @@ describe("Test Journey entity", () => {
 describe("Test Journey entity: getPaginatedJourneys", ()=>{
 
     it.each([[0,1],[0, 5], [0, 10], [2,3], [5,1], [5,7], [10003, 20]])
-    ("Test getPaginatedJourneys for valid input: skip %d journeys and take %d journeys", async(skip, take)=>{
+    ("Test getPaginatedJourneys for valid input: skip %d journeys and take %d journeys", async(skip:number, take:number)=>{
         const result:Journey[] = await Journey.getPaginatedJourneys(skip, take)
-        const firstJourney = await get_nth_journey_id(skip)
-        const lastJourney = await get_nth_journey_id(skip + take-1)
+        const firstJourney:number = await get_nth_journey_id(skip)
+        const lastJourney:number = await get_nth_journey_id(skip + take-1)
         expect(result).toHaveLength(take)
-        result.forEach((element) => {
+        result.forEach((element:Journey) => {
             expect(element).toBeInstanceOf(Journey)
         })
         expect(result[0].ID).toEqual(firstJourney)
@@ -49,14 +49,14 @@ describe("Test Journey entity: getPaginatedJourneys", ()=>{
     test("Test getPaginatedJourneys for valid input but borderline skip: skip total-n journeys and take maximum 10 journeys", async()=>{
         const totalJourneys = await Journey.countTotal()
         const take = 10
-        const skips = [totalJourneys-1, totalJourneys-6, totalJourneys-9]
+        const skips: number[] = [totalJourneys-1, totalJourneys-6, totalJourneys-9]
         for(const skip of skips ){
             const result:Journey[] = await Journey.getPaginatedJourneys(skip, take)
-            const takenJourneys = totalJourneys-skip
-            const firstJourney = await get_nth_journey_id(skip)
-            const lastJourney = await get_nth_journey_id(totalJourneys-1)
+            const takenJourneys:number = totalJourneys-skip
+            const firstJourney:number = await get_nth_journey_id(skip)
+            const lastJourney:number = await get_nth_journey_id(totalJourneys-1)
             expect(result).toHaveLength(totalJourneys-skip)
-            result.forEach((element) => {
+            result.forEach((element: Journey) => {
                 expect(element).toBeInstanceOf(Journey)
             })
             expect(result[0].ID).toEqual(firstJourney)
@@ -65,29 +65,29 @@ describe("Test Journey entity: getPaginatedJourneys", ()=>{
 
     })
     it.each([[-1, 10], [-5,1], [50000000, 6]])
-    ("Test getPaginatedJourneys for not valid skip value %d", async(skip, take)=>{
+    ("Test getPaginatedJourneys for not valid skip value %d", async(skip:number, take:number)=>{
         await expect(Journey.getPaginatedJourneys(skip, take)).rejects.toThrowError(RangeError)
     })
     it.each([[0, -1], [5, -2], [0,0]])
-    ("Test getPaginatedJourneys for not valid take value %d", async(skip, take)=>{
+    ("Test getPaginatedJourneys for not valid take value %d", async(skip:number, take:number)=>{
         await expect(Journey.getPaginatedJourneys(skip, take)).rejects.toThrowError(RangeError)
     })
 })
 
 describe("Test Journey entity: getNumberOfJourneysFromStation", () => {
     it.each([[1,], [503]])
-    ("Test for valid input: station id %d", async(id) => {
+    ("Test for valid input: station id %d", async(id:number) => {
         const numberOfJourneys = await Journey.getNumberOfJourneysFromStation(id)
         const expectedNumberOfJourneys:number = await count_journeys_from_station(id)
         expect(numberOfJourneys).toEqual(expectedNumberOfJourneys)
     })
     it.each([[504, 0], [1000, 0]])
-    ("Test for not existent station: station id %d", async(id, expectedNumberOfJourneys) => {
+    ("Test for not existent station: station id %d", async(id:number, expectedNumberOfJourneys:number) => {
         const numberOfJourneys = await Journey.getNumberOfJourneysFromStation(id)
         expect(numberOfJourneys).toEqual(expectedNumberOfJourneys)
     })
     it.each([[0], [-2], [-10]])
-    ("Test for not valid input: station id %d", async(id) => {
+    ("Test for not valid input: station id %d", async(id:number) => {
         await expect(Journey.getNumberOfJourneysFromStation(id)).rejects.toThrowError(RangeError)
     })
     it.each([[503, 5], [1, 6], [22, 7]])("Test for valid ids and valid months: id %d, month %d", async(id:number, month:number) =>{
@@ -142,9 +142,9 @@ describe("Test Journey entity: getNumberOfJourneysToStation", () => {
 
 describe("Test Journey entity: countJourneysForSearch", ()=>{
     it.each([["A", ""], ["", "Keilalahti"], ["A", "K"], ["2", ""], ["", "2"], ["2", "2"], ["drop", ""], ["", "drop"]])
-    ("Test for valid patterns that returns correct count of journeys for search %s, %s", async (patternDepartureStation, patternReturnStation)=>{
+    ("Test for valid patterns that returns correct count of journeys for search %s, %s", async (patternDepartureStation:string, patternReturnStation:string)=>{
         const countJourneys: number = await Journey.countJourneysForSearch(patternDepartureStation, patternReturnStation)
-        const expectedNumberOfJourneys = await count_journeys_for_search(patternDepartureStation, patternReturnStation)
+        const expectedNumberOfJourneys: number = await count_journeys_for_search(patternDepartureStation, patternReturnStation)
         expect(countJourneys).toEqual(expectedNumberOfJourneys)
     })
 })
