@@ -40,12 +40,22 @@ export class Journey extends BaseEntity{
     })
     declare Duration: number
 
+    /**
+     * Return total number of journeys
+     */
     static async countTotal():Promise<number>{
         return await Journey.count({
             cache:true
         })
     }
 
+    /**
+     * Return n journeys after skipping m journeys
+     * @param {number} skip : journeys to skip
+     * @param {number} take : journeys to be taken
+     *
+     * @returns {Journey[]} : list of journeys
+     */
     static async getPaginatedJourneys(skip=0, take=100): Promise<Journey[]>{
         const totalJourneys = await Journey.countTotal()
         if (take<=0){
@@ -70,6 +80,13 @@ export class Journey extends BaseEntity{
         })
     }
 
+    /**
+     * Return journeys from station filtered by month
+     * @param {number} id : departure station id
+     * @param {number} month : month in which the journeys have begun
+     *
+     * @return {number} : count of journeys from station in a certain month (if set, otherwise total)
+     */
     static async getNumberOfJourneysFromStation(id:number, month?:number):Promise<number>{
         if (id<=0){
             throw RangeError("Bad request: ID must be > 0")
@@ -91,6 +108,13 @@ export class Journey extends BaseEntity{
                 .getCount()
     }
 
+    /**
+     * Return journeys to station filtered by month
+     * @param {number} id : return station id
+     * @param {number} month : month in which the journeys have begun
+     *
+     * @return {number} : count of journeys to station in a certain month (if set, otherwise total)
+     */
     static async getNumberOfJourneysToStation(id:number, month?:number):Promise<number>{
         if (id<=0){
             throw RangeError("Bad request: ID must be > 0")
@@ -112,6 +136,13 @@ export class Journey extends BaseEntity{
                 .getCount()
     }
 
+    /**
+     * Count journeys with departure station and return station matching search criteria
+     * @param {string} patternDepartureStation : search criteria for departure station name
+     * @param {string} patternReturnStation : search criteria for return station name
+     *
+     * @returns {number} : count journeys with search criteria
+     */
     static async countJourneysForSearch(patternDepartureStation:string, patternReturnStation:string): Promise<number>{
         patternDepartureStation = patternDepartureStation +'%'
         patternReturnStation = patternReturnStation + '%'
@@ -130,6 +161,13 @@ export class Journey extends BaseEntity{
         })
     }
 
+    /**
+     * Return n journeys after skipping m journeys and matching search criteria for departure station name and return station name
+     * @param {number} skip : journeys to be skipped
+     * @param {number} take : journeys to be taken
+     * @param {string} patternDepartureStation : search criteria for departure station name
+     * @param {string} patternReturnStation : search criteria for return station name
+     */
     static async getPaginatedJourneysForSearch(skip:number, take:number, patternDepartureStation:string, patternReturnStation:string): Promise<Journey[]>{
         const totalJourneys = await Journey.countJourneysForSearch(patternDepartureStation, patternReturnStation)
         if (take<=0){
@@ -159,6 +197,13 @@ export class Journey extends BaseEntity{
         })
     }
 
+    /**
+     * Return average covered distance for journeys from station
+     * @param {number} id : id of departure station
+     * @param {number} month : month in which the journeys have begun
+     *
+     * @returns {number} : average covered distance for journeys from station in a certain month, if set, otherwise total
+     */
     static async getAverageDistanceFrom(id:number, month?:number): Promise<number>{
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
@@ -187,6 +232,13 @@ export class Journey extends BaseEntity{
                 return response.avg
     }
 
+    /**
+     * Return average covered distance for journeys to station
+     * @param {number} id : id of return station
+     * @param {number} month : month in which the journeys have ended
+     *
+     * @returns {number} : average covered distance for journeys to station in a certain month, if set, otherwise total
+     */
     static async getAverageDistanceTo(id:number, month?:number): Promise<number>{
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
@@ -215,6 +267,14 @@ export class Journey extends BaseEntity{
                 return response.avg
     }
 
+    /**
+     * Return list of top n destinations for journeys from station with id
+     * @param {number} id : id of departure station
+     * @param {number} limit: number of destinations to be taken
+     * @param {number} month: month in which the journeys have begun
+     *
+     * @returns {Destination[]} : top n destinations for journeys from station
+     */
     static async getTopNDestinations(id:number, limit:number, month?:number): Promise<Destination[]>{
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
@@ -249,6 +309,14 @@ export class Journey extends BaseEntity{
                 .getRawMany()
     }
 
+    /**
+     * Return list of top n departures for journeys to station with id
+     * @param {number} id : id of return station
+     * @param {number} limit: number of departures to be taken
+     * @param {number} month: month in which the journeys have ended
+     *
+     * @returns {Departure[]} : top n departures for journeys to station
+     */
     static async getTopNDepartures(id:number, limit:number, month?:number):Promise<Departure[]>{
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
