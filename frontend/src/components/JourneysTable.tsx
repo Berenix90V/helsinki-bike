@@ -61,24 +61,24 @@ function JourneysTable(){
             <Table striped bordered hover>
                 <thead>
                 <tr>
-                    <th>Departure</th>
-                    <th>Return</th>
-                    <th>
+                    <th className={"align-top"}>Departure</th>
+                    <th className={"align-top"}>Return</th>
+                    <th className={"align-top"}>
                         Departure station
                         <p><input onChange={(e)=> {
                             setPage(1)
                             setPatternFrom(e.target.value)
                         }}/></p>
                     </th>
-                    <th >
+                    <th className={"align-top"}>
                         Return station
                         <p><input onChange={(e)=> {
                             setPage(1)
                             setPatternTo(e.target.value)
                         }}/></p>
                     </th>
-                    <th>Covered distance (km)</th>
-                    <th>Duration (min)</th>
+                    <th className={"align-top"}>Covered distance (km)</th>
+                    <th className={"align-top"}>Duration (min)</th>
                 </tr>
                 </thead>
                 <tbody>

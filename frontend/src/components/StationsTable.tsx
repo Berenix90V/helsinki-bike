@@ -63,18 +63,18 @@ function StationsTable(){
             <Table striped bordered hover>
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>
+                    <th className={"align-top"}>ID</th>
+                    <th className={"align-top"}>
                         Name
                         <p><input onChange={(e)=> {
                             setPage(1)
                             setPatternName(e.target.value)
                         }}/></p>
                     </th>
-                    <th>City</th>
-                    <th>Address</th>
-                    <th>Operator</th>
-                    <th>Capacity</th>
+                    <th className={"align-top"}>City</th>
+                    <th className={"align-top"}>Address</th>
+                    <th className={"align-top"}>Operator</th>
+                    <th className={"align-top"}>Capacity</th>
                 </tr>
                 </thead>
                 <tbody>
