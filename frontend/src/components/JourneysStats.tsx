@@ -1,4 +1,5 @@
 import {Col, Row, Form} from "react-bootstrap";
+import Container from "react-bootstrap/Container";
 import {useEffect, useState} from "react";
 import {
     avgJourneyFromStation,
@@ -56,42 +57,48 @@ function JourneysStats({id}: JourneysParameters){
     }, [id, month])
     return(
         <>
-            <h3>Journeys from station</h3>
-            <Form.Select aria-label="Filter statistics by month" onChange={(el)=>setMonth(el.target.value)}>
-                <option value="">Total</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-            </Form.Select>
-            <Row>
-                <Col>
-                    <p><b>Total journeys</b></p>
-                    <p>{nJourneysFrom}</p>
-                </Col>
-                <Col>
-                    <p><b>Average distance</b></p>
-                    <p>{(avgJourneyFrom/1000).toFixed(2)}</p>
-                </Col>
-            </Row>
-            <Row>
-                <p><b>Top 5 Destinations</b></p>
-                <DestinationsTable departure_id={id} month={month}/>
-            </Row>
-            <h3>Journeys to station</h3>
-            <Row>
-                <Col>
-                    <p><b>Total journeys</b></p>
-                    <p>{nJourneysTo}</p>
-                </Col>
-                <Col>
-                    <p><b>Average distance</b></p>
-                    <p>{(avgJourneyTo/1000).toFixed(2)}</p>
-                </Col>
-            </Row>
-            <Row>
-                <p><b>Top 5 Departures</b></p>
-                <DeparturesTable return_id={id} month={month}/>
-            </Row>
+            <Container>
+                <h3>Journeys from station</h3>
+                <Form.Group className={"mb-3"}>
+                    <Form.Label>Filter Statistics by month</Form.Label>
+                    <Form.Select aria-label="Filter statistics by month" onChange={(el)=>setMonth(el.target.value)}>
+                        <option value="">Total</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                    </Form.Select>
+                </Form.Group>
+                <Row>
+                    <Col>
+                        <p><b>Total journeys</b></p>
+                        <p>{nJourneysFrom}</p>
+                    </Col>
+                    <Col>
+                        <p><b>Average distance</b></p>
+                        <p>{(avgJourneyFrom/1000).toFixed(2)}</p>
+                    </Col>
+                </Row>
+                <Row>
+                    <p><b>Top 5 Destinations</b></p>
+                    <DestinationsTable departure_id={id} month={month}/>
+                </Row>
+                <h3>Journeys to station</h3>
+                <Row>
+                    <Col>
+                        <p><b>Total journeys</b></p>
+                        <p>{nJourneysTo}</p>
+                    </Col>
+                    <Col>
+                        <p><b>Average distance</b></p>
+                        <p>{(avgJourneyTo/1000).toFixed(2)}</p>
+                    </Col>
+                </Row>
+                <Row>
+                    <p><b>Top 5 Departures</b></p>
+                    <DeparturesTable return_id={id} month={month}/>
+                </Row>
+            </Container>
+
         </>
     )
 }

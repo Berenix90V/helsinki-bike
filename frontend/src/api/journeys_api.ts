@@ -39,7 +39,7 @@ export function avgJourneyFromStation(id:number, month:string){
     if(month==="")
         return http.get("journeys/from/"+id+"/distance/avg")
     else
-        return http.get("journeys/from/"+id+"/distance/avg?month"+month)
+        return http.get("journeys/from/"+id+"/distance/avg?month="+month)
 }
 
 export function avgJourneyToStation(id:number, month:string){

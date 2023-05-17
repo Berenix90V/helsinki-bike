@@ -15,19 +15,19 @@ function StationDetails({station}:StationProps){
                 <p><b>Name</b></p>
                 <Row>
                     <Col sm={6}>
-                        <p><FI title="Finland" style={{"height": 16}}/>{station.Name_fi}</p>
+                        <p><FI title="Finland" style={{"height": 16, "margin":10}}/>{station.Name_fi}</p>
                     </Col>
                     <Col sm={6}>
-                        <p><SE title="Finland" style={{"height": 16}}/>{station.Name_sw}</p>
+                        <p><SE title="Finland" style={{"height": 16, "margin":10}}/>{station.Name_sw}</p>
                     </Col>
                 </Row>
                 <p><b>Address</b></p>
                 <Row>
                     <Col sm={6}>
-                        <p><FI title="Finland" style={{"height": 16}}/>{station.Address_fi}, {station.City_fi}</p>
+                        <p><FI title="Finland" style={{"height": 16, "margin":10}}/>{station.Address_fi}, {station.City_fi}</p>
                     </Col>
                     <Col sm={6}>
-                        <p><SE title="Finland" style={{"height": 16}}/>{station.Address_sw}, {station.City_sw}</p>
+                        <p><SE title="Finland" style={{"height": 16, "margin":10}}/>{station.Address_sw}, {station.City_sw}</p>
                     </Col>
                 </Row>
             </Container>
