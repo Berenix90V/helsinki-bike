@@ -89,7 +89,7 @@ export class Station extends BaseEntity{
             }
         })
     }
-    static async getPaginatedStations(skip: number, take:number){
+    static async getPaginatedStations(skip: number, take:number): Promise<Station[]>{
         const totalStations = await Journey.countTotal()
         if (take<=0){
             throw RangeError("Bad request: The number of required objects must be > 0")
@@ -109,7 +109,7 @@ export class Station extends BaseEntity{
         })
     }
 
-    static async countStationForSearch(patternName:string){
+    static async countStationForSearch(patternName:string): Promise<number>{
         return await Station.count({
             where:{
                 Name:Like(patternName+"%")
@@ -117,7 +117,7 @@ export class Station extends BaseEntity{
         })
     }
 
-    static async getPaginatedStationsForSearch(skip:number, take:number, patternName:string){
+    static async getPaginatedStationsForSearch(skip:number, take:number, patternName:string): Promise<Station[]>{
         const totalStations:number = await Station.countStationForSearch(patternName)
         if (take<=0){
             throw RangeError("Bad request: The number of required objects must be > 0")

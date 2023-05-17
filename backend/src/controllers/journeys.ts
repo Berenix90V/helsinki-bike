@@ -1,6 +1,8 @@
 import {Journey} from "../models/Journey";
+import {Destination} from "../models/Destinations";
+import {Departure} from "../models/Departure";
 
-export const getAllJourneys = async (skip: number, take:number)=>{
+export const getAllJourneys = async (skip: number, take:number):Promise<Journey[]>=>{
     if(Number.isNaN(take))
         throw TypeError("Provided \"take\" value is not a number. Please provide a numeric value")
     if(Number.isNaN(skip))
@@ -8,11 +10,11 @@ export const getAllJourneys = async (skip: number, take:number)=>{
     return await Journey.getPaginatedJourneys(skip, take)
 }
 
-export const countTotalJourneys = async()=>{
+export const countTotalJourneys = async():Promise<number>=>{
     return await Journey.countTotal()
 }
 
-export const getNumberOfJourneysFromStation = async(id:number, month?:number) => {
+export const getNumberOfJourneysFromStation = async(id:number, month?:number): Promise<number> => {
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
     if(month !== undefined)
@@ -24,7 +26,7 @@ export const getNumberOfJourneysFromStation = async(id:number, month?:number) =>
         return await Journey.getNumberOfJourneysFromStation(id)
 }
 
-export const getNumberOfJourneysToStation = async(id:number, month?:number) => {
+export const getNumberOfJourneysToStation = async(id:number, month?:number):Promise<number> => {
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
     if(month!==undefined)
@@ -36,7 +38,7 @@ export const getNumberOfJourneysToStation = async(id:number, month?:number) => {
         return await Journey.getNumberOfJourneysToStation(id)
 }
 
-export const getPaginatedJourneysForSearch= async(skip:number, take:number, patternDepartureStation:string, patternReturnStation:string)=>{
+export const getPaginatedJourneysForSearch= async(skip:number, take:number, patternDepartureStation:string, patternReturnStation:string): Promise<Journey[]>=>{
     if(Number.isNaN(take))
         throw TypeError("Provided \"take\" value is not a number. Please provide a numeric value")
     if(Number.isNaN(skip))
@@ -44,11 +46,11 @@ export const getPaginatedJourneysForSearch= async(skip:number, take:number, patt
     return await Journey.getPaginatedJourneysForSearch(skip, take, patternDepartureStation, patternReturnStation)
 }
 
-export const countJourneysForSearch = async(patternDepartureStation:string, patternReturnStation:string) =>{
+export const countJourneysForSearch = async(patternDepartureStation:string, patternReturnStation:string): Promise<number> =>{
     return await Journey.countJourneysForSearch(patternDepartureStation, patternReturnStation)
 }
 
-export const getAvgDistanceJourneysFrom = async(id:number, month?:number)=>{
+export const getAvgDistanceJourneysFrom = async(id:number, month?:number):Promise<number>=>{
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
     if(month !== undefined)
@@ -59,7 +61,7 @@ export const getAvgDistanceJourneysFrom = async(id:number, month?:number)=>{
     return await Journey.getAverageDistanceFrom(id)
 }
 
-export const getAvgDistanceJourneysTo = async(id:number, month?:number)=>{
+export const getAvgDistanceJourneysTo = async(id:number, month?:number): Promise<number>=>{
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
     if(month !== undefined)
@@ -70,7 +72,7 @@ export const getAvgDistanceJourneysTo = async(id:number, month?:number)=>{
     return await Journey.getAverageDistanceTo(id)
 }
 
-export const getTopNDestinations = async(id:number, limit: number, month?:number) =>{
+export const getTopNDestinations = async(id:number, limit: number, month?:number): Promise<Destination[]> =>{
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
     if(Number.isNaN(limit))
@@ -83,7 +85,7 @@ export const getTopNDestinations = async(id:number, limit: number, month?:number
     return await Journey.getTopNDestinations(id, limit)
 }
 
-export const getTopNDepartures = async(id:number, limit:number, month?:number) =>{
+export const getTopNDepartures = async(id:number, limit:number, month?:number): Promise<Departure[]> =>{
     if(Number.isNaN(id))
         throw TypeError("Provided \"id\" value is not a number. Please provide a numeric value")
     if(Number.isNaN(limit))
