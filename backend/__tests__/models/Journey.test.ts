@@ -32,21 +32,6 @@ describe("Test Journey entity", () => {
     })
 })
 
-describe("Test Journey entity: fetchFirstNJourneys", ()=>{
-    it.each([[10], [5], [1]])
-    ("Test fetchFirstNJourneys for valid input: first %d journeys", async(n)=>{
-        const result:Journey[] = await Journey.fetchFirstNJourneys(n)
-        expect(result).toHaveLength(n)
-        result.forEach((element) => {
-            expect(element).toBeInstanceOf(Journey)
-        })
-    })
-    it.each([[0], [-1], [-5]])
-    ("Test fetchFirstNJourneys for not valid input: first %d journeys", async(n)=>{
-        await expect(Journey.fetchFirstNJourneys(n)).rejects.toThrowError(RangeError)
-    })
-})
-
 describe("Test Journey entity: getPaginatedJourneys", ()=>{
 
     it.each([[0,1],[0, 5], [0, 10], [2,3], [5,1], [5,7], [10003, 20]])

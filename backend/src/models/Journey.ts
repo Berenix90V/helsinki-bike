@@ -44,23 +44,6 @@ export class Journey extends BaseEntity{
         })
     }
 
-    static async fetchFirstNJourneys(take:number): Promise<Journey[]>{
-        if (take<=0){
-            throw RangeError("Bad request: The number of required objects must be > 0")
-        }
-        return await Journey.find({
-            relations: {
-                Departure_station: true,
-                Return_station: true
-            },
-            order:{
-                ID: "ASC"
-            },
-            skip: 0,
-            take: take
-        })
-    }
-
     static async getPaginatedJourneys(skip=0, take=100): Promise<Journey[]>{
         const totalJourneys = await Journey.countTotal()
         if (take<=0){
