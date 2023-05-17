@@ -1,5 +1,7 @@
 import {BaseEntity, Column, Entity, JoinColumn, Like, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Station} from "./Station";
+import {Destination} from "./Destinations";
+import {Departure} from "./Departure";
 
 @Entity({ name: "trips", synchronize:false})
 export class Journey extends BaseEntity{
@@ -213,7 +215,7 @@ export class Journey extends BaseEntity{
                 return response.avg
     }
 
-    static async getTopNDestinations(id:number, limit:number, month?:number): Promise<{count:number, Return_station_ID:number, Name:string}[]>{
+    static async getTopNDestinations(id:number, limit:number, month?:number): Promise<Destination[]>{
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
         if(limit<0)
@@ -247,7 +249,7 @@ export class Journey extends BaseEntity{
                 .getRawMany()
     }
 
-    static async getTopNDepartures(id:number, limit:number, month?:number):Promise<{count:number, Departure_station_ID:number, Name:string}[]>{
+    static async getTopNDepartures(id:number, limit:number, month?:number):Promise<Departure[]>{
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
         if(limit<0)
