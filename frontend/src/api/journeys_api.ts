@@ -15,16 +15,16 @@ export function countJourneys(){
 }
 export function getNJourneysFromStation(id:number, month?:string){
     if(month==="")
-        return http.get<{njourneys:number}>("journeys/from/"+id)
+        return http.get<{count:number}>("journeys/from/"+id)
     else
-        return http.get<{njourneys:number}>("journeys/from/"+id+"/?month="+parseInt(month as string))
+        return http.get<{count:number}>("journeys/from/"+id+"/?month="+parseInt(month as string))
 }
 
 export function getNJourneysToStation(id:number, month?:string){
     if(month ==="")
-        return http.get<{njourneys:number}>("journeys/to/"+id)
+        return http.get<{count:number}>("journeys/to/"+id)
     else
-        return http.get<{njourneys:number}>("journeys/to/"+id+"/?month="+parseInt(month as string))
+        return http.get<{count:number}>("journeys/to/"+id+"/?month="+parseInt(month as string))
 }
 
 export function getPaginatedJourneysByDepartureStation(skip:number, take: number, patternFrom:string, patternTo:string){
