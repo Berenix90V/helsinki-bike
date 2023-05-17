@@ -5,7 +5,7 @@ import {
     countJourneys,
     countJourneysWithDepartureStationStartingWith,
     getPaginatedJourneys,
-    getPaginatedJourneysByDepartureStation
+    getPaginatedJourneysBySearch
 } from "../api/journeys_api";
 import {TablePagination} from "./TablePagination";
 import {PageSize} from "./PageSize";
@@ -49,7 +49,7 @@ function JourneysTable(){
                     setJourneys(response.data.journeys)
                 })
         else
-            getPaginatedJourneysByDepartureStation(skip, pageSize, patternFrom, patternTo)
+            getPaginatedJourneysBySearch(skip, pageSize, patternFrom, patternTo)
                 .then((response) => {
                     setJourneys(response.data.journeys)
                 })

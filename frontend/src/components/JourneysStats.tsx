@@ -23,12 +23,12 @@ function JourneysStats({id}: JourneysParameters){
     useEffect(()=>{
         const getNJourneysFrom = async () => {
             return await getNJourneysFromStation(id, month)
-                .then((response) => response.data.njourneys)
+                .then((response) => response.data.count)
                 .catch((err)=>err)
         }
         const getNJourneysTo = async () =>{
             return await getNJourneysToStation(id, month)
-                .then((response) => response.data.njourneys)
+                .then((response) => response.data.count)
                 .catch((err) => err)
         }
         const getAvgJourneyFromStation = async () => {

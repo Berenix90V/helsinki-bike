@@ -95,7 +95,7 @@ router.route("/from/:id").get(async(req, res) =>{
     await getNumberOfJourneysFromStation(id, month)
         .then((nJourneys:number)=>
             res.status(200).json({
-                njourneys: nJourneys
+                count: nJourneys
             })
         )
         .catch((err) => {
@@ -118,7 +118,7 @@ router.route("/to/:id").get(async(req, res) =>{
     await getNumberOfJourneysToStation(id, month)
         .then((nJourneys:number)=>
             res.status(200).json({
-                njourneys: nJourneys
+                count: nJourneys
             })
         )
         .catch((err) => {
