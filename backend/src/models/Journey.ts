@@ -128,7 +128,7 @@ export class Journey extends BaseEntity{
         })
     }
 
-    static async getPaginatedJourneysForSearch(skip:number, take:number, patternDepartureStation:string, patternReturnStation:string){
+    static async getPaginatedJourneysForSearch(skip:number, take:number, patternDepartureStation:string, patternReturnStation:string): Promise<Journey[]>{
         const totalJourneys = await Journey.countJourneysForSearch(patternDepartureStation, patternReturnStation)
         if (take<=0){
             throw RangeError("Bad request: The number of required objects must be > 0")
@@ -157,7 +157,7 @@ export class Journey extends BaseEntity{
         })
     }
 
-    static async getAverageDistanceFrom(id:number, month?:number){
+    static async getAverageDistanceFrom(id:number, month?:number): Promise<number>{
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
         let response:{avg:number}|undefined
@@ -185,7 +185,7 @@ export class Journey extends BaseEntity{
                 return response.avg
     }
 
-    static async getAverageDistanceTo(id:number, month?:number){
+    static async getAverageDistanceTo(id:number, month?:number): Promise<number>{
         if(id<=0)
             throw RangeError("ID must be >= 0 ")
         let response: {avg:number}|undefined
