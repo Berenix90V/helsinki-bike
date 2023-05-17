@@ -76,12 +76,20 @@ export class Station extends BaseEntity{
     @OneToMany(() => Journey, journey=> journey.Return_station)
     declare Return_journeys: Journey[]
 
-
+    /**
+     * Return number of stations
+     * @returns {number} : total stations
+     */
     static async countTotal(): Promise<number>{
         return await Station.count({
             cache:true
         })
     }
+
+    /**
+     * Return all stations
+     * @returns {Station[]} : list of stations
+     */
     static async fetchAll(): Promise<Station[]>{
         return await Station.find({
             order:{
@@ -89,6 +97,14 @@ export class Station extends BaseEntity{
             }
         })
     }
+
+    /**
+     * Return list of n stations after skipping m stations
+     * @param {number} skip : stations to be skipped
+     * @param {number} take : stations to be taken
+     *
+     * @returns {Station[]}: list of stations
+     */
     static async getPaginatedStations(skip: number, take:number): Promise<Station[]>{
         const totalStations = await Journey.countTotal()
         if (take<=0){
@@ -109,6 +125,10 @@ export class Station extends BaseEntity{
         })
     }
 
+    /**
+     * Return number of stations that match search criteria for station name
+     * @param {string} patternName :  search criteria for station name
+     */
     static async countStationForSearch(patternName:string): Promise<number>{
         return await Station.count({
             where:{
@@ -117,6 +137,14 @@ export class Station extends BaseEntity{
         })
     }
 
+    /**
+     * Return n stations after skipping m stations that match criteria
+     * @param {number} skip : number of stations to be skipped
+     * @param {number} take :  number of stations to be taken
+     * @param {string} patternName : search criteria for station name
+     *
+     * @returns {Station[]} : list of stations matching the search pattern
+     */
     static async getPaginatedStationsForSearch(skip:number, take:number, patternName:string): Promise<Station[]>{
         const totalStations:number = await Station.countStationForSearch(patternName)
         if (take<=0){
@@ -136,6 +164,13 @@ export class Station extends BaseEntity{
             }
         })
     }
+
+    /**
+     * Return station by id
+     * @param {number} id : id of the station to be selected
+     *
+     * @returns {Station} : station with id == id
+     */
     static async getByID(id:number): Promise<Station>{
         if(id<=0)
             throw RangeError("Bad request: The ID must be >= 0")
