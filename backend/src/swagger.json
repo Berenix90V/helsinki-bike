@@ -162,14 +162,16 @@
           {
             "name": "patternFromStation",
             "in": "query",
+            "description": "pattern to be searched in departure station name",
             "schema": {
               "type": "string"
             },
             "example": "A"
           },
           {
-            "name": "patternToStation",
+            "name": "pattern to be searched in return station name",
             "in": "query",
+            "description": "",
             "schema": {
               "type": "string"
             },
@@ -270,6 +272,7 @@
           {
             "name": "patternFromStation",
             "in": "query",
+            "description": "pattern to be searched in departure station name",
             "schema": {
               "type": "string"
             },
@@ -278,6 +281,7 @@
           {
             "name": "patternToStation",
             "in": "query",
+            "description": "pattern to be searched in return station name",
             "schema": {
               "type": "string"
             },
@@ -745,6 +749,343 @@
                   "properties": {
                     "err": {
                       "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stations": {
+      "get": {
+        "description": "Get paginated stations",
+        "tags": ["stations"],
+        "parameters": [
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "example": 5,
+            "description": "Number of stations to be returned",
+            "required": true
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "example": 3,
+            "description": "Number of stations to be skipped",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of stations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Station"
+                      }
+                    }
+                  },
+                  "example": {
+                    "skip": 12,
+                    "take": 3
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request for not valid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stations/count": {
+      "get": {
+        "description": "Returns number of stations",
+        "tags": ["stations"],
+        "responses": {
+          "200": {
+            "description": "Number of stations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stations/search": {
+      "get": {
+        "description": "Get stations that match the search criteria",
+        "tags": ["stations"],
+        "parameters": [
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "example": 5,
+            "description": "Number of stations to be returned",
+            "required": true
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "example": 0,
+            "description": "Number of stations to be skipped",
+            "required": true
+          },
+          {
+            "name": "patternName",
+            "in": "query",
+            "description": "pattern to be searched in station name",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "example": "A"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of stations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Station"
+                      }
+                    }
+                  },
+                  "example": {
+                    "skip": 0,
+                    "take": 3,
+                    "patternName": "A"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request for not valid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stations/count/search": {
+      "get": {
+        "description": "Returns number of stations matching the search criteria",
+        "tags": ["stations"],
+        "parameters": [
+          {
+            "name": "patternName",
+            "in": "query",
+            "description": "pattern to be searched in station name",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "example": "A"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Number of stations matching the search criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    }
+                  },
+                  "example": {
+                    "patternName": "Kirkko"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "general error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stations/:id": {
+      "get": {
+        "description": "Returns station with given id",
+        "tags": ["stations"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the searched station",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 503
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Station object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "station": {
+                      "$ref": "#/components/schemas/Station"
+                    }
+                  },
+                  "example": {
+                    "id": 4
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request for not valid parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
                     }
                   }
                 }
