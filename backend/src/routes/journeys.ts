@@ -87,7 +87,7 @@ router.route("/count/search/").get(async(req, res)=>{
         )
 })
 
-router.route("/from/:id").get(async(req, res) =>{
+router.route("/count/from/:id").get(async(req, res) =>{
     const id:number = parseInt(req.params.id)
     let month:string|undefined|number = req.query.month as string
     if (month !== undefined)
@@ -110,7 +110,7 @@ router.route("/from/:id").get(async(req, res) =>{
         })
 })
 
-router.route("/to/:id").get(async(req, res) =>{
+router.route("/count/to/:id").get(async(req, res) =>{
     const id:number = parseInt(req.params.id)
     let month:string|undefined|number = req.query.month as string
     if (month !== undefined)
