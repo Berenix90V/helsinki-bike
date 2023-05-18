@@ -141,8 +141,10 @@
             "name": "take",
             "in": "query",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "minimum": 1
             },
+            "example": 7,
             "description": "Number of journeys to be returned",
             "required": true
           },
@@ -150,8 +152,10 @@
             "name": "skip",
             "in": "query",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "minimum": 0
             },
+            "example": 0,
             "description": "Number of journeys to be skipped",
             "required": true
           },
@@ -160,14 +164,16 @@
             "in": "query",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "A"
           },
           {
             "name": "patternToStation",
             "in": "query",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "Ki"
           }
         ],
         "responses": {
@@ -243,7 +249,8 @@
             "name": "take",
             "in": "query",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "minimum": 1
             },
             "example": 5,
             "description": "Number of journeys to be returned",
@@ -253,9 +260,10 @@
             "name": "skip",
             "in": "query",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "minimum": 0
             },
-            "example": 3,
+            "example": 0,
             "description": "Number of journeys to be skipped",
             "required": true
           },
@@ -264,14 +272,16 @@
             "in": "query",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "La"
           },
           {
             "name": "patternToStation",
             "in": "query",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "A"
           }
         ],
         "responses": {
@@ -324,7 +334,8 @@
             "schema": {
               "type": "integer",
               "minimum": 1
-            }
+            },
+            "example": 2
           }
         ],
         "responses": {
@@ -392,8 +403,10 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
-            }
+              "type": "integer",
+              "minimum": 1
+            },
+            "example": 503
           }
         ],
         "responses": {
@@ -428,6 +441,296 @@
                   },
                   "example": {
                     "id": -3
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journeys/from/:id/distance/": {
+      "get": {
+        "description": "Get average covered distance of journeys from station with given id",
+        "tags": ["station journeys stats"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "example": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Average distance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "avg": {
+                      "type": "number"
+                    }
+                  },
+                  "example": {
+                    "id": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request for not valid parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err" : {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "id" : 0
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err":{
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journeys/to/:id/distance/": {
+      "get": {
+        "description": "Get average covered distance of journeys to station with given id",
+        "tags": ["station journeys stats"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "example": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Average distance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "avg": {
+                      "type": "number"
+                    }
+                  },
+                  "example": {
+                    "id": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request for not valid parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err" : {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "id" : 0
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err":{
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journeys/from/:id/top/destinations": {
+      "get": {
+        "description": "Returns top n destinations from station with given id",
+        "tags": ["station journeys stats"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "example": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of destinations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destinations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Destination"
+                      }
+                    }
+                  },
+                  "example": {
+                    "id": 2
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request for not valid parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "id": -2
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journeys/to/:id/top/departures": {
+      "get": {
+        "description": "Returns top n departures to station with given id",
+        "tags": ["station journeys stats"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "example": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of departures",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destinations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Departure"
+                      }
+                    }
+                  },
+                  "example": {
+                    "id": 2
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request for not valid parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "id": -2
                   }
                 }
               }
@@ -518,6 +821,34 @@
           },
           "Return_Station": {
               "$ref": "#/components/schemas/Station"
+          }
+        }
+      },
+      "Destination": {
+        "type": "object",
+        "properties": {
+          "Return_station_ID": {
+            "type": "integer"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "count" : {
+            "type": "integer"
+          }
+        }
+      },
+      "Departure": {
+        "type": "object",
+        "properties": {
+          "Departure_station_ID": {
+            "type": "integer"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "count" : {
+            "type": "integer"
           }
         }
       }
