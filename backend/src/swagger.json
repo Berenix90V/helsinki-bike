@@ -4,12 +4,358 @@
     "title": "REST API for Helsinki bikes",
     "version": "1.0.0"
   },
-  "servers": [{ "url": "http://localhost:3006/" }],
+  "servers": [{ "url": "http://localhost:3006/api/v1/" }],
   "paths": {
-    "/api/v1/journeys/count": {
+    "/journeys": {
       "get": {
+        "parameters": [
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 5,
+            "description": "Number of journeys to be returned",
+            "required": true
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 3,
+            "description": "Number of journeys to be skipped",
+            "required": true
+          }
+        ],
+        "description": "Returns the list of journeys",
+        "tags": ["journeys"],
         "responses": {
-          "200": {}
+          "200": {
+            "description": "Returns the list of journeys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "journeys": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Journey"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request error for not valid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journeys/count": {
+      "get": {
+        "description": "Returns the count of total journeys in database",
+        "tags": ["journeys"],
+        "responses": {
+          "200": {
+            "description": "Number of total journeys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journeys/search": {
+      "get": {
+        "description": "Returns the list of journeys matching the search criteria",
+        "tags": ["journeys"],
+        "parameters": [
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 5,
+            "description": "Number of journeys to be returned",
+            "required": true
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 3,
+            "description": "Number of journeys to be skipped",
+            "required": true
+          },
+          {
+            "name": "patternFromStation",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "patternToStation",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of journeys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "journeys": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Journey"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request for not valid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journeys/count/search": {
+      "get": {
+        "description": "Get number of journeys matching search criteria",
+        "tags": ["journeys"],
+        "parameters": [
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 5,
+            "description": "Number of journeys to be returned",
+            "required": true
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 3,
+            "description": "Number of journeys to be skipped",
+            "required": true
+          },
+          {
+            "name": "patternFromStation",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "patternToStation",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Number of journeys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err" : {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Station": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer"
+          },
+          "Name_fi": {
+            "type": "string"
+          },
+          "Name_sw": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Address_fi": {
+            "type": "string"
+          },
+          "Address_sw": {
+            "type": "string"
+          },
+          "City_fi": {
+            "type": "string"
+          },
+          "City_sw": {
+            "type": "string"
+          },
+          "Operator": {
+            "type": "string"
+          },
+          "Capacity": {
+            "type": "integer"
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          }
+        }
+      },
+      "Journey": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer"
+          },
+          "Departure_datetime": {
+            "type": "string"
+          },
+          "Return_datetime": {
+            "type": "string"
+          },
+          "Covered_distance": {
+            "type": "number"
+          },
+          "Duration": {
+            "type": "integer"
+          },
+          "Departure_station": {
+              "$ref": "#/components/schemas/Station"
+          },
+          "Return_Station": {
+              "$ref": "#/components/schemas/Station"
+          }
         }
       }
     }
