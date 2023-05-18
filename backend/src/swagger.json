@@ -13,7 +13,8 @@
             "name": "take",
             "in": "query",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "minimum": 1
             },
             "example": 5,
             "description": "Number of journeys to be returned",
@@ -23,7 +24,8 @@
             "name": "skip",
             "in": "query",
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "minimum": 0
             },
             "example": 3,
             "description": "Number of journeys to be skipped",
@@ -46,6 +48,10 @@
                         "$ref": "#/components/schemas/Journey"
                       }
                     }
+                  },
+                  "example": {
+                    "skip": 10,
+                    "take": 5
                   }
                 }
               }
@@ -61,6 +67,10 @@
                     "err": {
                       "type": "string"
                     }
+                  },
+                  "example": {
+                    "skip": -2,
+                    "take": 10
                   }
                 }
               }
@@ -133,7 +143,6 @@
             "schema": {
               "type": "integer"
             },
-            "example": 5,
             "description": "Number of journeys to be returned",
             "required": true
           },
@@ -143,7 +152,6 @@
             "schema": {
               "type": "integer"
             },
-            "example": 3,
             "description": "Number of journeys to be skipped",
             "required": true
           },
@@ -176,6 +184,12 @@
                         "$ref": "#/components/schemas/Journey"
                       }
                     }
+                  },
+                  "example": {
+                    "skip": 0,
+                    "take": 5,
+                    "patternFromStation": "A",
+                    "patternToStation": "Kirkko"
                   }
                 }
               }
@@ -191,6 +205,12 @@
                     "err": {
                       "type": "string"
                     }
+                  },
+                  "example": {
+                    "skip": 0,
+                    "take": -3,
+                    "patternFromStation": "Ki",
+                    "patternToStation": "A"
                   }
                 }
               }
@@ -265,6 +285,10 @@
                     "count": {
                       "type": "number"
                     }
+                  },
+                  "example": {
+                    "patternFromStation": "A",
+                    "patternToStation": "K"
                   }
                 }
               }
@@ -278,6 +302,145 @@
                   "type": "object",
                   "properties": {
                     "err" : {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journeys/count/from/": {
+      "get": {
+        "description": "Returns number of journeys with departure station id equals given id ",
+        "tags": ["station journeys stats"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Number of journeys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    }
+                  },
+                  "example": {
+                    "id": 503
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request for not valid parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err" : {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "id": 503
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/journeys/count/to/": {
+      "get": {
+        "description": "Returns number of journeys with return station id equals given id",
+        "tags": ["station journeys stats"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "number of journeys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    }
+                  },
+                  "example": {
+                    "id": 503
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request for not valid parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err" : {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "id": -3
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "General error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
                       "type": "string"
                     }
                   }
