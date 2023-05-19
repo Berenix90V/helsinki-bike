@@ -10,6 +10,10 @@ import {useNavigate} from "react-router-dom";
 import {PageSize} from "./PageSize";
 import {TablePagination} from "./TablePagination";
 
+/**
+ * Returns a paginated stations' table
+ *
+ */
 function StationsTable(){
     const[stations, setStations] = useState<Station[]>([])
     const [page, setPage] = useState<number>(1)

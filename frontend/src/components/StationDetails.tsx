@@ -7,6 +7,11 @@ type StationProps = {
     station: Station
 }
 
+/**
+ * Given  a station it returns station details
+ * @param {Station} station: station to be rendered
+ *
+ */
 function StationDetails({station}:StationProps){
 
     return(

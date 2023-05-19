@@ -6,6 +6,15 @@ type paginationParameters = {
     totalElements: number,
     setPage:any
 }
+
+/**
+ * Component to set pagination in the tables
+ * @param {number} page : current page
+ * @param {number} pageSize: current page size
+ * @param {number} totalElements: total elements in the table
+ * @param setPage: setter function for page number
+ *
+ */
 function TablePagination({page, pageSize, totalElements, setPage}: paginationParameters){
     const totalPages = Math.ceil(totalElements/pageSize)
     let items: (number|string)[] = []

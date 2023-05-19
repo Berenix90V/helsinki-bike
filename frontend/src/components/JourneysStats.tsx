@@ -13,6 +13,16 @@ import {DeparturesTable} from "./DeparturesTable";
 type JourneysParameters = {
     id: number
 }
+
+/**
+ * Return statistics about the journeys related to a certain station filtered by selectable month:
+ * - Total journeys from and to station
+ * - average covered distance fof journeys from and to station
+ * - Call components for top departures and destinations
+ *
+ * @param: {number} id : station id
+ *
+ */
 function JourneysStats({id}: JourneysParameters){
     const [nJourneysFrom, setNJourneysFrom] = useState<number>(0)
     const [nJourneysTo, setNJourneysTo] = useState<number>(0)

@@ -10,6 +10,11 @@ import {
 import {TablePagination} from "./TablePagination";
 import {PageSize} from "./PageSize";
 
+/**
+ * Render Journey's record
+ * @param {Journey} journey: single journey object to be rendered
+ * @param {number} index: index of journey
+ */
 function renderJourney(journey:Journey, index:number){
     return (
         <tr key={index}>
@@ -22,6 +27,11 @@ function renderJourney(journey:Journey, index:number){
         </tr>
     )
 }
+
+/**
+ * It returns a paginated table of journeys
+ *
+ */
 function JourneysTable(){
     const [journeys, setJourneys] = useState<Journey[]>([])
     const [page, setPage] = useState<number>(1)

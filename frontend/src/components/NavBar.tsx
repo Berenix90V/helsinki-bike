@@ -1,5 +1,10 @@
 import {Nav, Navbar, NavbarBrand} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
+
+/**
+ * Returns the NavBar with link to Journeys and Stations tables
+ * 
+ */
 function NavBar(){
     return (
         <Navbar>

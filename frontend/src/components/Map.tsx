@@ -17,6 +17,13 @@ type MapProps = {
     x:number,
     y: number
 }
+
+/**
+ * Given the coordinates of a station it return the map with the station position
+ * @param {number} x : coordinate x of the station
+ * @param {number} y : coordinate y of the station
+ * @constructor
+ */
 export function Map({x, y}:MapProps){
     const position:[number, number] = [y, x]
 

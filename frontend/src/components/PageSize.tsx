@@ -6,6 +6,12 @@ type pageSizeParameters ={
     setPageSize: any
 }
 
+/**
+ * Returns the component to set up the page size for the table pagination
+ * @param {number} pageSize: currently selected page size
+ * @param setPageSize: setter for the page size
+ *
+ */
 export function PageSize({pageSize, setPageSize}: pageSizeParameters){
     return(
         <Form.Group>
