@@ -7,6 +7,13 @@ type DestinationsParameters={
     departure_id: number,
     month:string
 }
+
+/**
+ * Table containing top destination station given a departure station
+ * @param {number} return_id : id of departure station
+ * @param {number} month : month by which journeys are filtered
+ *
+ */
 export function DestinationsTable({departure_id, month}: DestinationsParameters){
     const [topDestinations, setTopDestinations] = useState<Destination[]>([])
     useEffect(()=>{

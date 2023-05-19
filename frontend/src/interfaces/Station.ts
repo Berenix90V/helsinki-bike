@@ -1,3 +1,6 @@
+/**
+ * Interface of Station
+ */
 export interface Station{
     ID:number,
     Name_fi: string,

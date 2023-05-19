@@ -1,5 +1,8 @@
 import {Station} from "./Station";
 
+/**
+ * Interface of a Journey
+ */
 export interface Journey{
     Departure_datetime: string,
     Return_datetime:string,
