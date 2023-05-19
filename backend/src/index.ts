@@ -23,7 +23,10 @@ app.use("/api/v1/journeys", journeyRouter)
 app.use("/api/v1/stations", stationRouter)
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.listen(process.env.PORT, ()=>{
-    console.log("Server listening on port "+process.env.PORT)
-})
+if(process.env.NODE_ENV !== 'test'){
+    app.listen(process.env.PORT, ()=>{
+        console.log("Server listening on port "+process.env.PORT)
+    })
+}
+
 export default app
