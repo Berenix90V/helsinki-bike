@@ -16,25 +16,56 @@ Python version 3.9.13
 Postgres version 14.5: 
 https://www.postgresql.org/download/
 
+Node version v16.17.0
+npm version 9.6.4
+
 ## Configurations
 
 ## Run
 To start fetching the data into the database run the script fetch_data/main.py:
 ```python ./fetch_data/main.py```
 
+Before starting the backend, copy paste the following environmental variables in a dotenv file
+and put it inside the folder /backend.
+Change user and password according to your setup
+```
+DB_HOST = 'localhost'
+DB_PORT = 5432
+DB_USER = 'postgres'
+DB_PASSWORD = 'postgres'
+DATABASE = 'helsinki_bikes'
+```
+To install backend dependencies and start the backend run the following commands:
+```
+npm install
+npm run start
+```
+
+To start the frontend run:
+```
+npm install
+npm run start
+```
 
 ## Tests
+The backend has been tested using Jest and Supertest.
+It is possible to run all the tests with the following command:
+```
+npm run test
+```
 
 ## Technologies
 ### Data fetch and validation
 A Python script is performing this task. Python has been chosen because it's easier to manage data structure 
 with this language thanks to its libraries dedicated to data analysis (pandas).\
-For data validation pandera is used becaause it is a library that provides an easy and fast readable way 
+For data validation pandera is used because it is a library that provides an easy and fast readable way 
 to validate dataframe objects. (https://pandera.readthedocs.io/en/stable/).\
-The check on the departure date < return date is not handled by pandera but by pandas.
+The check on the condition `departure date < return date` is not handled by pandera but by pandas.
 The interface between python and the database is provided by SQLAlchemy (https://www.sqlalchemy.org/).
+
 ### Database
 The database chosen is a PostgreSQL, a relational SQL database that fits the purpose of this project.
+
 ### Backend
 Backend: Node js, Typescript
 Frontend: React
