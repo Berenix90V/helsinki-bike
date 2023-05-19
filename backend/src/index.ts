@@ -23,9 +23,11 @@ app.use("/api/v1/journeys", journeyRouter)
 app.use("/api/v1/stations", stationRouter)
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+const port = process.env.BACKEND_PORT || 3006
+
 if(process.env.NODE_ENV !== 'test'){
-    app.listen(process.env.PORT, ()=>{
-        console.log("Server listening on port "+process.env.PORT)
+    app.listen(port, ()=>{
+        console.log("Server listening on port "+port)
     })
 }
 
