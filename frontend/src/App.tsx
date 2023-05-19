@@ -6,6 +6,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom"
 import {JourneysView} from "./views/JourneysView";
 import {StationsView} from "./views/StationsView";
 import SingleStationView from "./views/SingleStationView";
+import {HomeView} from "./views/HomeView";
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <NavBar/>
           </header>
                 <Routes>
+                    <Route path={"/"} element={<HomeView />}/>
                     <Route path={"/journeys"} element={<JourneysView />}/>
                     <Route path={"/stations"} element={<StationsView/>}/>
                     <Route path={"/stations/:id"} element={<SingleStationView/>}/>
