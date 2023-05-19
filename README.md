@@ -13,13 +13,23 @@ Python version 3.9.13
 
 ```pip install pandera python-dotenv SQLAlchemy sqlalchemy-utils```
 
-Postgres version 14.5: 
+**Database**
+
+Postgres version 14.5: \
 https://www.postgresql.org/download/
 
-Node version v16.17.0
-npm version 9.6.4
+**Backend and frontend**
 
-## Configurations
+Node version v16.17.0\
+npm version 9.6.4\
+Typescript Version 5.0.3\
+React version 18.2.0\
+express 4.18.2
+
+**Test**
+
+jest version 29.5.0\
+supertest version  6.3.3,
 
 ## Run
 To start fetching the data into the database run the script fetch_data/main.py:
@@ -54,7 +64,7 @@ It is possible to run all the tests with the following command:
 npm run test
 ```
 
-## Technologies
+## Technologies choices
 ### Data fetch and validation
 A Python script is performing this task. Python has been chosen because it's easier to manage data structure 
 with this language thanks to its libraries dedicated to data analysis (pandas).\
@@ -67,8 +77,21 @@ The interface between python and the database is provided by SQLAlchemy (https:/
 The database chosen is a PostgreSQL, a relational SQL database that fits the purpose of this project.
 
 ### Backend
-Backend: Node js, Typescript
-Frontend: React
+For the backend it has been chosen Node, because I was curious to learn it, and it has a good support documentation being quite broadly used.
+As a language I've chosen Typescript instead of Javascript to exploit the type system and have a more type-safe code and easier the coding process thanks to IDE's type hints.
+The connection to the database has been implemented through TypeORM. In a first instance I was not sure if use TyperORM or Sequelize, 
+but the first one seems to have a better documentation and integration with Typescript.\
+In TypeORM there is the possibility of using 2 different patterns: DataMapper and ActiveRecords: in this project the second one has been chosen, since the documentation
+suggest it to keep the code simple for smaller apps (https://github.com/typeorm/typeorm/blob/HEAD/docs/active-record-data-mapper.md#what-is-the-active-record-pattern).
+
+### API Documentation 
+To better implement the API documentation swagger has been used: it has a nice interface and let the user tests the route.
+
+### Test
+For testing the backend jest and supertest (for API) have been used because of their simplicity in use and good documentation.
+
+### Frontend
+In the implementation of the frontend React has been used as it is often combined with Node backend and it has a good documentation and support community.
 
 ## Software structure
 ### Fetch data
@@ -111,4 +134,12 @@ Columns:
 - Capacity (int): number of bikes that the station can host
 - x (float): x coordinate of the station
 - y (float): y coordinate of the station
+
+## Backend
+The backend has 2 folders, one for the source code and the other for the tests. The tests folder structure is the same as the backend 
+and the tests files has the same name of the file tha they are testing, except for the routes which tests are in the api folder.
+
+Features implemented: reference to the API documentation http://localhost:3006/api-docs
+
+## Frontend
 
