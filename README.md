@@ -32,12 +32,7 @@ jest version 29.5.0\
 supertest version  6.3.3,
 
 ## Run
-To start fetching the data into the database run the script fetch_data/main.py:
-```python ./fetch_data/main.py```
-
-Before starting the backend, copy paste the following environmental variables in a dotenv file
-and put it inside the folder /backend.
-Change user and password according to your setup
+Create your file dotenv and pu it in the folder &fetch data. The template is the following:
 ```
 DB_HOST = 'localhost'
 DB_PORT = 5432
@@ -45,6 +40,23 @@ DB_USER = 'postgres'
 DB_PASSWORD = 'postgres'
 DATABASE = 'helsinki_bikes'
 ```
+To start fetching the data into the database run the script fetch_data/main.py:
+```python ./fetch_data/main.py```
+
+Before starting the backend, copy paste the following environmental variables in a dotenv file
+and put it inside the folder /backend.
+Change user and password according to your setup
+
+```
+PORT=3006
+PG_HOST='localhost'
+PG_PORT=5432
+PG_USER='postgres'
+PG_PASSWORD='postgres'
+PG_DATABASE='helsinki_bikes'
+```
+tHE DEFAULT PORT IS 3006, BUT IT I9S POSSIBLE TO CHOSE ANOTHER ONE BETWEEN THE AVAILABLE ONES.
+
 To install backend dependencies and start the backend run the following commands:
 ```
 npm install
