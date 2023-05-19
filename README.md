@@ -142,4 +142,33 @@ and the tests files has the same name of the file tha they are testing, except f
 Features implemented: reference to the API documentation http://localhost:3006/api-docs
 
 ## Frontend
+### Journeys Table
+Features implemented:
+- List journeys: each journey has departure and return stations, covered distance in kilometers and duration in minutes
+- Pagination
+- Searching by name of departure station or return station
 
+### Station Table
+- List all the stations: each station has IID name, city, address, operator, capacity
+- Pagination
+- Searching by name
+- Each row is clickable and redirect to the single station view
+
+### Station view
+- Station name
+- Station address
+- Total number of journeys starting from the station
+- Total number of journeys ending at the station
+- Station location on the map
+- The average distance of a journey starting from the station
+- The average distance of a journey ending at the station
+- Top 5 most popular return stations for journeys starting from the station
+- Top 5 most popular departure stations for journeys ending at the station
+- Ability to filter all the calculations per month
+
+## Future features implementation
+For lacking of time the following features has not yet been implemented
+- Add ordering for each column: to implement this feature it may be necessary to refactor the code related to the entity method that implement searching
+  and use the query builder. 
+- Add filtering by datetime: it may have the same problem as the order. 
+They both need some more research to look for easier ways to be implemented, otherwise query builder should be used.
