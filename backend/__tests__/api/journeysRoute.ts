@@ -93,39 +93,39 @@ describe("GET /journeys/count", ()=>{
     })
 })
 
-describe("GET /journeys/from/:id", ()=>{
+describe("GET /journeys/count/from/:id", ()=>{
     it.each([["abc", 400],[true, 400],[-2, 400], [0, 400], [1, 200], [503, 200], [5000, 200]])
     ("Test status code for trips from station %d", async(id, statusCode: number)=>{
-        const res = await request(app).get('/api/v1/journeys/from/' + id)
+        const res = await request(app).get('/api/v1/journeys/count/from/' + id)
         expect(res.statusCode).toBe(statusCode)
     })
     it.each([[1], [503], [5000]])
     ("Test response for trips from station %d", async(id: number)=>{
         const expectedJourneys =  await count_journeys_from_station(id)
-        const res = await request(app).get('/api/v1/journeys/from/' + id)
+        const res = await request(app).get('/api/v1/journeys/count/from/' + id)
         expect(res.body).toHaveProperty('count')
         expect(res.body.count).toEqual(expectedJourneys)
     })
     it.each([[503, "abc", 400],[1, true, 400],[2, -2, 400], [503, 0, 400], [503, 1, 200], [503, 13, 400], [1,6, 200]])
     ("Test status code for trips from station %d and month %d", async(id:number, month, statusCode)=>{
-        const res = await request(app).get('/api/v1/journeys/from/' + id+'/?month='+month)
+        const res = await request(app).get('/api/v1/journeys/count/from/' + id+'/?month='+month)
         expect(res.statusCode).toBe(statusCode)
     })
     it.each([[503, 6], [503, 4]])("Test with valid ids and months: id %d month %d", async(id:number, month: number) => {
-        const res = await request(app).get('/api/v1/journeys/from/' + id+'/?month='+month)
+        const res = await request(app).get('/api/v1/journeys/count/from/' + id+'/?month='+month)
         const expectedCountJourneys = await count_journeys_from_station_filter_by_month(id, month)
         expect(res.statusCode).toEqual(200)
         expect(res.body).toHaveProperty('count')
         expect(res.body.count).toEqual(expectedCountJourneys)
     } )
     it.each([[504, 6], [5000, 7]])("Test with not valid ids, but valid month: id %d month %d", async (id:number, month:number) => {
-        const res = await request(app).get('/api/v1/journeys/from/' + id+'/?month='+month)
+        const res = await request(app).get('/api/v1/journeys/count/from/' + id+'/?month='+month)
         expect(res.statusCode).toEqual(200)
         expect(res.body).toHaveProperty('count')
         expect(res.body.count).toEqual(0)
     })
     it.each([[503, 3], [1, 9]])("Test with valid ids, month not in the database: id %d month %d", async(id:number, month:number) => {
-        const res = await request(app).get('/api/v1/journeys/from/' + id+'/?month='+month)
+        const res = await request(app).get('/api/v1/journeys/count/from/' + id+'/?month='+month)
         expect(res.statusCode).toEqual(200)
         expect(res.body).toHaveProperty('count')
         expect(res.body.count).toEqual(0)
@@ -134,37 +134,37 @@ describe("GET /journeys/from/:id", ()=>{
 
 describe("GET /journeys/to/:id", ()=>{
     it.each([["abc", 400],[true, 400],[-2, 400], [0, 400], [1, 200], [503, 200], [5000, 200]])
-    ("Test status code for trips from station %d", async(id, statusCode: number)=>{
-        const res = await request(app).get('/api/v1/journeys/to/' + id)
+    ("Test status code for trips to station %d", async(id, statusCode: number)=>{
+        const res = await request(app).get('/api/v1/journeys/count/to/' + id)
         expect(res.statusCode).toBe(statusCode)
     })
     it.each([[1], [503], [5000]])
-    ("Test response for trips from station %d", async(id: number)=>{
+    ("Test response for trips to station %d", async(id: number)=>{
         const expectedJourneys = await count_journeys_to_station(id)
-        const res = await request(app).get('/api/v1/journeys/to/' + id)
+        const res = await request(app).get('/api/v1/journeys/count/to/' + id)
         expect(res.body).toHaveProperty('count')
         expect(res.body.count).toEqual(expectedJourneys)
     })
     it.each([[503, "abc", 400],[1, true, 400],[2, -2, 400], [503, 0, 400], [503, 1, 200], [503, 13, 400], [1,6, 200]])
-    ("Test status code for trips from station %d and month %d", async(id:number, month, statusCode)=>{
-        const res = await request(app).get('/api/v1/journeys/to/' + id+'/?month='+month)
+    ("Test status code for trips to station %d and month %d", async(id:number, month, statusCode)=>{
+        const res = await request(app).get('/api/v1/journeys/count/to/' + id+'/?month='+month)
         expect(res.statusCode).toBe(statusCode)
     })
     it.each([[503, 6], [503, 4]])("Test with valid ids and months: id %d month %d", async(id:number, month: number) => {
-        const res = await request(app).get('/api/v1/journeys/to/' + id+'/?month='+month)
+        const res = await request(app).get('/api/v1/journeys/count/to/' + id+'/?month='+month)
         const expectedCountJourneys = await count_journeys_to_station_filter_by_month(id, month)
         expect(res.statusCode).toEqual(200)
         expect(res.body).toHaveProperty('count')
         expect(res.body.count).toEqual(expectedCountJourneys)
     } )
     it.each([[504, 6], [5000, 7]])("Test with not valid ids, but valid month: id %d month %d", async (id:number, month:number) => {
-        const res = await request(app).get('/api/v1/journeys/to/' + id+'/?month='+month)
+        const res = await request(app).get('/api/v1/journeys/count/to/' + id+'/?month='+month)
         expect(res.statusCode).toEqual(200)
         expect(res.body).toHaveProperty('count')
         expect(res.body.count).toEqual(0)
     })
     it.each([[503, 3], [1, 9]])("Test with valid ids, month not in the database: id %d month %d", async(id:number, month:number) => {
-        const res = await request(app).get('/api/v1/journeys/to/' + id+'/?month='+month)
+        const res = await request(app).get('/api/v1/journeys/count/to/' + id+'/?month='+month)
         expect(res.statusCode).toEqual(200)
         expect(res.body).toHaveProperty('count')
         expect(res.body.count).toEqual(0)
