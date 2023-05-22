@@ -1,5 +1,6 @@
 # helsinki-bike
-Web application to visualize data about journeys of city bikes in Helsinki
+Web application to visualize data about journeys of city bikes in Helsinki. Thi8s project has been done as pre-assignment 
+for Solita's Dev Academy Summer 2023
 
 ## Prerequisites
 ### Software versions
@@ -55,7 +56,7 @@ PG_USER='postgres'
 PG_PASSWORD='postgres'
 PG_DATABASE='helsinki_bikes'
 ```
-tHE DEFAULT PORT IS 3006, BUT IT I9S POSSIBLE TO CHOSE ANOTHER ONE BETWEEN THE AVAILABLE ONES.
+the default port is 3006, but it is possible to choose another one between the available ones.
 
 To install backend dependencies and start the backend run the following commands:
 ```
