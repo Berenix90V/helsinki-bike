@@ -1,6 +1,5 @@
 # helsinki-bike
-Web application to visualize data about journeys of city bikes in Helsinki. Thi8s project has been done as pre-assignment 
-for Solita's Dev Academy Summer 2023
+Web application to visualize data about journeys of city bikes in Helsinki. 
 
 ## Prerequisites
 ### Software versions
